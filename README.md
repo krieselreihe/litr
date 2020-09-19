@@ -2,7 +2,7 @@
 
 **L**anguage **I**ndependent **T**ask **R**unner, configure and then run any tasks you want.
 
-**Note:** This repository only serves for defining the tool, for now. Implementation will follow.
+**Note:** This repository only serves for defining the tool, for now. Implementation will follow. Have a look at the [wiki](https://github.com/krieselreihe/litr/wiki) for more details.
 
 ## Required tools
 
