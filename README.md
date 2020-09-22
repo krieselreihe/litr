@@ -2,107 +2,39 @@
 
 Litr (_Language Independent Task Runner_) lets you configure and then run any tasks you want for any language. Define scripts, run executables or execute commands on your machine. Litr serves as an abstraction layer to combine different strategies into one tool.
 
-**Note:** This repository only serves for defining the tool, for now. Implementation will follow. Have a look at the [wiki](https://github.com/krieselreihe/litr/wiki) for more details.
+**Note:** This repository only serves for defining the tool, for now. Implementation will follow. Have a look at the [wiki](https://github.com/krieselreihe/litr/wiki) for more details on the current progress.
 
-## Required tools
+## Vision
 
-### cmake
+Here is the vision of the tool and how it should work in a theoretical "quick setup" guide. **This does not yet work.**
 
-* Site: https://cmake.org/
-* Github: https://github.com/Kitware/CMake
-
-Install on Mac (if not already present):
+Install the tool:
 
 ```shell script
-brew install cmake
+brew install litr
 ```
 
-### LLVM
+Define some commands, to make it feel real the example wraps this project with C++ and CMake:
 
-* Site: https://llvm.org/
-* Github: https://github.com/llvm/llvm-project
+```toml
+# litr.toml
+[commands]
+update = "git pull && git submodule update --init"
+build = "cmake -GNinja -DCMAKE_BUILD_TYPE=${target} --build build/${target}"
+run = "./build/${target}/litr/client/Client"
 
-Tools from the LLVM toolchain are used. To install LLVM on Mac run:
+[param]
+target = "Defines the build target"
+```
+
+Run them all:
 
 ```shell script
-brew install llvm
+litr --target=debug update,build,run
 ```
 
-Tools used from the toolset:
+To find out more go to the [wikis setup section](https://github.com/krieselreihe/litr/wiki/Setup).
 
-* clang-tidy
-* clang-format
+## Development
 
-To link these tools run:
-
-```shell script
-ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
-ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
-```
-
-### Ninja
-
-* Site: https://ninja-build.org/
-* Github: https://github.com/ninja-build/ninja
-
-You can install Ninja on Mac via brew:
-
-```shell script
-brew install ninja
-```
-
-## Setup
-
-Clone the project with all submodules:
-
-```shell script
-git clone --recurse-submodules -j8 git@github.com:krieselreihe/litr.git
-```
-
-## Update
-
-```shell script
-git pull && git submodule update --init
-```
-
-## Build
-
-### Debug
-
-Build the configuration files with cmake:
-
-```shell script
-cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=Debug --build build/debug
-```
-
-Build the application with Ninja:
-
-```shell script
-ninja -C build/debug
-```
-
-### Release
-
-Build the configuration files with cmake:
-
-```shell script
-cmake -GNinja -DDEBUG=0 -DCMAKE_BUILD_TYPE=Release --build build/release
-```
-
-Build the application with Ninja:
-
-```shell script
-ninja -C build/release
-```
-
-## Run
-
-After [building the application](#build) you can either run the client in debug or release mode:
-
-```shell script
-# Debug
-./build/debug/litr/client/Client
-
-# Release
-./build/release/litr/client/Client
-```
+Find more information about how to contribute in the [contribution guide](CONTRIBUTING.md).
