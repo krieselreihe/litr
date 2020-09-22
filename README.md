@@ -1,6 +1,6 @@
 # litr
 
-**L**anguage **I**ndependent **T**ask **R**unner, configure and then run any tasks you want.
+Litr (_Language Independent Task Runner_) lets you configure and then run any tasks you want for any language. Define scripts, run executables or execute commands on your machine. Litr serves as an abstraction layer to combine different strategies into one tool.
 
 **Note:** This repository only serves for defining the tool, for now. Implementation will follow. Have a look at the [wiki](https://github.com/krieselreihe/litr/wiki) for more details.
 
