@@ -80,7 +80,7 @@ git pull && git submodule update --init
 Build the configuration files with cmake:
 
 ```shell script
-cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=Debug --build build/debug
+cmake -GNinja -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug --build build/debug
 ```
 
 Build the application with Ninja:
@@ -94,7 +94,7 @@ ninja -C build/debug
 Build the configuration files with cmake:
 
 ```shell script
-cmake -GNinja -DDEBUG=0 -DCMAKE_BUILD_TYPE=Release --build build/release
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release --build build/release
 ```
 
 Build the application with Ninja:

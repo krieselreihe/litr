@@ -18,15 +18,20 @@ endif()
 # Generate compile_commands.json to make it easier to work with clang based tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Inject debugging statement into code
+option(DEBUG "Enable debug statements and asserts" OFF)
 if (DEBUG)
-  add_definitions(-DDEBUG=${DEBUG} -DLITR_ENABLE_ASSERTS=${DEBUG})
+  add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)
 endif()
 
+option(PROFILE "Enable profiling tools" OFF)
 if (PROFILE)
-  add_definitions(-DLITR_PROFILE=1)
+  add_compile_definitions(LITR_PROFILE)
 endif()
 
-if(APPLE)
-  add_definitions(-DLITR_PLATFORM_MACOS=1)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  add_compile_definitions(LITR_PLATFORM_WINDOWS)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  add_compile_definitions(LITR_PLATFORM_LINUX)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  add_compile_definitions(LITR_PLATFORM_MACOS)
 endif()

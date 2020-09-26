@@ -6,8 +6,6 @@ project(
   DESCRIPTION "Language Independent Task Runner, configure and then run any tasks you want."
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-
 include(cmake/StandardProjectSettings.cmake)
 
 # Link this "library" to use the warnings specified in CompilerWarnings.cmake
