@@ -9,6 +9,7 @@ You want do contribute to this repo? Nice! And of course: **you are the best!** 
 - [Update](#update)
 - [Build](#build)
 - [Run](#run)
+- [Tests](#tests)
 
 ---
 
@@ -113,4 +114,16 @@ After [building the application](#build) you can either run the client in debug 
 
 # Release
 ./build/release/litr/client/Client
+```
+
+## Tests
+
+After [building the application](#build) you can run unit tests for the build output.
+
+```shell script
+# Run all tests for debugging build
+./build/debug/litr/tests/*Test
+
+# Run all tests for release build
+./build/release/litr/tests/*Test
 ```
