@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.17)
 project(
   Litr
   VERSION 1.0.0
-  DESCRIPTION "Language Independent Task Runner, configure and then run any tasks you want."
+  DESCRIPTION "Language Independent Task Runner lets you configure and then run any tasks you want for any language."
   LANGUAGES CXX)
 
 include(cmake/StandardProjectSettings.cmake)
@@ -13,4 +13,9 @@ add_library(project_warnings INTERFACE)
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
 
+# Dependencies
+add_subdirectory(vendor/doctest)
+
+# Application libraries and files
+add_subdirectory(litr/tests)
 add_subdirectory(litr/client)

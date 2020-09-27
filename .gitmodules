@@ -1,0 +1,4 @@
+[submodule "vendor/doctest"]
+	path = vendor/doctest
+	url = git@github.com:onqtam/doctest.git
+	branch = 2.4.0
