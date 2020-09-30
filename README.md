@@ -19,11 +19,14 @@ Define some commands, to make it feel real the example wraps this project with C
 ```toml
 # litr.toml
 [commands]
-update = "git pull && git submodule update --init"
+update = [
+  "git pull",
+  "git submodule update --init"
+]
 build = "cmake -GNinja -DCMAKE_BUILD_TYPE=${target} --build build/${target}"
 run = "./build/${target}/litr/client/Client"
 
-[param]
+[params]
 target = "Defines the build target"
 ```
 
