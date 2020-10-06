@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 project(
-  Litr
+  src
   VERSION 1.0.0
   DESCRIPTION "Language Independent Task Runner lets you configure and then run any tasks you want for any language."
   LANGUAGES CXX)
@@ -19,6 +19,6 @@ add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/tomlplusplus)
 
 # Application libraries and files
-add_subdirectory(litr/tests)
-add_subdirectory(litr/config)
-add_subdirectory(litr/client)
+add_subdirectory(src/tests)
+add_subdirectory(src/config)
+add_subdirectory(src/client)

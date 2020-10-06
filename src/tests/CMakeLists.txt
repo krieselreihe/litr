@@ -14,7 +14,7 @@ target_link_libraries(TestRunner PUBLIC doctest)
 
 add_library(TestBase INTERFACE)
 target_compile_features(TestBase INTERFACE cxx_std_17)
-# target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/client/Client)
+# target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/client/Client)
 target_link_libraries(TestBase INTERFACE doctest)
 
 # Test cases
