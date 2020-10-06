@@ -15,6 +15,7 @@ set_project_warnings(project_warnings)
 
 # Dependencies
 add_subdirectory(vendor/doctest)
+add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/tomlplusplus)
 
 # Application libraries and files
