@@ -10,6 +10,7 @@ You want do contribute to this repo? Nice! And of course: **you are the best!** 
 - [Build](#build)
 - [Run](#run)
 - [Tests](#tests)
+- [Profiling](#profiling)
 
 ---
 
@@ -126,4 +127,22 @@ After [building the application](#build) you can run unit tests for the build ou
 
 # Run all tests for release build
 ./build/release/litr/tests/*Test
+```
+
+## Profiling
+
+There is a profiling build you can generate running cmake with `PROFILE=ON` (build type is up to you, for real world results use "Release"):
+
+```shell script
+# Create config files
+cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release --build build/profile
+
+# Build profile runner
+ninja -C build/profile
+```
+
+Running the profiler executable will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run:
+
+```shell script
+./build/profile/src/client/Client
 ```
