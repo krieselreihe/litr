@@ -20,5 +20,5 @@ add_subdirectory(vendor/tomlplusplus)
 
 # Application libraries and files
 add_subdirectory(src/tests)
-add_subdirectory(src/config)
+add_subdirectory(src/core)
 add_subdirectory(src/client)

@@ -1,8 +1,6 @@
 #include "ConfigFile.hpp"
 
-#include <cstdlib>
-
-#include <fmt/format.h>
+#include "Core/Environment.hpp"
 
 namespace Litr {
 
@@ -18,7 +16,7 @@ ConfigFile::ConfigFile(Path cwd) {
     cwd = cwd.parent_path();
   } while (cwd != "/");
 
-  Path homeDir{GetHomeDirectory()};
+  Path homeDir{Environment::GetHomeDirectory()};
   if (!homeDir.empty()) {
     FindFile(homeDir);
   }
@@ -59,20 +57,6 @@ void ConfigFile::FindFile(const Path& cwd) {
     m_Status = Status::FOUND;
     return;
   }
-}
-
-Path ConfigFile::GetHomeDirectory() {
-#ifdef LITR_PLATFORM_MACOS
-  std::string userName{std::getenv("USER")};
-  std::string loginName{std::getenv("LOGNAME")};
-  Path path{fmt::format("/Users/{}", userName.empty() ? userName : loginName)};
-#elif LITR_PLATFORM_WINDOWS
-  Path path{std::getenv("HOMEPATH")};
-#elif LITR_PLATFORM_LINUX
-  Path path{std::getenv("HOME")};
-#endif
-
-  return path;
 }
 
 }  // namespace Litr

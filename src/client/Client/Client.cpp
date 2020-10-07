@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <iostream>
 
-#include "Config.hpp"
+#include "Core.hpp"
 
 static Litr::Path GetCurrentWorkingDirectory() {
   return std::filesystem::current_path();

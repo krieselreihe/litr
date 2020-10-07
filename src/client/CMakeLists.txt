@@ -5,5 +5,5 @@ include(${CMAKE_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 add_executable(${NAME} Client/Client.cpp)
 
 target_compile_features(${NAME} PRIVATE cxx_std_17)
-target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/config)
-target_link_libraries(${NAME} PRIVATE project_warnings Config)
+target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
+target_link_libraries(${NAME} PRIVATE project_warnings Core)

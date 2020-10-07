@@ -30,7 +30,6 @@ class ConfigFile {
   Status m_Status{Status::NOT_FOUND};
 
   void FindFile(const Path& cwd);
-  static Path GetHomeDirectory();
 };
 
 }  // namespace Litr
