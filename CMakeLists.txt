@@ -13,9 +13,12 @@ add_library(project_warnings INTERFACE)
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
 
+set(SPDLOG_FMT_EXTERNAL "ON")
+
 # Dependencies
 add_subdirectory(vendor/doctest)
 add_subdirectory(vendor/fmt)
+add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/tomlplusplus)
 
 # Application libraries and files

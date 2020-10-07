@@ -1,11 +1,16 @@
 #include "ConfigFile.hpp"
 
 #include "Core/Environment.hpp"
+#include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr {
 
 ConfigFile::ConfigFile(Path cwd) {
+  LITR_PROFILE_FUNCTION();
+
   do {
+    LITR_PROFILE_SCOPE("ConfigFile::ConfigFile::ResolvePath(do..while)");
+
     m_Directory = cwd;
     FindFile(cwd);
 
@@ -35,6 +40,8 @@ Path ConfigFile::GetFileDirectory() const {
 }
 
 void ConfigFile::FindFile(const Path& cwd) {
+  LITR_PROFILE_FUNCTION();
+
   Path filePath{cwd / m_FileName};
   Path hiddenFilePath{cwd / m_HiddenFileName};
 

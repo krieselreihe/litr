@@ -12,12 +12,14 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif()
 
 add_library(${NAME}
-  Core.hpp
-  Core/ConfigFile.cpp Core/ConfigFile.hpp
-  Core/Environment.hpp
-  ${OS_FILES})
+  Core.hpp Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp
+  Core/Debug/Instrumentor.hpp
+  ${OS_FILES}
+  Core/ConfigFile.cpp Core/ConfigFile.hpp Core/Environment.hpp)
 
 target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
 
 target_compile_features(${NAME} PRIVATE cxx_std_17)
-target_link_libraries(${NAME} PRIVATE project_warnings fmt tomlplusplus)
+target_link_libraries(${NAME}
+  PRIVATE project_warnings fmt
+  PUBLIC spdlog tomlplusplus)

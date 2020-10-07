@@ -8,6 +8,8 @@ static Litr::Path GetCurrentWorkingDirectory() {
 }
 
 int main() {
+  LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
+
   std::cout << "Hello, Litr!\n";
 
   Litr::Path cwd{GetCurrentWorkingDirectory()};
@@ -28,6 +30,8 @@ int main() {
       return EXIT_SUCCESS;
     }
   }
+
+  LITR_PROFILE_END_SESSION();
 
   return EXIT_SUCCESS;
 }
