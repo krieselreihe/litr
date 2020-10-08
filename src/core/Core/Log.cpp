@@ -5,21 +5,30 @@
 
 namespace Litr {
 
-std::shared_ptr<spdlog::logger> Log::s_Logger;
+Ref<spdlog::logger> Log::s_CoreLogger;
+Ref<spdlog::logger> Log::s_ClientLogger;
 
 void Log::Init() {
-  std::vector<spdlog::sink_ptr> logSinks{
-      std::make_shared<spdlog::sinks::stdout_color_sink_mt>(),
-      std::make_shared<spdlog::sinks::basic_file_sink_mt>("Litr.log", true)
-  };
+  std::vector<spdlog::sink_ptr> logSinks;
+  // @todo: I need a easy global way to change the log level.
+  // spdlog::level::level_enum level{spdlog::level::trace};
+  spdlog::level::level_enum level{spdlog::level::debug};
 
-  logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-  logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+  logSinks.emplace_back(CreateRef<spdlog::sinks::stdout_color_sink_mt>());
+  logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("Litr.log", true));
 
-  s_Logger = std::make_shared<spdlog::logger>("LITR", begin(logSinks), end(logSinks));
-  spdlog::register_logger(s_Logger);
-  s_Logger->set_level(spdlog::level::trace);
-  s_Logger->flush_on(spdlog::level::trace);
+  logSinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
+  logSinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
+
+  s_CoreLogger = CreateRef<spdlog::logger>("CORE", begin(logSinks), end(logSinks));
+  spdlog::register_logger(s_CoreLogger);
+  s_CoreLogger->set_level(level);
+  s_CoreLogger->flush_on(level);
+
+  s_ClientLogger = CreateRef<spdlog::logger>("CLIENT", begin(logSinks), end(logSinks));
+  spdlog::register_logger(s_ClientLogger);
+  s_ClientLogger->set_level(level);
+  s_ClientLogger->flush_on(level);
 }
 
 }  // namespace Litr

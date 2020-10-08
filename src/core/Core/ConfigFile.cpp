@@ -1,6 +1,7 @@
 #include "ConfigFile.hpp"
 
 #include "Core/Environment.hpp"
+#include "Core/Log.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr {
@@ -12,10 +13,11 @@ ConfigFile::ConfigFile(Path cwd) {
     LITR_PROFILE_SCOPE("ConfigFile::ConfigFile::ResolvePath(do..while)");
 
     m_Directory = cwd;
+    LITR_CORE_TRACE("Searching configuration file in: {0}", static_cast<std::string>(m_Directory));
     FindFile(cwd);
 
     if (m_Status != Status::NOT_FOUND) {
-      break;
+      return;
     }
 
     cwd = cwd.parent_path();
@@ -23,6 +25,7 @@ ConfigFile::ConfigFile(Path cwd) {
 
   Path homeDir{Environment::GetHomeDirectory()};
   if (!homeDir.empty()) {
+    LITR_CORE_TRACE("Searching configuration file in user home: {0}", static_cast<std::string>(homeDir));
     FindFile(homeDir);
   }
 }
@@ -49,17 +52,20 @@ void ConfigFile::FindFile(const Path& cwd) {
   bool hiddenFileExists{std::filesystem::exists(hiddenFilePath)};
 
   if (fileExists && hiddenFileExists) {
+    LITR_CORE_TRACE("Configuration file duplicate detected.");
     m_Status = Status::DUPLICATE;
     return;
   }
 
   if (fileExists) {
+    LITR_CORE_TRACE("Configuration file found at: {0}", static_cast<std::string>(filePath));
     m_Path = filePath;
     m_Status = Status::FOUND;
     return;
   }
 
   if (hiddenFileExists) {
+    LITR_CORE_TRACE("Hidden configuration file found at: {0}", static_cast<std::string>(hiddenFilePath));
     m_Path = hiddenFilePath;
     m_Status = Status::FOUND;
     return;

@@ -2,9 +2,6 @@
 
 #include <memory>
 
-#include "Core/Log.hpp"
-#include "Core/Assert.hpp"
-
 namespace Litr {
 
 template <typename T>

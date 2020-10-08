@@ -9,6 +9,7 @@ static Litr::Path GetCurrentWorkingDirectory() {
 
 int main() {
   LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
+  Litr::Log::Init();
 
   std::cout << "Hello, Litr!\n";
 

@@ -39,8 +39,8 @@ class Instrumentor {
       // newly opened session instead.  That's better than having badly formatted
       // profiling output.
       // Edge case: BeginSession() might be before Log::Init()
-      if (Log::GetLogger()) {
-        LITR_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
+      if (Log::GetCoreLogger()) {
+        LITR_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
       }
       InternalEndSession();
     }
@@ -51,8 +51,8 @@ class Instrumentor {
       WriteHeader();
     } else {
       // Edge case: BeginSession() might be before Log::Init()
-      if (Log::GetLogger()) {
-        LITR_ERROR("Instrumentor could not open results file '{0}'.", filepath);
+      if (Log::GetCoreLogger()) {
+        LITR_CORE_ERROR("Instrumentor could not open results file '{0}'.", filepath);
       }
     }
   }
@@ -159,7 +159,7 @@ class InstrumentationTimer {
 
 }  // namespace Litr
 
-#if LITR_PROFILE == 1
+#if LITR_PROFILE
 // Resolve which function signature macro will be used. Note that this only
 // is resolved when the (pre)compiler starts, so the syntax highlighting
 // could mark the wrong one in your editor!

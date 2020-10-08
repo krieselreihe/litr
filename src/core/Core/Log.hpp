@@ -3,24 +3,55 @@
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
 
+#include "Core/Base.hpp"
+
 namespace Litr {
 
 class Log {
  private:
-  static std::shared_ptr<spdlog::logger> s_Logger;
+  static Ref<spdlog::logger> s_CoreLogger;
+  static Ref<spdlog::logger> s_ClientLogger;
 
  public:
   static void Init();
 
-  static std::shared_ptr<spdlog::logger>& GetLogger() {
-    return s_Logger;
+  static Ref<spdlog::logger>& GetCoreLogger() {
+    return s_CoreLogger;
+  }
+
+  static Ref<spdlog::logger>& GetClientLogger() {
+    return s_ClientLogger;
   }
 };
 
 }  // namespace Litr
 
-#define LITR_TRACE(...) ::Litr::Log::GetLogger()->trace(__VA_ARGS__)
-#define LITR_INFO(...) ::Litr::Log::GetLogger()->info(__VA_ARGS__)
-#define LITR_WARN(...) ::Litr::Log::GetLogger()->warn(__VA_ARGS__)
-#define LITR_ERROR(...) ::Litr::Log::GetLogger()->error(__VA_ARGS__)
-#define LITR_FATAL(...) ::Litr::Log::GetLogger()->fatal(__VA_ARGS__)
+// Core logging
+
+#if DEBUG
+#define LITR_CORE_TRACE(...) ::Litr::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define LITR_CORE_DEBUG(...) ::Litr::Log::GetCoreLogger()->debug(__VA_ARGS__)
+#else
+#define LITR_CORE_TRACE(...)
+#define LITR_CORE_DEBUG(...)
+#endif
+
+#define LITR_CORE_INFO(...) ::Litr::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define LITR_CORE_WARN(...) ::Litr::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define LITR_CORE_ERROR(...) ::Litr::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define LITR_CORE_FATAL(...) ::Litr::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+
+// Client logging
+
+#if DEBUG
+#define LITR_TRACE(...) ::Litr::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define LITR_DEBUG(...) ::Litr::Log::GetClientLogger()->debug(__VA_ARGS__)
+#else
+#define LITR_TRACE(...)
+#define LITR_DEBUG(...)
+#endif
+
+#define LITR_INFO(...) ::Litr::Log::GetClientLogger()->info(__VA_ARGS__)
+#define LITR_WARN(...) ::Litr::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define LITR_ERROR(...) ::Litr::Log::GetClientLogger()->error(__VA_ARGS__)
+#define LITR_FATAL(...) ::Litr::Log::GetClientLogger()->fatal(__VA_ARGS__)
