@@ -5,7 +5,7 @@
 [submodule "vendor/tomlplusplus/tomlplusplus"]
 	path = vendor/tomlplusplus/tomlplusplus
 	url = git@github.com:marzer/tomlplusplus.git
-	branch = v2.1.0
+	branch = v2.2.0
 [submodule "vendor/fmt"]
 	path = vendor/fmt
 	url = git@github.com:fmtlib/fmt.git
