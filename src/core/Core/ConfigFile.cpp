@@ -1,8 +1,8 @@
 #include "ConfigFile.hpp"
 
+#include "Core/Debug/Instrumentor.hpp"
 #include "Core/Environment.hpp"
 #include "Core/Log.hpp"
-#include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr {
 
@@ -13,19 +13,19 @@ ConfigFile::ConfigFile(Path cwd) {
     LITR_PROFILE_SCOPE("ConfigFile::ConfigFile::ResolvePath(do..while)");
 
     m_Directory = cwd;
-    LITR_CORE_TRACE("Searching configuration file in: {0}", static_cast<std::string>(m_Directory));
+    LITR_CORE_TRACE("Searching configuration file in: {0}", m_Directory);
     FindFile(cwd);
 
     if (m_Status != Status::NOT_FOUND) {
       return;
     }
 
-    cwd = cwd.parent_path();
-  } while (cwd != cwd.parent_path());
+    cwd = cwd.ParentPath();
+  } while (cwd != cwd.ParentPath());
 
   Path homeDir{Environment::GetHomeDirectory()};
-  if (!homeDir.empty()) {
-    LITR_CORE_TRACE("Searching configuration file in user home: {0}", static_cast<std::string>(homeDir));
+  if (!homeDir.Empty()) {
+    LITR_CORE_TRACE("Searching configuration file in user home: {0}", homeDir);
     FindFile(homeDir);
   }
 }
@@ -45,11 +45,11 @@ Path ConfigFile::GetFileDirectory() const {
 void ConfigFile::FindFile(const Path& cwd) {
   LITR_PROFILE_FUNCTION();
 
-  Path filePath{cwd / m_FileName};
-  Path hiddenFilePath{cwd / m_HiddenFileName};
+  Path filePath{cwd.Append(m_FileName)};
+  Path hiddenFilePath{cwd.Append(m_HiddenFileName)};
 
-  bool fileExists{std::filesystem::exists(filePath)};
-  bool hiddenFileExists{std::filesystem::exists(hiddenFilePath)};
+  bool fileExists{FileSystem::Exists(filePath)};
+  bool hiddenFileExists{FileSystem::Exists(hiddenFilePath)};
 
   if (fileExists && hiddenFileExists) {
     LITR_CORE_TRACE("Configuration file duplicate detected.");
@@ -58,14 +58,14 @@ void ConfigFile::FindFile(const Path& cwd) {
   }
 
   if (fileExists) {
-    LITR_CORE_TRACE("Configuration file found at: {0}", static_cast<std::string>(filePath));
+    LITR_CORE_TRACE("Configuration file found at: {0}", filePath);
     m_Path = filePath;
     m_Status = Status::FOUND;
     return;
   }
 
   if (hiddenFileExists) {
-    LITR_CORE_TRACE("Hidden configuration file found at: {0}", static_cast<std::string>(hiddenFilePath));
+    LITR_CORE_TRACE("Hidden configuration file found at: {0}", hiddenFilePath);
     m_Path = hiddenFilePath;
     m_Status = Status::FOUND;
     return;

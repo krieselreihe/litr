@@ -1,11 +1,10 @@
 #pragma once
 
-#include <filesystem>
 #include <string>
 
-namespace Litr {
+#include "Core/FileSystem.hpp"
 
-using Path = std::filesystem::path;
+namespace Litr {
 
 class ConfigFile {
  public:

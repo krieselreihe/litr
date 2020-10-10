@@ -1,14 +1,12 @@
 #pragma once
 
-#include <filesystem>
+#include "Core/FileSystem.hpp"
 
 namespace Litr {
 
-using Path = std::filesystem::path;
-
 class Environment {
  public:
-  [[nodiscard]] static std::filesystem::path GetHomeDirectory();
+  [[nodiscard]] static Path GetHomeDirectory();
 };
 
 }  // namespace Litr
