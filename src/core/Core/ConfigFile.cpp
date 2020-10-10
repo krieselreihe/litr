@@ -6,6 +6,9 @@
 
 namespace Litr {
 
+ConfigFile::ConfigFile(const std::string& cwd) : ConfigFile(static_cast<Path>(cwd)) {
+}
+
 ConfigFile::ConfigFile(Path cwd) {
   LITR_PROFILE_FUNCTION();
 

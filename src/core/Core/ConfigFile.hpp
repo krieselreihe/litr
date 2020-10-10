@@ -15,6 +15,7 @@ class ConfigFile {
   };
 
   explicit ConfigFile(Path cwd);
+  explicit ConfigFile(const std::string& cwd);
 
   [[nodiscard]] Status GetStatus() const;
   [[nodiscard]] Path GetFilePath() const;

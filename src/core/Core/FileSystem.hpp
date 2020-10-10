@@ -13,6 +13,7 @@ class Path {
   Path() = default;
   explicit Path(std::string path);
   explicit Path(std::filesystem::path path);
+  virtual ~Path() = default;
 
   [[nodiscard]] Path ParentPath() const;
   [[nodiscard]] bool Empty() const;
@@ -22,17 +23,12 @@ class Path {
   [[nodiscard]] Path Append(const std::string& path) const;
   [[nodiscard]] Path Append(const Path& path) const;
 
-  explicit operator std::string() const {
-    return ToString();
-  }
+  explicit operator std::string() const { return ToString(); }
 
-  bool operator!=(const Path& other) const {
-    return other.m_Path != m_Path;
-  }
-
-  bool operator==(const Path& other) const {
-    return other.m_Path == m_Path;
-  }
+  bool operator!=(const Path& other) const { return other.m_Path != m_Path; }
+  bool operator==(const Path& other) const { return other.m_Path == m_Path; }
+  bool operator!=(const std::string& other) const { return other != m_Path; }
+  bool operator==(const std::string& other) const { return other == m_Path; }
 
   template <typename OStream>
   friend OStream& operator<<(OStream& os, const Path& path) {
