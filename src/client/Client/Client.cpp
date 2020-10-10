@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <iostream>
 
 #include "Core.hpp"
 
@@ -11,23 +10,25 @@ int main() {
   LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
   Litr::Log::Init();
 
-  std::cout << "Hello, Litr!\n";
+  LITR_INFO("Hello, Litr!");
 
   Litr::Path cwd{GetCurrentWorkingDirectory()};
   Litr::ConfigFile config{cwd};
 
   switch (config.GetStatus()) {
     case Litr::ConfigFile::Status::NOT_FOUND: {
-      std::cout << "No configuration file found!\n";
+      LITR_WARN("No configuration file found!");
       return EXIT_FAILURE;
     }
     case Litr::ConfigFile::Status::DUPLICATE: {
-      std::cout << "You defined both, litr.toml and .litr.toml in " << config.GetFileDirectory()
-                << " This is probably an error and you only want one of them.\n";
+      LITR_WARN(
+          "You defined both, litr.toml and .litr.toml in {0}."
+          "This is probably an error and you only want one of them.",
+          static_cast<std::string>(config.GetFileDirectory()));
       return EXIT_FAILURE;
     }
     case Litr::ConfigFile::Status::FOUND: {
-      std::cout << "Configuration file found under: " << config.GetFilePath() << "\n";
+      LITR_INFO("Configuration file found under: {0}", static_cast<std::string>(config.GetFilePath()));
       return EXIT_SUCCESS;
     }
   }

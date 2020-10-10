@@ -21,7 +21,7 @@ ConfigFile::ConfigFile(Path cwd) {
     }
 
     cwd = cwd.parent_path();
-  } while (cwd != "/");
+  } while (cwd != cwd.parent_path());
 
   Path homeDir{Environment::GetHomeDirectory()};
   if (!homeDir.empty()) {
