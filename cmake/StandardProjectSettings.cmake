@@ -18,6 +18,11 @@ endif()
 # Generate compile_commands.json to make it easier to work with clang based tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(DEACTIVATE_LOGGING "Disable logging" OFF)
+if (DEACTIVATE_LOGGING)
+  add_compile_definitions(LITR_DEACTIVATE_LOGGING)
+endif()
+
 option(DEBUG "Enable debug statements and asserts" OFF)
 if (DEBUG)
   add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)
