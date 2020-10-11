@@ -1,13 +1,13 @@
 #include <doctest/doctest.h>
 
+#include "Core/ConfigFileResolver.hpp"
 #include "Core/Log.hpp"
-#include "Core/ConfigFile.hpp"
 
-TEST_SUITE("ConfigFile") {
+TEST_SUITE("ConfigFileResolver") {
   TEST_CASE("File not found") {
     Litr::Log::Init();
-    Litr::ConfigFile config{"/some/path/to/nowhere"};
-    CHECK(config.GetStatus() == Litr::ConfigFile::Status::NOT_FOUND);
+    Litr::ConfigFileResolver config{"/some/path/to/nowhere"};
+    CHECK(config.GetStatus() == Litr::ConfigFileResolver::Status::NOT_FOUND);
     CHECK(config.GetFilePath() == "");
   }
 

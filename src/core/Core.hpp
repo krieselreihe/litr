@@ -8,8 +8,8 @@
 
 // Main -------------------------------
 
+#include "Core/ConfigFileResolver.hpp"
 #include "Core/Environment.hpp"
-#include "Core/ConfigFile.hpp"
 #include "Core/FileSystem.hpp"
 
 // Debug ------------------------------

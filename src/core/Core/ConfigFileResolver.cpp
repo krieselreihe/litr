@@ -1,4 +1,4 @@
-#include "ConfigFile.hpp"
+#include "ConfigFileResolver.hpp"
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Environment.hpp"
@@ -6,14 +6,14 @@
 
 namespace Litr {
 
-ConfigFile::ConfigFile(const std::string& cwd) : ConfigFile(static_cast<Path>(cwd)) {
+ConfigFileResolver::ConfigFileResolver(const std::string& cwd) : ConfigFileResolver(static_cast<Path>(cwd)) {
 }
 
-ConfigFile::ConfigFile(Path cwd) {
+ConfigFileResolver::ConfigFileResolver(Path cwd) {
   LITR_PROFILE_FUNCTION();
 
   do {
-    LITR_PROFILE_SCOPE("ConfigFile::ConfigFile::ResolvePath(do..while)");
+    LITR_PROFILE_SCOPE("ConfigFileResolver::ConfigFileResolver::ResolvePath(do..while)");
 
     m_Directory = cwd;
     LITR_CORE_TRACE("Searching configuration file in: {0}", m_Directory);
@@ -33,19 +33,19 @@ ConfigFile::ConfigFile(Path cwd) {
   }
 }
 
-ConfigFile::Status ConfigFile::GetStatus() const {
+ConfigFileResolver::Status ConfigFileResolver::GetStatus() const {
   return m_Status;
 }
 
-Path ConfigFile::GetFilePath() const {
+Path ConfigFileResolver::GetFilePath() const {
   return m_Path;
 }
 
-Path ConfigFile::GetFileDirectory() const {
+Path ConfigFileResolver::GetFileDirectory() const {
   return m_Directory;
 }
 
-void ConfigFile::FindFile(const Path& cwd) {
+void ConfigFileResolver::FindFile(const Path& cwd) {
   LITR_PROFILE_FUNCTION();
 
   Path filePath{cwd.Append(m_FileName)};

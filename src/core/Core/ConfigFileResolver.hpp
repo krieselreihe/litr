@@ -6,7 +6,7 @@
 
 namespace Litr {
 
-class ConfigFile {
+class ConfigFileResolver {
  public:
   enum class Status {
     FOUND,
@@ -14,8 +14,8 @@ class ConfigFile {
     DUPLICATE,
   };
 
-  explicit ConfigFile(Path cwd);
-  explicit ConfigFile(const std::string& cwd);
+  explicit ConfigFileResolver(Path cwd);
+  explicit ConfigFileResolver(const std::string& cwd);
 
   [[nodiscard]] Status GetStatus() const;
   [[nodiscard]] Path GetFilePath() const;

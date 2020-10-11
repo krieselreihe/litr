@@ -9,6 +9,7 @@ Ref<spdlog::logger> Log::s_CoreLogger;
 Ref<spdlog::logger> Log::s_ClientLogger;
 
 void Log::Init() {
+#ifndef LITR_DEACTIVATE_LOGGING
   std::vector<spdlog::sink_ptr> logSinks;
   // @todo: I need a easy global way to change the log level.
   // spdlog::level::level_enum level{spdlog::level::trace};
@@ -29,6 +30,7 @@ void Log::Init() {
   spdlog::register_logger(s_ClientLogger);
   s_ClientLogger->set_level(level);
   s_ClientLogger->flush_on(level);
+#endif
 }
 
 }  // namespace Litr
