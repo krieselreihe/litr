@@ -11,6 +11,7 @@ TEST_SUITE("ConfigFileResolver") {
     CHECK(config.GetFilePath() == "");
   }
 
-  // @todo: Tests cases for finding a file in different scenarios,
+  // @todo: Test cases for finding a file in different scenarios,
   // made possible by mocking.
+  // https://github.com/krieselreihe/litr/issues/12
 }

@@ -9,9 +9,6 @@ namespace Litr {
 Path::Path(std::string path) : m_Path(std::move(path)) {
 }
 
-Path::Path(std::filesystem::path path) : m_Path(std::move(path)) {
-}
-
 Path Path::ParentPath() const {
   LITR_PROFILE_FUNCTION();
 

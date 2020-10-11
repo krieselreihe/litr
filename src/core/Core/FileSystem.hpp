@@ -12,7 +12,6 @@ class Path {
  public:
   Path() = default;
   explicit Path(std::string path);
-  explicit Path(std::filesystem::path path);
   virtual ~Path() = default;
 
   [[nodiscard]] Path ParentPath() const;

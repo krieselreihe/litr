@@ -12,9 +12,9 @@ int main() {
     LITR_PROFILE_SCOPE("ClientRunner");
 
     Litr::Path cwd{Litr::FileSystem::GetCurrentWorkingDirectory()};
-    Litr::ConfigFileResolver config{cwd};
+    Litr::ConfigFileResolver configPath{cwd};
 
-    switch (config.GetStatus()) {
+    switch (configPath.GetStatus()) {
       case Litr::ConfigFileResolver::Status::NOT_FOUND: {
         fmt::print("No configuration file found!\n");
         return EXIT_FAILURE;
@@ -23,14 +23,15 @@ int main() {
         fmt::print(
             "You defined both, litr.toml and .litr.toml in {0}."
             "This is probably an error and you only want one of them.\n",
-            config.GetFileDirectory());
+            configPath.GetFileDirectory());
         return EXIT_FAILURE;
       }
       case Litr::ConfigFileResolver::Status::FOUND: {
-        fmt::print("Configuration file found under: {0}\n", config.GetFilePath());
-        return EXIT_SUCCESS;
+        fmt::print("Configuration file found under: {0}\n", configPath.GetFilePath());
       }
     }
+
+    auto config{Litr::CreateScope<Litr::Configuration>(configPath.GetFilePath())};
   }
 
   LITR_PROFILE_END_SESSION();

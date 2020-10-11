@@ -1,0 +1,14 @@
+[commands]
+update = "git pull && git submodule update --init"
+build = [
+  # Not sure about this `pascal_case` function here, yet.
+  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=${pascal_case(target)} --build build/${target}",
+  "ninja -C build/${target}"
+]
+run = "./build/${target}/litr/client/Client"
+
+[params.target]
+shortcut = "t"
+description = "Define the build target"
+type = ["debug", "release"]
+default = "debug"
