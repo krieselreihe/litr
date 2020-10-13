@@ -5,7 +5,9 @@ build = [
   "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=${pascal_case(target)} --build build/${target}",
   "ninja -C build/${target}"
 ]
-run = "./build/${target}/litr/client/Client"
+
+[commands.run]
+script = "./build/${target}/litr/client/Client"
 
 [params.target]
 shortcut = "t"
