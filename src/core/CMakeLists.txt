@@ -15,11 +15,11 @@ add_library(${NAME}
   Core.hpp Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp
   Core/Debug/Instrumentor.hpp
   ${OS_FILES}
-  Core/ConfigFileResolver.cpp Core/ConfigFileResolver.hpp Core/Environment.hpp Core/FileSystem.cpp Core/FileSystem.hpp Core/Configuration.cpp Core/Configuration.hpp Core/Command.hpp Core/Parameters.hpp)
+  Core/ConfigFileResolver.cpp Core/ConfigFileResolver.hpp Core/Environment.hpp Core/FileSystem.cpp Core/FileSystem.hpp Core/Configuration.cpp Core/Configuration.hpp Core/Command.hpp Core/Parameter.hpp Core/ErrorReporter.cpp Core/ErrorReporter.hpp)
 
 target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
 
 target_compile_features(${NAME} PRIVATE cxx_std_17)
 target_link_libraries(${NAME}
   PRIVATE project_warnings
-  PUBLIC fmt spdlog tomlplusplus)
+  PUBLIC fmt spdlog toml11)

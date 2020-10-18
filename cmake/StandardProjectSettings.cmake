@@ -23,6 +23,11 @@ if (DEACTIVATE_LOGGING)
   add_compile_definitions(LITR_DEACTIVATE_LOGGING)
 endif()
 
+option(TRACE "Enable detailed execution flow tracing" OFF)
+if (TRACE)
+  add_compile_definitions(TRACE)
+endif()
+
 option(DEBUG "Enable debug statements and asserts" OFF)
 if (DEBUG)
   add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)

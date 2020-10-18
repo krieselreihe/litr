@@ -11,9 +11,12 @@ Ref<spdlog::logger> Log::s_ClientLogger;
 void Log::Init() {
 #ifndef LITR_DEACTIVATE_LOGGING
   std::vector<spdlog::sink_ptr> logSinks;
-  // @todo: I need a easy global way to change the log level.
-  // spdlog::level::level_enum level{spdlog::level::trace};
+
+#ifdef TRACE
+  spdlog::level::level_enum level{spdlog::level::trace};
+#else
   spdlog::level::level_enum level{spdlog::level::debug};
+#endif
 
   logSinks.emplace_back(CreateRef<spdlog::sinks::stdout_color_sink_mt>());
   logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("Litr.log", true));

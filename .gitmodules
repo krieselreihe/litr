@@ -10,3 +10,7 @@
 	path = vendor/spdlog
 	url = git@github.com:gabime/spdlog.git
 	branch = v1.8.1
+[submodule "vendor/toml11"]
+	path = vendor/toml11
+	url = git@github.com:ToruNiina/toml11.git
+	branch = v3.6.0

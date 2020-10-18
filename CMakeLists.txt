@@ -19,7 +19,7 @@ set(SPDLOG_FMT_EXTERNAL "ON")
 add_subdirectory(vendor/doctest)
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/spdlog)
-add_subdirectory(vendor/tomlplusplus)
+add_subdirectory(vendor/toml11)
 
 # Application libraries and files
 add_subdirectory(src/tests)

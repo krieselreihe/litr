@@ -1,6 +1,6 @@
-#include "Core.hpp"
-
 #include <fmt/printf.h>
+
+#include "Core.hpp"
 
 int main() {
   LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
@@ -31,7 +31,11 @@ int main() {
       }
     }
 
+    // Quick test ...
     auto config{Litr::CreateScope<Litr::Configuration>(configPath.GetFilePath())};
+    if (config->HasErrors()) {
+      Litr::ErrorReporter::PrintErrors(config->GetErrors());
+    }
   }
 
   LITR_PROFILE_END_SESSION();
