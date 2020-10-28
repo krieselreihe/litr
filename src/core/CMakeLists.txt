@@ -15,7 +15,10 @@ add_library(${NAME}
   Core.hpp Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp
   Core/Debug/Instrumentor.hpp
   ${OS_FILES}
-  Core/ConfigFileResolver.cpp Core/ConfigFileResolver.hpp Core/Environment.hpp Core/FileSystem.cpp Core/FileSystem.hpp Core/Configuration.cpp Core/Configuration.hpp Core/Command.hpp Core/Parameter.hpp Core/ErrorReporter.cpp Core/ErrorReporter.hpp)
+  Core/ConfigFileResolver.cpp Core/ConfigFileResolver.hpp Core/FileSystem.cpp Core/FileSystem.hpp
+  Core/Configuration.cpp Core/Environment.hpp Core/Configuration.hpp
+  Core/Command.hpp Core/Parameter.hpp
+  Core/ErrorReporter.cpp Core/ErrorReporter.hpp Core/Errors.hpp)
 
 target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
 

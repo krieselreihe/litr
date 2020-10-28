@@ -13,7 +13,7 @@ Configuration::Configuration(const Path& filePath) {
   m_RawConfig = toml::parse(filePath.ToString());
 
   if (!m_RawConfig.is_table()) {
-    AppendError(ErrorType::MALFORMED_FILE, "Configuration is not a TOML table.");
+    AppendError(ConfigurationErrorType::MALFORMED_FILE, "Configuration is not a TOML table.");
     return;
   }
 
@@ -36,7 +36,7 @@ std::vector<Parameter> Configuration::GetParameter() const {
   return m_Parameters;
 }
 
-std::vector<Configuration::Error> Configuration::GetErrors() const {
+std::vector<ConfigurationError> Configuration::GetErrors() const {
   return m_Errors;
 }
 
@@ -65,8 +65,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
         if (s.is_string()) {
           scripts.emplace_back(s.as_string());
         } else {
-          AppendError(ErrorType::MALFORMED_SCRIPT, "A command script can be either a string or array of strings.",
-                      commands.at(key));
+          AppendError(
+              ConfigurationErrorType::MALFORMED_SCRIPT,
+              "A command script can be either a string or array of strings.",
+              commands.at(key));
         }
       }
       command.Script = scripts;
@@ -76,7 +78,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
 
     // From here on it needs to be a table to be valid.
     if (!value.is_table()) {
-      AppendError(ErrorType::MALFORMED_COMMAND, "A command can be a string or table.", commands.at(key));
+      AppendError(
+          ConfigurationErrorType::MALFORMED_COMMAND,
+          "A command can be a string or table.",
+          commands.at(key));
       return;
     }
 
@@ -97,8 +102,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
       if (description.is_string()) {
         command.Description = description.as_string();
       } else {
-        AppendError(ErrorType::MALFORMED_COMMAND, R"(The "description" can can only be a string.)",
-                    value.at("description"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_COMMAND,
+            R"(The "description" can can only be a string.)",
+            value.at("description"));
       }
     }
 
@@ -107,8 +114,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
       if (example.is_string()) {
         command.Description = example.as_string();
       } else {
-        AppendError(ErrorType::MALFORMED_COMMAND, R"(The "example" can can only be a string.)",
-                    value.at("example"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_COMMAND,
+            R"(The "example" can can only be a string.)",
+            value.at("example"));
       }
     }
 
@@ -121,8 +130,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
           command.Directory.emplace_back(d.as_string());
         }
       } else {
-        AppendError(ErrorType::MALFORMED_COMMAND, R"(A "dir" can either be a string or array of strings.)",
-                    value.at("dir"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_COMMAND,
+            R"(A "dir" can either be a string or array of strings.)",
+            value.at("dir"));
       }
     }
 
@@ -133,8 +144,10 @@ void Configuration::CollectCommands(const toml::table& commands) {
       } else if (output == "unchanged") {
         command.Output = Command::Output::UNCHANGED;
       } else {
-        AppendError(ErrorType::MALFORMED_COMMAND, R"(The "output" can either be "unchanged" or "silent".)",
-                    value.at("output"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_COMMAND,
+            R"(The "output" can either be "unchanged" or "silent".)",
+            value.at("output"));
       }
     }
 
@@ -146,8 +159,12 @@ void Configuration::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto& [key, value] : params) {
+    // @todo: Flexible restricted field names.
     if (key == "help") {
-      AppendError(ErrorType::RESERVED_PARAM, "The parameter name \"help\" is restricted to Litr.", params.at(key));
+      AppendError(
+          ConfigurationErrorType::RESERVED_PARAM,
+          "The parameter name \"help\" is restricted to Litr.",
+          params.at(key));
       continue;
     }
 
@@ -163,20 +180,28 @@ void Configuration::CollectParams(const toml::table& params) {
 
     // From here on it needs to be a table to be valid.
     if (!value.is_table()) {
-      AppendError(ErrorType::MALFORMED_PARAM, "A parameter needs to be a string or table.", params.at(key));
+      AppendError(
+          ConfigurationErrorType::MALFORMED_PARAM,
+          "A parameter needs to be a string or table.",
+          params.at(key));
       return;
     }
 
     // Detailed parameter form
     if (!value.contains("description")) {
-      AppendError(ErrorType::MALFORMED_PARAM, R"(You're missing the "description" field.)", params.at(key));
+      AppendError(
+          ConfigurationErrorType::MALFORMED_PARAM,
+          R"(You're missing the "description" field.)",
+          params.at(key));
       return;
     }
 
     toml::value description{toml::find(value, "description")};
     if (!description.is_string()) {
-      AppendError(ErrorType::MALFORMED_PARAM, R"(The "description" can can only be a string.)",
-                  value.at("description"));
+      AppendError(
+          ConfigurationErrorType::MALFORMED_PARAM,
+          R"(The "description" can can only be a string.)",
+          value.at("description"));
       return;
     }
 
@@ -187,8 +212,10 @@ void Configuration::CollectParams(const toml::table& params) {
       if (shortcut.is_string()) {
         param.Shortcut = shortcut.as_string();
       } else {
-        AppendError(ErrorType::MALFORMED_PARAM, R"(A "shortcut" can can only be a string.)",
-                    value.at("shortcut"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_PARAM,
+            R"(A "shortcut" can can only be a string.)",
+            value.at("shortcut"));
       }
     }
 
@@ -206,7 +233,10 @@ void Configuration::CollectParams(const toml::table& params) {
       if (def.is_string()) {
         param.Default = def.as_string();
       } else {
-        AppendError(ErrorType::MALFORMED_PARAM, R"(The field "default" needs to be a string.)", value.at("default"));
+        AppendError(
+            ConfigurationErrorType::MALFORMED_PARAM,
+            R"(The field "default" needs to be a string.)",
+            value.at("default"));
       }
     }
 
@@ -214,16 +244,22 @@ void Configuration::CollectParams(const toml::table& params) {
   }
 }
 
-void Configuration::AppendError(Configuration::ErrorType type, const std::string& message) {
+void Configuration::AppendError(const ConfigurationError& error) {
+  LITR_PROFILE_FUNCTION();
+
+  m_Errors.emplace_back(error);
+}
+
+void Configuration::AppendError(ConfigurationErrorType type, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
   m_Errors.emplace_back(type, message);
 }
 
-void Configuration::AppendError(Configuration::ErrorType type, const std::string& message, const toml::value& context) {
+void Configuration::AppendError(ConfigurationErrorType type, const std::string& message, const toml::value& context) {
   LITR_PROFILE_FUNCTION();
 
-  Error err{type, message};
+  ConfigurationError err{type, message};
   toml::source_location location{context.location()};
 
   err.Line = location.line();
