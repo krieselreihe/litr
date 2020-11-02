@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Core/Errors.hpp"
+#include "Core/Errors/ConfigurationError.hpp"
 
 namespace Litr {
 

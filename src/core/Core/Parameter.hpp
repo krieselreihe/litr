@@ -10,12 +10,16 @@ namespace Litr {
 struct Parameter {
   enum class ParameterType { String = 0, Array = 1 };
 
+  std::vector<std::string> TypeArguments{};
+
   std::string Name;
   std::string Description{};
   std::string Shortcut{};
-  ParameterType Type{ParameterType::String};
-  std::vector<std::string> TypeArguments{};
   std::string Default{};
+
+  ParameterType Type{ParameterType::String};
+
+  explicit Parameter(std::string name) : Name(std::move(name)) {}
 };
 
 }  // namespace Litr
@@ -30,6 +34,10 @@ struct fmt::formatter<Litr::Parameter> {
 
   template <typename FormatContext>
   auto format(const Litr::Parameter& p, FormatContext& ctx) {
-    return format_to(ctx.out(), "Param: {} - {}", p.Name, p.Description);
+    if (!p.Description.empty()) {
+      return format_to(ctx.out(), "Param: {} - {}", p.Name, p.Description);
+    }
+
+    return format_to(ctx.out(), "Param: {}", p.Name);
   }
 };

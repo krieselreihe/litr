@@ -12,10 +12,13 @@
 #include "Core/ConfigFileResolver.hpp"
 #include "Core/Configuration.hpp"
 #include "Core/Environment.hpp"
-#include "Core/ErrorReporter.hpp"
-#include "Core/Errors.hpp"
 #include "Core/FileSystem.hpp"
 #include "Core/Parameter.hpp"
+
+// Errors -----------------------------
+
+#include "Core/Errors/ConfigurationError.hpp"
+#include "Core/Errors/ErrorReporter.hpp"
 
 // Debug ------------------------------
 

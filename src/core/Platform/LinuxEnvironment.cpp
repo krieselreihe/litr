@@ -8,7 +8,7 @@ namespace Litr {
 Path Environment::GetHomeDirectory() {
   LITR_PROFILE_FUNCTION();
 
-  return std::getenv("HOME");
+  return Path(std::getenv("HOME"));
 }
 
 }  // namespace Litr

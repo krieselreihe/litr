@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Core/Command.hpp"
-#include "Core/Errors.hpp"
+#include "Core/Errors/ConfigurationError.hpp"
 #include "Core/FileSystem.hpp"
 #include "Core/Parameter.hpp"
 
