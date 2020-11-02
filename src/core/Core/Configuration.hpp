@@ -26,10 +26,6 @@ class Configuration {
   void CollectCommands(const toml::table& commands);
   void CollectParams(const toml::table& params);
 
-  void AppendError(const ConfigurationError& error);
-  void AppendError(ConfigurationErrorType type, const std::string& message);
-  void AppendError(ConfigurationErrorType type, const std::string& message, const toml::value& context);
-
  private:
   toml::value m_RawConfig;
   std::vector<Command> m_Commands{};

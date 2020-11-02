@@ -10,5 +10,5 @@ run = "./build/${target}/litr/client/Client"
 [params.target]
 shortcut = "t"
 description = "Define the build target."
-type = ["debug", ""]
+type = ["debug", "release"]
 default = "debug"
