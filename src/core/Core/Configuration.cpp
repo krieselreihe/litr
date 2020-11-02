@@ -31,22 +31,6 @@ Configuration::Configuration(const Path& filePath) {
   }
 }
 
-std::vector<Command> Configuration::GetCommands() const {
-  return m_Commands;
-}
-
-std::vector<Parameter> Configuration::GetParameter() const {
-  return m_Parameters;
-}
-
-std::vector<ConfigurationError> Configuration::GetErrors() const {
-  return m_Errors;
-}
-
-bool Configuration::HasErrors() const {
-  return !m_Errors.empty();
-}
-
 void Configuration::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 

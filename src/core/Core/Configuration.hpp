@@ -16,11 +16,10 @@ class Configuration {
   explicit Configuration(const Path& filePath);
   virtual ~Configuration() = default;
 
-  [[nodiscard]] std::vector<Command> GetCommands() const;
-  [[nodiscard]] std::vector<Parameter> GetParameter() const;
-  [[nodiscard]] std::vector<ConfigurationError> GetErrors() const;
-
-  [[nodiscard]] bool HasErrors() const;
+  [[nodiscard]] inline std::vector<Command> GetCommands() const { return m_Commands; };
+  [[nodiscard]] inline std::vector<Parameter> GetParameter() const { return m_Parameters; };
+  [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
+  [[nodiscard]] inline bool HasErrors() const { return !m_Errors.empty(); };
 
  private:
   void CollectCommands(const toml::table& commands);
