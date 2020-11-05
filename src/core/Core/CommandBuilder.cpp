@@ -10,14 +10,20 @@ CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data,
 }
 
 void CommandBuilder::AddScriptLine(const std::string& line) {
+  LITR_PROFILE_FUNCTION();
+
   m_Command->Script.emplace_back(line);
 }
 
 void CommandBuilder::AddScript(const std::vector<std::string>& scripts) {
+  LITR_PROFILE_FUNCTION();
+
   m_Command->Script = scripts;
 }
 
 void CommandBuilder::AddScript(const toml::value& scripts) {
+  LITR_PROFILE_FUNCTION();
+
   for (const auto& script : scripts.as_array()) {
     if (!script.is_string()) {
       m_Errors.emplace_back(
@@ -33,6 +39,8 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
 }
 
 void CommandBuilder::AddDescription() {
+  LITR_PROFILE_FUNCTION();
+
   std::string name{"description"};
 
   if (m_Table.contains(name)) {
@@ -49,6 +57,8 @@ void CommandBuilder::AddDescription() {
 }
 
 void CommandBuilder::AddExample() {
+  LITR_PROFILE_FUNCTION();
+
   std::string name{"example"};
 
   if (m_Table.contains(name)) {
@@ -65,6 +75,8 @@ void CommandBuilder::AddExample() {
 }
 
 void CommandBuilder::AddDirectory() {
+  LITR_PROFILE_FUNCTION();
+
   std::string name{"dir"};
 
   if (m_Table.contains(name)) {
@@ -85,6 +97,8 @@ void CommandBuilder::AddDirectory() {
 }
 
 void CommandBuilder::AddOutput() {
+  LITR_PROFILE_FUNCTION();
+
   std::string name{"output"};
 
   if (m_Table.contains(name)) {
@@ -103,6 +117,8 @@ void CommandBuilder::AddOutput() {
 }
 
 void CommandBuilder::AddChildCommand(const Ref<Command>& command) {
+  LITR_PROFILE_FUNCTION();
+
   m_Command->ChildCommands.emplace_back(command);
 }
 

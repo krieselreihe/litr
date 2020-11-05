@@ -11,6 +11,7 @@ namespace Litr {
 Configuration::Configuration(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
+  // @todo: Command order is currently "unordered". Needs to be ordered.
   m_RawConfig = toml::parse(filePath.ToString());
 
   if (!m_RawConfig.is_table()) {
@@ -34,6 +35,8 @@ Configuration::Configuration(const Path& filePath) {
 // Ignore recursion warning.
 // NOLINTNEXTLINE
 Ref<Command> Configuration::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
+  LITR_PROFILE_FUNCTION();
+
   CommandBuilder builder{commands, definition, name};
 
   // Simple string form
@@ -68,6 +71,7 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
 
   std::stack<std::string> extraProperties{};
   while (!properties.empty()) {
+    LITR_PROFILE_SCOPE("Configuration::CreateCommand::CollectCommandProperties(while)");
     const std::string property{properties.top()};
 
     if (property == "script") {
@@ -118,6 +122,7 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
   }
 
   while (!extraProperties.empty()) {
+    LITR_PROFILE_SCOPE("Configuration::CreateCommand::AddSubCommands(while)");
     const std::string property{extraProperties.top()};
     const toml::value& value{toml::find(definition, property)};
 
