@@ -12,7 +12,8 @@ enum class ConfigurationErrorType {
   MALFORMED_FILE,
   MALFORMED_COMMAND,
   MALFORMED_PARAM,
-  MALFORMED_SCRIPT
+  MALFORMED_SCRIPT,
+  UNKNOWN_COMMAND_PROPERTY
 };
 
 struct ConfigurationError {
@@ -47,6 +48,8 @@ struct ConfigurationError {
         return "Parameter format is wrong!";
       case ConfigurationErrorType::MALFORMED_SCRIPT:
         return "Command script is wrong!";
+      case ConfigurationErrorType::UNKNOWN_COMMAND_PROPERTY:
+        return "Command property does not exist!";
     }
   }
 };

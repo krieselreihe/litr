@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "Core/Base.hpp"
+
 namespace Litr {
 
 struct Command {
@@ -14,9 +16,10 @@ struct Command {
   std::vector<std::string> Script{};
   std::vector<std::string> Directory{};
 
-  std::string Name;
+  const std::string Name;
   std::string Description{};
   std::string Example{};
+  std::vector<Ref<Command>> ChildCommands{};
 
   Output Output{Output::UNCHANGED};
 
@@ -35,10 +38,17 @@ struct fmt::formatter<Litr::Command> {
 
   template <typename FormatContext>
   auto format(const Litr::Command& c, FormatContext& ctx) {
-    if (!c.Description.empty()) {
-      return format_to(ctx.out(), "Script: {} - {}", c.Name, c.Description);
+    std::string childView{};
+    if (!c.ChildCommands.empty()) {
+      for (const auto& child : c.ChildCommands) {
+        childView.append(fmt::format("\n    - Sub{}", *child));
+      }
     }
 
-    return format_to(ctx.out(), "Script: {}", c.Name);
+    if (!c.Description.empty()) {
+      return format_to(ctx.out(), "Script: {} - {}{}", c.Name, c.Description, childView);
+    }
+
+    return format_to(ctx.out(), "Script: {}{}", c.Name, childView);
   }
 };

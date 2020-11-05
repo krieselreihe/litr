@@ -31,56 +31,120 @@ Configuration::Configuration(const Path& filePath) {
   }
 }
 
+// Ignore recursion warning.
+// NOLINTNEXTLINE
+Ref<Command> Configuration::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
+  CommandBuilder builder{commands, definition, name};
+
+  // Simple string form
+  if (definition.is_string()) {
+    builder.AddScriptLine(definition.as_string());
+    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+    return builder.GetResult();
+  }
+
+  // Simple string array form
+  if (definition.is_array()) {
+    builder.AddScript(definition);
+    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+    return builder.GetResult();
+  }
+
+  // From here on it needs to be a table to be valid.
+  if (!definition.is_table()) {
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_COMMAND,
+        "A command can be a string or table.",
+        commands.at(name));
+    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+    return builder.GetResult();
+  }
+
+  // Collect command property names
+  std::stack<std::string> properties{};
+  for (const auto& property : definition.as_table()) {
+    properties.push(property.first);
+  }
+
+  std::stack<std::string> extraProperties{};
+  while (!properties.empty()) {
+    const std::string property{properties.top()};
+
+    if (property == "script") {
+      toml::value scripts{toml::find(definition, "script")};
+
+      if (scripts.is_string()) {
+        builder.AddScriptLine(scripts.as_string());
+      } else if (scripts.is_array()) {
+        builder.AddScript(scripts);
+      } else {
+        m_Errors.emplace_back(
+            ConfigurationErrorType::MALFORMED_SCRIPT,
+            "A command script can be either a string or array of strings.",
+            definition.at(property));
+      }
+
+      properties.pop();
+      continue;
+    }
+
+    if (property == "description") {
+      builder.AddDescription();
+      properties.pop();
+      continue;
+    }
+
+    if (property == "example") {
+      builder.AddExample();
+      properties.pop();
+      continue;
+    }
+
+    if (property == "dir") {
+      builder.AddDirectory();
+      properties.pop();
+      continue;
+    }
+
+    if (property == "output") {
+      builder.AddOutput();
+      properties.pop();
+      continue;
+    }
+
+    // Collect properties that cannot directly be resolved.
+    extraProperties.push(property);
+    properties.pop();
+  }
+
+  while (!extraProperties.empty()) {
+    const std::string property{extraProperties.top()};
+    const toml::value& value{toml::find(definition, property)};
+
+    if (!value.is_table()) {
+      m_Errors.emplace_back(
+          ConfigurationErrorType::UNKNOWN_COMMAND_PROPERTY,
+          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+          definition.at(property));
+      extraProperties.pop();
+      continue;
+    }
+
+    // Ignore recursion warning.
+    // NOLINTNEXTLINE
+    builder.AddChildCommand(CreateCommand(definition.as_table(), value, property));
+    extraProperties.pop();
+  }
+
+  for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+  return builder.GetResult();
+}
+
 void Configuration::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
-  for (const auto& [key, value] : commands) {
-    CommandBuilder builder{key, value, commands};
-
-    // Simple string form
-    if (value.is_string()) {
-      builder.AddScriptLine(value.as_string());
-      for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
-      m_Commands.emplace_back(builder.GetResult());
-      continue;
-    }
-
-    // Simple string array form
-    if (value.is_array()) {
-      builder.AddScript(value);
-      for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
-      m_Commands.emplace_back(builder.GetResult());
-      continue;
-    }
-
-    // @todo: Check if sub command.
-
-    // From here on it needs to be a table to be valid.
-    if (!value.is_table()) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_COMMAND,
-          "A command can be a string or table.",
-          commands.at(key));
-      return;
-    }
-
-    // @todo: Until here there can be sub commands.
-
-    // Detailed command form
-    toml::value scripts{toml::find(value, "script")};
-    if (scripts.is_string()) {
-      builder.AddScriptLine(scripts.as_string());
-    } else if (scripts.is_array()) {
-      builder.AddScript(scripts);
-    }
-
-    builder.AddDescription();
-    builder.AddExample();
-    builder.AddDirectory();
-    builder.AddOutput();
-
-    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
-    m_Commands.emplace_back(builder.GetResult());
+  for (const auto& [name, definition] : commands) {
+    m_Commands.emplace_back(CreateCommand(commands, definition, name));
   }
 }
 
@@ -97,6 +161,7 @@ void Configuration::CollectParams(const toml::table& params) {
       continue;
     }
 
+    // @todo: Use same builder pattern as for commands.
     Parameter param{key};
     LITR_CORE_TRACE("Creating {}", param);
 

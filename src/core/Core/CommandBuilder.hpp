@@ -3,6 +3,7 @@
 #include <toml.hpp>
 #include <vector>
 
+#include "Core/Base.hpp"
 #include "Core/Command.hpp"
 #include "Core/Errors/ConfigurationError.hpp"
 
@@ -10,7 +11,7 @@ namespace Litr {
 
 class CommandBuilder {
  public:
-  CommandBuilder(const std::string& name, const toml::value& data, const toml::table& file);
+  CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name);
 
   void AddScriptLine(const std::string& line);
   void AddScript(const std::vector<std::string>& scripts);
@@ -20,8 +21,9 @@ class CommandBuilder {
   void AddExample();
   void AddDirectory();
   void AddOutput();
+  void AddChildCommand(const Ref<Command>& command);
 
-  [[nodiscard]] Command GetResult() const {
+  [[nodiscard]] Ref<Command> GetResult() const {
     return m_Command;
   }
 
@@ -30,9 +32,11 @@ class CommandBuilder {
   };
 
  private:
-  Command m_Command;
-  const toml::value& m_Table;
+  Ref<Command> m_Command;
+
   const toml::table& m_File;
+  const toml::value& m_Table;
+
   std::vector<ConfigurationError> m_Errors{};
 };
 

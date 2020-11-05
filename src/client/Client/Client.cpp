@@ -36,6 +36,11 @@ int main() {
     if (config->HasErrors()) {
       Litr::ErrorReporter::PrintErrors(config->GetErrors());
     }
+
+    // @todo: Test output.
+    for (const auto& command : config->GetCommands()) {
+      LITR_INFO("{}", *command);
+    }
   }
 
   LITR_PROFILE_END_SESSION();
