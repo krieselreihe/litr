@@ -19,7 +19,8 @@ struct Parameter {
 
   ParameterType Type{ParameterType::String};
 
-  explicit Parameter(std::string name) : Name(std::move(name)) {}
+  explicit Parameter(std::string name) : Name(std::move(name)) {
+  }
 };
 
 }  // namespace Litr

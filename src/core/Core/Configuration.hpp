@@ -18,9 +18,11 @@ class Configuration {
   virtual ~Configuration() = default;
 
   [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
-  [[nodiscard]] inline std::vector<Parameter> GetParameter() const { return m_Parameters; };
+  [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameter() const { return m_Parameters; };
   [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
   [[nodiscard]] inline bool HasErrors() const { return !m_Errors.empty(); };
+
+  [[nodiscard]] static bool IsReservedParameter(const std::string& name);
 
  private:
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
@@ -30,7 +32,7 @@ class Configuration {
  private:
   toml::value m_RawConfig;
   std::vector<Ref<Command>> m_Commands{};
-  std::vector<Parameter> m_Parameters{};
+  std::vector<Ref<Parameter>> m_Parameters{};
 
   std::vector<ConfigurationError> m_Errors{};
 };

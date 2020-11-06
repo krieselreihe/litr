@@ -41,10 +41,10 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
 void CommandBuilder::AddDescription() {
   LITR_PROFILE_FUNCTION();
 
-  std::string name{"description"};
+  const std::string name{"description"};
 
   if (m_Table.contains(name)) {
-    toml::value description{toml::find(m_Table, name)};
+    const toml::value& description{toml::find(m_Table, name)};
     if (description.is_string()) {
       m_Command->Description = description.as_string();
     } else {
@@ -59,10 +59,10 @@ void CommandBuilder::AddDescription() {
 void CommandBuilder::AddExample() {
   LITR_PROFILE_FUNCTION();
 
-  std::string name{"example"};
+  const std::string name{"example"};
 
   if (m_Table.contains(name)) {
-    toml::value example{toml::find(m_Table, name)};
+    const toml::value& example{toml::find(m_Table, name)};
     if (example.is_string()) {
       m_Command->Example = example.as_string();
     } else {
@@ -77,15 +77,23 @@ void CommandBuilder::AddExample() {
 void CommandBuilder::AddDirectory() {
   LITR_PROFILE_FUNCTION();
 
-  std::string name{"dir"};
+  const std::string name{"dir"};
 
   if (m_Table.contains(name)) {
-    toml::value dir{toml::find(m_Table, name)};
-    if (dir.is_string()) {
-      m_Command->Directory.emplace_back(dir.as_string());
-    } else if (dir.is_array()) {
-      for (auto d : dir.as_array()) {
-        m_Command->Directory.emplace_back(d.as_string());
+    const toml::value& directories{toml::find(m_Table, name)};
+    if (directories.is_string()) {
+      m_Command->Directory.emplace_back(directories.as_string());
+    } else if (directories.is_array()) {
+      for (auto directory : directories.as_array()) {
+        if (!directory.is_string()) {
+          m_Errors.emplace_back(
+              ConfigurationErrorType::MALFORMED_COMMAND,
+              fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
+              m_Table.at(name));
+          continue;
+        }
+
+        m_Command->Directory.emplace_back(directory.as_string());
       }
     } else {
       m_Errors.emplace_back(
@@ -102,7 +110,7 @@ void CommandBuilder::AddOutput() {
   std::string name{"output"};
 
   if (m_Table.contains(name)) {
-    std::string output{toml::find(m_Table, name).as_string()};
+    const std::string& output{toml::find(m_Table, name).as_string()};
     if (output == "silent") {
       m_Command->Output = Command::Output::SILENT;
     } else if (output == "unchanged") {

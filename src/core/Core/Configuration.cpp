@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-#include "Core/Debug/Instrumentor.hpp"
 #include "Core/Log.hpp"
+#include "Core/Debug/Instrumentor.hpp"
 #include "Core/CommandBuilder.hpp"
+#include "Core/ParameterBuilder.hpp"
 
 namespace Litr {
 
@@ -69,7 +70,6 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
     properties.push(property.first);
   }
 
-  std::stack<std::string> extraProperties{};
   while (!properties.empty()) {
     LITR_PROFILE_SCOPE("Configuration::CreateCommand::CollectCommandProperties(while)");
     const std::string property{properties.top()};
@@ -117,28 +117,20 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
     }
 
     // Collect properties that cannot directly be resolved.
-    extraProperties.push(property);
-    properties.pop();
-  }
-
-  while (!extraProperties.empty()) {
-    LITR_PROFILE_SCOPE("Configuration::CreateCommand::AddSubCommands(while)");
-    const std::string property{extraProperties.top()};
     const toml::value& value{toml::find(definition, property)};
-
     if (!value.is_table()) {
       m_Errors.emplace_back(
           ConfigurationErrorType::UNKNOWN_COMMAND_PROPERTY,
           fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property));
-      extraProperties.pop();
+      properties.pop();
       continue;
     }
 
     // Ignore recursion warning.
     // NOLINTNEXTLINE
     builder.AddChildCommand(CreateCommand(definition.as_table(), value, property));
-    extraProperties.pop();
+    properties.pop();
   }
 
   for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
@@ -156,91 +148,46 @@ void Configuration::CollectCommands(const toml::table& commands) {
 void Configuration::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
-  for (auto& [key, value] : params) {
-    // @todo: Flexible restricted field names.
-    if (key == "help") {
+  for (auto& [name, definition] : params) {
+    if (IsReservedParameter(name)) {
       m_Errors.emplace_back(
           ConfigurationErrorType::RESERVED_PARAM,
-          "The parameter name \"help\" is restricted to Litr.",
-          params.at(key));
+          fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
+          params.at(name));
       continue;
     }
 
-    // @todo: Use same builder pattern as for commands.
-    Parameter param{key};
-    LITR_CORE_TRACE("Creating {}", param);
+    ParameterBuilder builder{params, definition, name};
 
     // Simple string form
-    if (value.is_string()) {
-      param.Description = value.as_string();
-      m_Parameters.emplace_back(param);
+    if (definition.is_string()) {
+      builder.AddDescription(definition.as_string());
+      m_Parameters.emplace_back(builder.GetResult());
       continue;
     }
 
     // From here on it needs to be a table to be valid.
-    if (!value.is_table()) {
+    if (!definition.is_table()) {
       m_Errors.emplace_back(
           ConfigurationErrorType::MALFORMED_PARAM,
           "A parameter needs to be a string or table.",
-          params.at(key));
-      return;
+          params.at(name));
+      continue;
     }
 
-    // Detailed parameter form
-    if (!value.contains("description")) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_PARAM,
-          R"(You're missing the "description" field.)",
-          params.at(key));
-      return;
-    }
+    builder.AddDescription();
+    builder.AddShortcut();
+    builder.AddType();
+    builder.AddDefault();
 
-    toml::value description{toml::find(value, "description")};
-    if (!description.is_string()) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_PARAM,
-          R"(The "description" can can only be a string.)",
-          value.at("description"));
-      return;
-    }
-
-    param.Description = description.as_string();
-
-    if (value.contains("shortcut")) {
-      toml::value shortcut{toml::find(value, "shortcut")};
-      if (shortcut.is_string()) {
-        param.Shortcut = shortcut.as_string();
-      } else {
-        m_Errors.emplace_back(
-            ConfigurationErrorType::MALFORMED_PARAM,
-            R"(A "shortcut" can can only be a string.)",
-            value.at("shortcut"));
-      }
-    }
-
-    if (value.contains("type")) {
-      if (value.is_array()) {
-        param.Type = Parameter::ParameterType::Array;
-        for (auto pa : value.as_array()) {
-          param.TypeArguments.emplace_back(pa.as_string());
-        }
-      }
-    }
-
-    if (value.contains("default")) {
-      toml::value def{toml::find(value, "default")};
-      if (def.is_string()) {
-        param.Default = def.as_string();
-      } else {
-        m_Errors.emplace_back(
-            ConfigurationErrorType::MALFORMED_PARAM,
-            R"(The field "default" needs to be a string.)",
-            value.at("default"));
-      }
-    }
-
-    m_Parameters.emplace_back(param);
+    m_Parameters.emplace_back(builder.GetResult());
   }
+}
+
+bool Configuration::IsReservedParameter(const std::string& name) {
+  const std::array<std::string, 2> reserved{"help", "h"};
+
+  return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 
 }  // namespace Litr

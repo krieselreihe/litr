@@ -23,7 +23,8 @@ struct Command {
 
   Output Output{Output::UNCHANGED};
 
-  explicit Command(std::string name) : Name(std::move(name)) {}
+  explicit Command(std::string name) : Name(std::move(name)) {
+  }
 };
 
 }  // namespace Litr
