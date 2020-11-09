@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "Core/Base.hpp"
-#include "Core/Command.hpp"
+#include "Core/Config/Command.hpp"
+#include "Core/Config/Parameter.hpp"
 #include "Core/Errors/ConfigurationError.hpp"
 #include "Core/FileSystem.hpp"
-#include "Core/Parameter.hpp"
 
 namespace Litr {
 

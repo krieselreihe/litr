@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "Core/Log.hpp"
+#include "Core/Config/CommandBuilder.hpp"
+#include "Core/Config/ParameterBuilder.hpp"
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/CommandBuilder.hpp"
-#include "Core/ParameterBuilder.hpp"
+#include "Core/Log.hpp"
 
 namespace Litr {
 

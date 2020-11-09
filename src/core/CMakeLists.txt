@@ -11,14 +11,14 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(OS_FILES "Platform/MacEnvironment.cpp")
 endif()
 
-add_library(${NAME}
-  Core.hpp Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp
-  Core/Debug/Instrumentor.hpp
-  ${OS_FILES}
-  Core/ConfigFileResolver.cpp Core/ConfigFileResolver.hpp Core/FileSystem.cpp Core/FileSystem.hpp
-  Core/Configuration.cpp Core/Environment.hpp Core/Configuration.hpp
-  Core/Command.hpp Core/Parameter.hpp
-  Core/Errors/ErrorReporter.cpp Core/Errors/ErrorReporter.hpp Core/Errors/ConfigurationError.hpp Core/CommandBuilder.cpp Core/CommandBuilder.hpp Core/ParameterBuilder.cpp Core/ParameterBuilder.hpp)
+add_library(${NAME} ${OS_FILES}
+  Core.hpp Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp Core/Debug/Instrumentor.hpp
+  Core/FileSystem.cpp Core/FileSystem.hpp Core/Environment.hpp
+  Core/Errors/ErrorReporter.cpp Core/Errors/ErrorReporter.hpp Core/Errors/ConfigurationError.hpp
+  Core/Config/ConfigFileResolver.cpp Core/Config/ConfigFileResolver.hpp
+  Core/Config/Configuration.cpp  Core/Config/Configuration.hpp
+  Core/Config/Command.hpp Core/Config/Parameter.hpp Core/Config/ParameterBuilder.hpp
+  Core/Config/CommandBuilder.cpp Core/Config/CommandBuilder.hpp Core/Config/ParameterBuilder.cpp)
 
 target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
 

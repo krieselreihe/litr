@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Core/Base.hpp"
-#include "Core/Command.hpp"
+#include "Core/Config/Command.hpp"
 #include "Core/Errors/ConfigurationError.hpp"
 
 namespace Litr {

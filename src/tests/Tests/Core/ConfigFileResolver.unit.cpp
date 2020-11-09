@@ -1,6 +1,6 @@
 #include <doctest/doctest.h>
 
-#include "Core/ConfigFileResolver.hpp"
+#include "Core/Config/ConfigFileResolver.hpp"
 #include "Core/Log.hpp"
 
 TEST_SUITE("ConfigFileResolver") {

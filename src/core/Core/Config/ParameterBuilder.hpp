@@ -4,8 +4,8 @@
 #include <toml.hpp>
 
 #include "Core/Base.hpp"
-#include "Core/Parameter.hpp"
-#include <Core/Errors/ConfigurationError.hpp>
+#include "Core/Config/Parameter.hpp"
+#include "Core/Errors/ConfigurationError.hpp"
 
 namespace Litr {
 
