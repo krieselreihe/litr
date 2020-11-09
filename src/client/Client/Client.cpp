@@ -32,7 +32,7 @@ int main() {
     }
 
     // Quick test ...
-    auto config{Litr::CreateScope<Litr::Configuration>(configPath.GetFilePath())};
+    auto config{Litr::CreateScope<Litr::ConfigLoader>(configPath.GetFilePath())};
     if (config->HasErrors()) {
       Litr::ErrorReporter::PrintErrors(config->GetErrors());
     }

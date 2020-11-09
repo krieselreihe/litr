@@ -12,10 +12,10 @@
 
 namespace Litr {
 
-class Configuration {
+class ConfigLoader {
  public:
-  explicit Configuration(const Path& filePath);
-  virtual ~Configuration() = default;
+  explicit ConfigLoader(const Path& filePath);
+  virtual ~ConfigLoader() = default;
 
   [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
   [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameter() const { return m_Parameters; };
@@ -30,7 +30,6 @@ class Configuration {
   void CollectParams(const toml::table& params);
 
  private:
-  toml::value m_RawConfig;
   std::vector<Ref<Command>> m_Commands{};
   std::vector<Ref<Parameter>> m_Parameters{};
 

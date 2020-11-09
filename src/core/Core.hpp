@@ -15,7 +15,7 @@
 
 #include "Core/Config/Command.hpp"
 #include "Core/Config/ConfigFileResolver.hpp"
-#include "Core/Config/Configuration.hpp"
+#include "Core/Config/ConfigLoader.hpp"
 #include "Core/Config/Parameter.hpp"
 
 // Errors -----------------------------

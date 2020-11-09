@@ -1,4 +1,4 @@
-#include "Configuration.hpp"
+#include "ConfigLoader.hpp"
 
 #include <iostream>
 
@@ -9,33 +9,33 @@
 
 namespace Litr {
 
-Configuration::Configuration(const Path& filePath) {
+ConfigLoader::ConfigLoader(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
   // @todo: Command order is currently "unordered". Needs to be ordered.
-  m_RawConfig = toml::parse(filePath.ToString());
+  toml::value config{toml::parse(filePath.ToString())};
 
-  if (!m_RawConfig.is_table()) {
+  if (!config.is_table()) {
     m_Errors.emplace_back(
         ConfigurationErrorType::MALFORMED_FILE,
         "Configuration is not a TOML table.");
     return;
   }
 
-  if (m_RawConfig.contains("commands")) {
-    auto& commands{toml::find<toml::table>(m_RawConfig, "commands")};
+  if (config.contains("commands")) {
+    auto& commands{toml::find<toml::table>(config, "commands")};
     CollectCommands(commands);
   }
 
-  if (m_RawConfig.contains("params")) {
-    auto& params{toml::find<toml::table>(m_RawConfig, "params")};
+  if (config.contains("params")) {
+    auto& params{toml::find<toml::table>(config, "params")};
     CollectParams(params);
   }
 }
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Configuration::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
+Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{commands, definition, name};
@@ -71,7 +71,7 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
   }
 
   while (!properties.empty()) {
-    LITR_PROFILE_SCOPE("Configuration::CreateCommand::CollectCommandProperties(while)");
+    LITR_PROFILE_SCOPE("ConfigLoader::CreateCommand::CollectCommandProperties(while)");
     const std::string property{properties.top()};
 
     if (property == "script") {
@@ -137,7 +137,7 @@ Ref<Command> Configuration::CreateCommand(const toml::table& commands, const tom
   return builder.GetResult();
 }
 
-void Configuration::CollectCommands(const toml::table& commands) {
+void ConfigLoader::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const auto& [name, definition] : commands) {
@@ -145,7 +145,7 @@ void Configuration::CollectCommands(const toml::table& commands) {
   }
 }
 
-void Configuration::CollectParams(const toml::table& params) {
+void ConfigLoader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto& [name, definition] : params) {
@@ -184,7 +184,7 @@ void Configuration::CollectParams(const toml::table& params) {
   }
 }
 
-bool Configuration::IsReservedParameter(const std::string& name) {
+bool ConfigLoader::IsReservedParameter(const std::string& name) {
   const std::array<std::string, 2> reserved{"help", "h"};
 
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
