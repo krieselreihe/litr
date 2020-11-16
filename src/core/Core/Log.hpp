@@ -8,20 +8,31 @@
 namespace Litr {
 
 class Log {
- private:
-  static Ref<spdlog::logger> s_CoreLogger;
-  static Ref<spdlog::logger> s_ClientLogger;
-
  public:
-  static void Init();
+  Log(const Log&) = delete;
+  Log& operator=(const Log&) = delete;
 
   static Ref<spdlog::logger>& GetCoreLogger() {
-    return s_CoreLogger;
+    return Get().s_CoreLogger;
   }
 
   static Ref<spdlog::logger>& GetClientLogger() {
-    return s_ClientLogger;
+    return Get().s_ClientLogger;
   }
+
+ private:
+  // The constructor shall not be deleted but used to bootstrap the logger. Ignoring
+  // the lint warning is ignoring doing `Log() = delete`.
+  // NOLINTNEXTLINE
+  Log();
+
+  static Log& Get() {
+    static Log instance{};
+    return instance;
+  }
+
+  Ref<spdlog::logger> s_CoreLogger;
+  Ref<spdlog::logger> s_ClientLogger;
 };
 
 }  // namespace Litr

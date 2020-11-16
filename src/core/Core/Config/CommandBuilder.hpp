@@ -23,13 +23,8 @@ class CommandBuilder {
   void AddOutput();
   void AddChildCommand(const Ref<Command>& command);
 
-  [[nodiscard]] Ref<Command> GetResult() const {
-    return m_Command;
-  }
-
-  [[nodiscard]] std::vector<ConfigurationError> GetErrors() const {
-      return m_Errors;
-  };
+  [[nodiscard]] inline Ref<Command> GetResult() const { return m_Command; }
+  [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
 
  private:
   Ref<Command> m_Command;

@@ -5,7 +5,6 @@
 
 TEST_SUITE("ConfigFileResolver") {
   TEST_CASE("File not found") {
-    Litr::Log::Init();
     Litr::ConfigFileResolver config{"/some/path/to/nowhere"};
     CHECK(config.GetStatus() == Litr::ConfigFileResolver::Status::NOT_FOUND);
     CHECK(config.GetFilePath() == "");

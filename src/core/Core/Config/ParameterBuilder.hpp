@@ -19,13 +19,8 @@ class ParameterBuilder {
   void AddDefault();
   void AddType();
 
-  [[nodiscard]] Ref<Parameter> GetResult() const {
-    return m_Parameter;
-  }
-
-  [[nodiscard]] std::vector<ConfigurationError> GetErrors() const {
-    return m_Errors;
-  };
+  [[nodiscard]] inline Ref<Parameter> GetResult() const { return m_Parameter; }
+  [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
 
  private:
   Ref<Parameter> m_Parameter;

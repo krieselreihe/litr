@@ -4,8 +4,6 @@
 
 int main() {
   LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
-  Litr::Log::Init();
-
   fmt::print("Hello, Litr!\n");
 
   {

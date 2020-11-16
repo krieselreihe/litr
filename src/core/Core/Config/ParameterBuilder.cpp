@@ -33,6 +33,8 @@ void ParameterBuilder::AddDescription() {
 }
 
 void ParameterBuilder::AddDescription(const std::string& description) {
+  LITR_PROFILE_FUNCTION();
+
   m_Parameter->Description = description;
 }
 

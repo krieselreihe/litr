@@ -5,11 +5,7 @@
 
 namespace Litr {
 
-Ref<spdlog::logger> Log::s_CoreLogger;
-Ref<spdlog::logger> Log::s_ClientLogger;
-
-void Log::Init() {
-#ifndef LITR_DEACTIVATE_LOGGING
+Log::Log() {
   std::vector<spdlog::sink_ptr> logSinks;
 
 #ifdef TRACE
@@ -33,7 +29,7 @@ void Log::Init() {
   spdlog::register_logger(s_ClientLogger);
   s_ClientLogger->set_level(level);
   s_ClientLogger->flush_on(level);
-#endif
 }
+
 
 }  // namespace Litr
