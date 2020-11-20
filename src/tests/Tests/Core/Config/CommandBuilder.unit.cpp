@@ -143,4 +143,124 @@ TEST_SUITE("CommandBuilder") {
       CHECK(builder.GetResult()->Example == "Text");
     }
   }
+
+  TEST_CASE("CommandBuilder::AddDirectory") {
+    SUBCASE("Does nothing if dir is not set") {
+      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Directory.empty());
+    }
+
+    SUBCASE("Emits an error if dir is not a string or array of strings") {
+      auto [file, data] = CreateTOMLMock("test", R"(dir = 42)");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 1);
+      CHECK(builder.GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
+    }
+
+    SUBCASE("Emits an error if dir array does not only contain strings") {
+      auto [file, data] = CreateTOMLMock("test", R"(dir = [1])");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 1);
+      CHECK(builder.GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
+    }
+
+    SUBCASE("Emits more than one error if dir array does not only contain multiple strings") {
+      auto [file, data] = CreateTOMLMock("test", R"(dir = [1, 2])");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 2);
+      CHECK(builder.GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
+      CHECK(builder.GetErrors()[1].Message == R"(A "dir" can either be a string or array of strings.)");
+    }
+
+    SUBCASE("Creates a directory folder from a string") {
+      auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1"])");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Directory[0] == "folder1");
+    }
+
+    SUBCASE("Creates a directory folder from an array of strings") {
+      auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1", "folder2"])");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddDirectory();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Directory[0] == "folder1");
+      CHECK(builder.GetResult()->Directory[1] == "folder2");
+    }
+  }
+
+  TEST_CASE("CommandBuilder::AddOutput") {
+    SUBCASE("Does nothing if output is not set") {
+      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddOutput();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Output == Litr::Command::Output::UNCHANGED);
+    }
+
+    SUBCASE("Emits an error if output type is not known") {
+      auto [file, data] = CreateTOMLMock("test", R"(output = "unknown")");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddOutput();
+
+      CHECK(builder.GetErrors().size() == 1);
+      CHECK(builder.GetErrors()[0].Message == R"(The "output" can either be "unchanged" or "silent".)");
+    }
+
+    SUBCASE("Sets the output to silent if the option is provided") {
+      auto [file, data] = CreateTOMLMock("test", R"(output = "silent")");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddOutput();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Output == Litr::Command::Output::SILENT);
+    }
+
+    SUBCASE("Sets the output to unchanged if the option is provided") {
+      auto [file, data] = CreateTOMLMock("test", R"(output = "unchanged")");
+
+      Litr::CommandBuilder builder{file, data, "test"};
+      builder.AddOutput();
+
+      CHECK(builder.GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Output == Litr::Command::Output::UNCHANGED);
+    }
+  }
+
+  TEST_CASE("CommandBuilder::AddChildCommand") {
+    SUBCASE("Sets a child command as reference") {
+      auto [file, data] = CreateTOMLMock("test", "");
+
+      Litr::CommandBuilder builderRoot{file, data, "test"};
+      Litr::CommandBuilder builderChild{file, data, "test"};
+
+      builderRoot.AddChildCommand(builderChild.GetResult());
+
+      CHECK(builderRoot.GetErrors().size() == 0);
+      CHECK(builderRoot.GetResult()->ChildCommands.size() == 1);
+    }
+  }
 }
