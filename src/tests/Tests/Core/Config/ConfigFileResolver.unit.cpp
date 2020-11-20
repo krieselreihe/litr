@@ -1,7 +1,6 @@
 #include <doctest/doctest.h>
 
 #include "Core/Config/ConfigFileResolver.hpp"
-#include "Core/Log.hpp"
 
 TEST_SUITE("ConfigFileResolver") {
   TEST_CASE("File not found") {
@@ -13,4 +12,5 @@ TEST_SUITE("ConfigFileResolver") {
   // @todo: Test cases for finding a file in different scenarios,
   // made possible by mocking.
   // https://github.com/krieselreihe/litr/issues/12
+  // @hint: Could be done by using FakeIt and making FileSystem a singleton.
 }

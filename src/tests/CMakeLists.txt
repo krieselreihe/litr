@@ -18,15 +18,23 @@ target_link_libraries(TestBase INTERFACE doctest)
 
 # Test cases
 
-add_executable(ConfigFileTest
+# --- ConfigFileResolver ---
+
+add_executable(ConfigFileResolver Tests/Core/Config/ConfigFileResolver.unit.cpp $<TARGET_OBJECTS:TestRunner>)
+add_test(NAME ConfigFileResolver COMMAND ConfigFileResolver)
+target_link_libraries(ConfigFileResolver PRIVATE TestBase Core)
+target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/core)
+
+# --- CommandBuilder / ParameterBuilder ---
+
+add_executable(CommandAndParameterBuilder
   Helpers/TOML.cpp Helpers/TOML.hpp
-  Tests/Core/Config/ConfigFileResolver.unit.cpp
-  Tests/Core/Config/ParameterBuilder.unit.cpp
   Tests/Core/Config/CommandBuilder.unit.cpp
+  Tests/Core/Config/ParameterBuilder.unit.cpp
   $<TARGET_OBJECTS:TestRunner>)
 
-add_test(NAME ConfigFileTest COMMAND ConfigFileTest)
-target_link_libraries(ConfigFileTest PRIVATE TestBase Core)
+add_test(NAME CommandAndParameterBuilder COMMAND CommandAndParameterBuilder)
+target_link_libraries(CommandAndParameterBuilder PRIVATE TestBase Core)
 target_include_directories(TestBase INTERFACE
   ${CMAKE_SOURCE_DIR}/src/tests
   ${CMAKE_SOURCE_DIR}/src/core)
