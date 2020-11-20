@@ -17,8 +17,9 @@ add_library(${NAME} ${OS_FILES}
   Core/Errors/ErrorReporter.cpp Core/Errors/ErrorReporter.hpp Core/Errors/ConfigurationError.hpp
   Core/Config/ConfigFileResolver.cpp Core/Config/ConfigFileResolver.hpp
   Core/Config/ConfigLoader.cpp Core/Config/ConfigLoader.hpp
-  Core/Config/Command.hpp Core/Config/Parameter.hpp Core/Config/ParameterBuilder.hpp
-  Core/Config/CommandBuilder.cpp Core/Config/CommandBuilder.hpp Core/Config/ParameterBuilder.cpp)
+  Core/Config/Command.hpp Core/Config/Parameter.hpp
+  Core/Config/CommandBuilder.cpp Core/Config/CommandBuilder.hpp
+  Core/Config/ParameterBuilder.cpp Core/Config/ParameterBuilder.hpp)
 
 target_include_directories(${NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/core)
 

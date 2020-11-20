@@ -22,6 +22,7 @@ add_executable(ConfigFileTest
   Helpers/TOML.cpp Helpers/TOML.hpp
   Tests/Core/Config/ConfigFileResolver.unit.cpp
   Tests/Core/Config/ParameterBuilder.unit.cpp
+  Tests/Core/Config/CommandBuilder.unit.cpp
   $<TARGET_OBJECTS:TestRunner>)
 
 add_test(NAME ConfigFileTest COMMAND ConfigFileTest)

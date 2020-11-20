@@ -45,14 +45,16 @@ void CommandBuilder::AddDescription() {
 
   if (m_Table.contains(name)) {
     const toml::value& description{toml::find(m_Table, name)};
+
     if (description.is_string()) {
       m_Command->Description = description.as_string();
-    } else {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_COMMAND,
-          fmt::format(R"(The "{}" can can only be a string.)", name),
-          m_Table.at(name));
+      return;
     }
+
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can can only be a string.)", name),
+        m_Table.at(name));
   }
 }
 
@@ -65,12 +67,13 @@ void CommandBuilder::AddExample() {
     const toml::value& example{toml::find(m_Table, name)};
     if (example.is_string()) {
       m_Command->Example = example.as_string();
-    } else {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_COMMAND,
-          fmt::format(R"(The "{}" can can only be a string.)", name),
-          m_Table.at(name));
+      return;
     }
+
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can can only be a string.)", name),
+        m_Table.at(name));
   }
 }
 
@@ -81,9 +84,13 @@ void CommandBuilder::AddDirectory() {
 
   if (m_Table.contains(name)) {
     const toml::value& directories{toml::find(m_Table, name)};
+
     if (directories.is_string()) {
       m_Command->Directory.emplace_back(directories.as_string());
-    } else if (directories.is_array()) {
+      return;
+    }
+
+    if (directories.is_array()) {
       for (auto directory : directories.as_array()) {
         if (!directory.is_string()) {
           m_Errors.emplace_back(
@@ -95,12 +102,13 @@ void CommandBuilder::AddDirectory() {
 
         m_Command->Directory.emplace_back(directory.as_string());
       }
-    } else {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_COMMAND,
-          fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
-          m_Table.at(name));
+      return;
     }
+
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
+        m_Table.at(name));
   }
 }
 
@@ -111,16 +119,21 @@ void CommandBuilder::AddOutput() {
 
   if (m_Table.contains(name)) {
     const std::string& output{toml::find(m_Table, name).as_string()};
+
     if (output == "silent") {
       m_Command->Output = Command::Output::SILENT;
-    } else if (output == "unchanged") {
-      m_Command->Output = Command::Output::UNCHANGED;
-    } else {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_COMMAND,
-          fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
-          m_Table.at(name));
+      return;
     }
+
+    if (output == "unchanged") {
+      m_Command->Output = Command::Output::UNCHANGED;
+      return;
+    }
+
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
+        m_Table.at(name));
   }
 }
 
