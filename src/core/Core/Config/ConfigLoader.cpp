@@ -12,30 +12,33 @@ namespace Litr {
 ConfigLoader::ConfigLoader(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
+  toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
+
   try {
-    const auto& config{toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString())};
-
-    if (!config.is_table()) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_FILE,
-          "Configuration is not a TOML table.");
-      return;
-    }
-
-    if (config.contains("commands")) {
-      const auto& commands{toml::find<toml::table>(config, "commands")};
-      CollectCommands(commands);
-    }
-
-    if (config.contains("params")) {
-      const auto& params{toml::find<toml::table>(config, "params")};
-      CollectParams(params);
-    }
+    config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
   } catch (const toml::syntax_error& err) {
     m_Errors.emplace_back(
         ConfigurationErrorType::MALFORMED_FILE,
         "There is a syntax error inside the configuration file",
         err);
+    return;
+  }
+
+  if (!config.is_table()) {
+    m_Errors.emplace_back(
+        ConfigurationErrorType::MALFORMED_FILE,
+        "Configuration is not a TOML table.");
+    return;
+  }
+
+  if (config.contains("commands")) {
+    const auto& commands{toml::find<toml::table>(config, "commands")};
+    CollectCommands(commands);
+  }
+
+  if (config.contains("params")) {
+    const auto& params{toml::find<toml::table>(config, "params")};
+    CollectParams(params);
   }
 }
 
