@@ -28,7 +28,15 @@ struct ConfigurationError {
   }
 
   ConfigurationError(ConfigurationErrorType type, std::string message, const toml::value& context) : Type(type), Message(std::move(message)) {
-    toml::source_location location{context.location()};
+    const toml::source_location& location{context.location()};
+
+    Line = location.line();
+    Column = location.column();
+    LineStr = location.line_str();
+  }
+
+  ConfigurationError(ConfigurationErrorType type, std::string message, const toml::exception& err) : Type(type), Message(std::move(message)) {
+    const toml::source_location& location{err.location()};
 
     Line = location.line();
     Column = location.column();
