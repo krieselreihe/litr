@@ -20,6 +20,7 @@ add_subdirectory(vendor/doctest)
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/toml11)
+add_subdirectory(vendor/ordered-map)
 
 # Application libraries and files
 add_subdirectory(src/tests)

@@ -1,6 +1,6 @@
 #include "ConfigLoader.hpp"
 
-#include <iostream>
+#include <tsl/ordered_map.h>
 
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
@@ -12,8 +12,7 @@ namespace Litr {
 ConfigLoader::ConfigLoader(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
-  // @todo: Command order is currently "unordered". Needs to be ordered.
-  toml::value config{toml::parse(filePath.ToString())};
+  const auto& config{toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString())};
 
   if (!config.is_table()) {
     m_Errors.emplace_back(
@@ -23,12 +22,12 @@ ConfigLoader::ConfigLoader(const Path& filePath) {
   }
 
   if (config.contains("commands")) {
-    auto& commands{toml::find<toml::table>(config, "commands")};
+    const auto& commands{toml::find<toml::table>(config, "commands")};
     CollectCommands(commands);
   }
 
   if (config.contains("params")) {
-    auto& params{toml::find<toml::table>(config, "params")};
+    const auto& params{toml::find<toml::table>(config, "params")};
     CollectParams(params);
   }
 }
@@ -75,7 +74,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
     const std::string property{properties.top()};
 
     if (property == "script") {
-      toml::value scripts{toml::find(definition, "script")};
+      const toml::value& scripts{toml::find(definition, "script")};
 
       if (scripts.is_string()) {
         builder.AddScriptLine(scripts.as_string());
@@ -141,6 +140,7 @@ void ConfigLoader::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const auto& [name, definition] : commands) {
+    LITR_CORE_INFO("COMMAND NAME IS {}", name);
     m_Commands.emplace_back(CreateCommand(commands, definition, name));
   }
 }

@@ -16,6 +16,12 @@ description = "This is the first to run"
 [commands.run.seconds]
 script = "run second"
 
+[commands.run.third]
+script = "run third"
+
+[commands.run.fourth]
+script = "run fourth"
+
 [params.target]
 shortcut = "t"
 description = "Define the build target."

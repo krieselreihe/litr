@@ -91,7 +91,7 @@ void CommandBuilder::AddDirectory() {
     }
 
     if (directories.is_array()) {
-      for (auto directory : directories.as_array()) {
+      for (const auto& directory : directories.as_array()) {
         if (!directory.is_string()) {
           m_Errors.emplace_back(
               ConfigurationErrorType::MALFORMED_COMMAND,
