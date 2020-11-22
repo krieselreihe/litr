@@ -19,7 +19,7 @@ ConfigLoader::ConfigLoader(const Path& filePath) {
   } catch (const toml::syntax_error& err) {
     m_Errors.emplace_back(
         ConfigurationErrorType::MALFORMED_FILE,
-        "There is a syntax error inside the configuration file",
+        "There is a syntax error inside the configuration file.",
         err);
     return;
   }
@@ -40,6 +40,23 @@ ConfigLoader::ConfigLoader(const Path& filePath) {
     const auto& params{toml::find<toml::table>(config, "params")};
     CollectParams(params);
   }
+}
+
+static std::deque<std::string> SplitCommandQuery(const std::string& query) {
+  std::stringstream ss{query};
+  std::string name;
+  std::deque<std::string> parts;
+
+  while (std::getline(ss, name, '.')) {
+    parts.push_back(name);
+  }
+
+  return parts;
+}
+
+Ref<Command> ConfigLoader::GetCommand(const std::string& name) const {
+  std::deque names{SplitCommandQuery(name)};
+  return GetCommand(names, m_Commands);
 }
 
 // Ignore recursion warning.
@@ -150,7 +167,6 @@ void ConfigLoader::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const auto& [name, definition] : commands) {
-    LITR_CORE_INFO("COMMAND NAME IS {}", name);
     m_Commands.emplace_back(CreateCommand(commands, definition, name));
   }
 }
@@ -198,6 +214,47 @@ bool ConfigLoader::IsReservedParameter(const std::string& name) {
   const std::array<std::string, 2> reserved{"help", "h"};
 
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
+}
+
+Ref<Command> ConfigLoader::GetCommand(const std::string& name, const std::vector<Ref<Command>>& commands) {
+  for (const auto& command : commands) {
+    if (command->Name == name) {
+      return command;
+    }
+  }
+
+  return nullptr;
+}
+
+// Ignore recursion warning.
+// NOLINTNEXTLINE
+Ref<Command> ConfigLoader::GetCommand(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
+  const auto& command{GetCommand(names.front(), commands)};
+
+  if (command == nullptr) {
+    return nullptr;
+  }
+
+  names.pop_front();
+
+  if (names.empty()) {
+    return command;
+  }
+
+  if (command->ChildCommands.empty()) {
+    if (!names.empty()) {
+      // @todo: This is an error, but not a hard one as the user could access sub commands that
+      // do not exist. But I also do not want to emit a user error as this is not the place for
+      // this. Maybe this whole `GetCommand` function should not exist here and rather be moved
+      // to the client.
+    }
+
+    return nullptr;
+  }
+
+  // Ignore recursion warning.
+  // NOLINTNEXTLINE
+  return GetCommand(names, command->ChildCommands);
 }
 
 }  // namespace Litr

@@ -1,0 +1,39 @@
+[commands]
+update = "git pull && git submodule update --init"
+build = [
+  # Here is some comment
+  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=${pascal_case(target)} --build build/${target}",
+  "ninja -C build/${target}"
+]
+
+[commands.run]
+script = "Script"
+description = "Description"
+example = "Example"
+dir = "Directory"
+output = "silent"
+
+[commands.run.first]
+script = "run first"
+
+[commands.run.second]
+script = "run second"
+
+[commands.run.third]
+script = ["Script1", "Script2"]
+description = "Description"
+dir = ["Directory1", "Directory2"]
+
+[commands.run.fourth]
+script = "run fourth"
+
+[commands.run.fourth.l1]
+[commands.run.fourth.l1.l2]
+[commands.run.fourth.l1.l2.l3]
+script = "Deep Script"
+
+[params.target]
+shortcut = "t"
+description = "Define the build target."
+type = ["debug", "release"]
+default = "debug"

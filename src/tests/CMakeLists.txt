@@ -4,6 +4,8 @@ enable_testing()
 
 include(${CMAKE_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Fixtures DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # Test runner
 
 add_library(TestRunner OBJECT Tests/Runner.cpp)
@@ -17,6 +19,13 @@ target_compile_features(TestBase INTERFACE cxx_std_17)
 target_link_libraries(TestBase INTERFACE doctest)
 
 # Test cases
+
+# --- ConfigLoader ---
+
+add_executable(ConfigLoader Tests/Core/Config/ConfigLoader.int.cpp $<TARGET_OBJECTS:TestRunner>)
+add_test(NAME ConfigLoader COMMAND ConfigLoader)
+target_link_libraries(ConfigLoader PRIVATE TestBase Core)
+target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/core)
 
 # --- ConfigFileResolver ---
 

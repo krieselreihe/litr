@@ -3,6 +3,7 @@
 #include <toml.hpp>
 #include <utility>
 #include <vector>
+#include <deque>
 
 #include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"
@@ -17,6 +18,12 @@ class ConfigLoader {
   explicit ConfigLoader(const Path& filePath);
   virtual ~ConfigLoader() = default;
 
+  /**
+   * Can use a dot-notation to access nested commands.
+   * @todo: This should probably be moved. See implementation for details.
+   */
+  [[nodiscard]] Ref<Command> GetCommand(const std::string& name) const;
+
   [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
   [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameter() const { return m_Parameters; };
   [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
@@ -28,6 +35,9 @@ class ConfigLoader {
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
   void CollectCommands(const toml::table& commands);
   void CollectParams(const toml::table& params);
+
+  [[nodiscard]] static Ref<Command> GetCommand(const std::string& name, const std::vector<Ref<Command>>& commands);
+  [[nodiscard]] static Ref<Command> GetCommand(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands);
 
  private:
   std::vector<Ref<Command>> m_Commands{};
