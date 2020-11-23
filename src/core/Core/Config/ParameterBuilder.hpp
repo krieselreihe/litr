@@ -22,6 +22,8 @@ class ParameterBuilder {
   [[nodiscard]] inline Ref<Parameter> GetResult() const { return m_Parameter; }
   [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
 
+  [[nodiscard]] static bool IsReservedName(const std::string& name);
+
  private:
   Ref<Parameter> m_Parameter;
 

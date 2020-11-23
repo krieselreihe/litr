@@ -118,16 +118,18 @@ void CommandBuilder::AddOutput() {
   std::string name{"output"};
 
   if (m_Table.contains(name)) {
-    const std::string& output{toml::find(m_Table, name).as_string()};
+    const toml::value& output{toml::find(m_Table, name)};
 
-    if (output == "silent") {
-      m_Command->Output = Command::Output::SILENT;
-      return;
-    }
+    if (output.is_string()) {
+      if (output.as_string() == "silent") {
+        m_Command->Output = Command::Output::SILENT;
+        return;
+      }
 
-    if (output == "unchanged") {
-      m_Command->Output = Command::Output::UNCHANGED;
-      return;
+      if (output.as_string() == "unchanged") {
+        m_Command->Output = Command::Output::UNCHANGED;
+        return;
+      }
     }
 
     m_Errors.emplace_back(

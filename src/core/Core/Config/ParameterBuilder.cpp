@@ -48,7 +48,17 @@ void ParameterBuilder::AddShortcut() {
     const toml::value& shortcut{toml::find(m_Table, name)};
 
     if (shortcut.is_string()) {
-      m_Parameter->Shortcut = shortcut.as_string();
+      const std::string shortcutStr{shortcut.as_string()};
+
+      if (IsReservedName(shortcutStr)) {
+        m_Errors.emplace_back(
+            ConfigurationErrorType::RESERVED_PARAM,
+            fmt::format(R"(The shortcut name "{}" is reserved by Litr.)", shortcutStr),
+            m_Table.at(name));
+        return;
+      }
+
+      m_Parameter->Shortcut = shortcutStr;
       return;
     }
 
@@ -121,6 +131,11 @@ void ParameterBuilder::AddDefault() {
         fmt::format(R"(The field "{}" needs to be a string.)", name),
         m_Table.at(name));
   }
+}
+
+bool ParameterBuilder::IsReservedName(const std::string& name) {
+  const std::array<std::string, 2> reserved{"help", "h"};
+  return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 
 }  // namespace Litr

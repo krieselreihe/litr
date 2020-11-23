@@ -9,6 +9,59 @@
 
 namespace Litr {
 
+static Ref<Command> GetCommandByName(const std::string& name, const std::vector<Ref<Command>>& commands) {
+  for (const auto& command : commands) {
+    if (command->Name == name) {
+      return command;
+    }
+  }
+
+  return nullptr;
+}
+
+// Ignore recursion warning.
+// NOLINTNEXTLINE
+static Ref<Command> ResolveCommandByPath(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
+  const auto& command{GetCommandByName(names.front(), commands)};
+
+  if (command == nullptr) {
+    return nullptr;
+  }
+
+  names.pop_front();
+
+  if (names.empty()) {
+    return command;
+  }
+
+  if (command->ChildCommands.empty()) {
+    if (!names.empty()) {
+      // @todo: This is an error, but not a hard one as the user could access sub commands that
+      // do not exist. But I also do not want to emit a user error as this is not the place for
+      // this. Maybe this whole `GetCommand` function should not exist here and rather be moved
+      // to the client.
+    }
+
+    return nullptr;
+  }
+
+  // Ignore recursion warning.
+  // NOLINTNEXTLINE
+  return ResolveCommandByPath(names, command->ChildCommands);
+}
+
+static std::deque<std::string> SplitCommandQuery(const std::string& query) {
+  std::stringstream ss{query};
+  std::string name;
+  std::deque<std::string> parts;
+
+  while (std::getline(ss, name, '.')) {
+    parts.push_back(name);
+  }
+
+  return parts;
+}
+
 ConfigLoader::ConfigLoader(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
@@ -42,21 +95,19 @@ ConfigLoader::ConfigLoader(const Path& filePath) {
   }
 }
 
-static std::deque<std::string> SplitCommandQuery(const std::string& query) {
-  std::stringstream ss{query};
-  std::string name;
-  std::deque<std::string> parts;
-
-  while (std::getline(ss, name, '.')) {
-    parts.push_back(name);
-  }
-
-  return parts;
-}
-
 Ref<Command> ConfigLoader::GetCommand(const std::string& name) const {
   std::deque names{SplitCommandQuery(name)};
-  return GetCommand(names, m_Commands);
+  return ResolveCommandByPath(names, m_Commands);
+}
+
+Ref<Parameter> ConfigLoader::GetParameter(const std::string& name) const {
+  for (const auto& param : m_Parameters) {
+    if (param->Name == name) {
+      return param;
+    }
+  }
+
+  return nullptr;
 }
 
 // Ignore recursion warning.
@@ -69,14 +120,13 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
   // Simple string form
   if (definition.is_string()) {
     builder.AddScriptLine(definition.as_string());
-    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
     return builder.GetResult();
   }
 
   // Simple string array form
   if (definition.is_array()) {
     builder.AddScript(definition);
-    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+    AppendErrors(builder.GetErrors());
     return builder.GetResult();
   }
 
@@ -86,7 +136,6 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
         ConfigurationErrorType::MALFORMED_COMMAND,
         "A command can be a string or table.",
         commands.at(name));
-    for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
     return builder.GetResult();
   }
 
@@ -159,7 +208,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
     properties.pop();
   }
 
-  for (const auto& error : builder.GetErrors()) m_Errors.emplace_back(error);
+  AppendErrors(builder.GetErrors());
   return builder.GetResult();
 }
 
@@ -175,15 +224,15 @@ void ConfigLoader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto& [name, definition] : params) {
-    if (IsReservedParameter(name)) {
+    ParameterBuilder builder{params, definition, name};
+
+    if (ParameterBuilder::IsReservedName(name)) {
       m_Errors.emplace_back(
           ConfigurationErrorType::RESERVED_PARAM,
           fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
           params.at(name));
       continue;
     }
-
-    ParameterBuilder builder{params, definition, name};
 
     // Simple string form
     if (definition.is_string()) {
@@ -206,55 +255,13 @@ void ConfigLoader::CollectParams(const toml::table& params) {
     builder.AddType();
     builder.AddDefault();
 
+    AppendErrors(builder.GetErrors());
     m_Parameters.emplace_back(builder.GetResult());
   }
 }
 
-bool ConfigLoader::IsReservedParameter(const std::string& name) {
-  const std::array<std::string, 2> reserved{"help", "h"};
-
-  return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
-}
-
-Ref<Command> ConfigLoader::GetCommand(const std::string& name, const std::vector<Ref<Command>>& commands) {
-  for (const auto& command : commands) {
-    if (command->Name == name) {
-      return command;
-    }
-  }
-
-  return nullptr;
-}
-
-// Ignore recursion warning.
-// NOLINTNEXTLINE
-Ref<Command> ConfigLoader::GetCommand(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
-  const auto& command{GetCommand(names.front(), commands)};
-
-  if (command == nullptr) {
-    return nullptr;
-  }
-
-  names.pop_front();
-
-  if (names.empty()) {
-    return command;
-  }
-
-  if (command->ChildCommands.empty()) {
-    if (!names.empty()) {
-      // @todo: This is an error, but not a hard one as the user could access sub commands that
-      // do not exist. But I also do not want to emit a user error as this is not the place for
-      // this. Maybe this whole `GetCommand` function should not exist here and rather be moved
-      // to the client.
-    }
-
-    return nullptr;
-  }
-
-  // Ignore recursion warning.
-  // NOLINTNEXTLINE
-  return GetCommand(names, command->ChildCommands);
+void ConfigLoader::AppendErrors(const std::vector<ConfigurationError>& errors) {
+  std::copy(errors.begin(), errors.end(), std::back_inserter(m_Errors));
 }
 
 }  // namespace Litr

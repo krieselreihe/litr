@@ -5,7 +5,7 @@
 
 TEST_SUITE("CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {
-    auto [file, data] = CreateTOMLMock("test", "");
+    const auto [file, data] = CreateTOMLMock("test", "");
 
     Litr::CommandBuilder builder{file, data, "test"};
     Litr::Ref<Litr::Command> builderResult{builder.GetResult()};
@@ -17,13 +17,13 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddScriptLine") {
     SUBCASE("Can add multiple lines of script to the command") {
-      auto [file, data] = CreateTOMLMock("test", "");
+      const auto [file, data] = CreateTOMLMock("test", "");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddScriptLine("first line");
       builder.AddScriptLine("second line");
 
-      auto result{builder.GetResult()};
+      const auto result{builder.GetResult()};
 
       CHECK(builder.GetErrors().size() == 0);
       CHECK(result->Script[0] == "first line");
@@ -33,13 +33,13 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddScript") {
     SUBCASE("Can override the whole script at once") {
-      auto [file, data] = CreateTOMLMock("test", "");
+      const auto [file, data] = CreateTOMLMock("test", "");
 
       Litr::CommandBuilder builder{file, data, "test"};
       const std::vector script{"first line", "second line"};
       builder.AddScript(script);
 
-      auto result{builder.GetResult()};
+      const auto result{builder.GetResult()};
 
       CHECK(builder.GetErrors().size() == 0);
       CHECK(result->Script[0] == "first line");
@@ -47,7 +47,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits and error if script data is not of type string") {
-      auto [file, data] = CreateTOMLMock("test", "scripts = [1]");
+      const auto [file, data] = CreateTOMLMock("test", "scripts = [1]");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
@@ -57,7 +57,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits only one error if script data is not of type string") {
-      auto [file, data] = CreateTOMLMock("test", "scripts = [1, 2, 3]");
+      const auto [file, data] = CreateTOMLMock("test", "scripts = [1, 2, 3]");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
@@ -67,12 +67,12 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Writes scripts from TOML data successfully") {
-      auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
+      const auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
 
-      auto result{builder.GetResult()};
+      const auto result{builder.GetResult()};
 
       CHECK(builder.GetErrors().size() == 0);
       CHECK(result->Script[0] == "first line");
@@ -82,7 +82,7 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddDescription") {
     SUBCASE("Does nothing if description is not set") {
-      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDescription();
@@ -92,7 +92,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits and error if description is not a string") {
-      auto [file, data] = CreateTOMLMock("test", R"(description = 42)");
+      const auto [file, data] = CreateTOMLMock("test", R"(description = 42)");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDescription();
@@ -102,7 +102,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Extracts the description from toml data") {
-      auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
+      const auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDescription();
@@ -114,7 +114,7 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddExample") {
     SUBCASE("Does nothing if example is not set") {
-      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddExample();
@@ -124,7 +124,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits and error if example is not a string") {
-      auto [file, data] = CreateTOMLMock("test", R"(example = 42)");
+      const auto [file, data] = CreateTOMLMock("test", R"(example = 42)");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddExample();
@@ -134,7 +134,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Extracts the example from toml data") {
-      auto [file, data] = CreateTOMLMock("test", R"(example = "Text")");
+      const auto [file, data] = CreateTOMLMock("test", R"(example = "Text")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddExample();
@@ -146,7 +146,7 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddDirectory") {
     SUBCASE("Does nothing if dir is not set") {
-      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -156,7 +156,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits an error if dir is not a string or array of strings") {
-      auto [file, data] = CreateTOMLMock("test", R"(dir = 42)");
+      const auto [file, data] = CreateTOMLMock("test", R"(dir = 42)");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -166,7 +166,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits an error if dir array does not only contain strings") {
-      auto [file, data] = CreateTOMLMock("test", R"(dir = [1])");
+      const auto [file, data] = CreateTOMLMock("test", R"(dir = [1])");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -176,7 +176,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits more than one error if dir array does not only contain multiple strings") {
-      auto [file, data] = CreateTOMLMock("test", R"(dir = [1, 2])");
+      const auto [file, data] = CreateTOMLMock("test", R"(dir = [1, 2])");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -187,7 +187,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Creates a directory folder from a string") {
-      auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1"])");
+      const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1"])");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -197,7 +197,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Creates a directory folder from an array of strings") {
-      auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1", "folder2"])");
+      const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1", "folder2"])");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddDirectory();
@@ -210,7 +210,7 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddOutput") {
     SUBCASE("Does nothing if output is not set") {
-      auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddOutput();
@@ -220,7 +220,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Emits an error if output type is not known") {
-      auto [file, data] = CreateTOMLMock("test", R"(output = "unknown")");
+      const auto [file, data] = CreateTOMLMock("test", R"(output = "unknown")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddOutput();
@@ -230,7 +230,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Sets the output to silent if the option is provided") {
-      auto [file, data] = CreateTOMLMock("test", R"(output = "silent")");
+      const auto [file, data] = CreateTOMLMock("test", R"(output = "silent")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddOutput();
@@ -240,7 +240,7 @@ TEST_SUITE("CommandBuilder") {
     }
 
     SUBCASE("Sets the output to unchanged if the option is provided") {
-      auto [file, data] = CreateTOMLMock("test", R"(output = "unchanged")");
+      const auto [file, data] = CreateTOMLMock("test", R"(output = "unchanged")");
 
       Litr::CommandBuilder builder{file, data, "test"};
       builder.AddOutput();
@@ -252,7 +252,7 @@ TEST_SUITE("CommandBuilder") {
 
   TEST_CASE("CommandBuilder::AddChildCommand") {
     SUBCASE("Sets a child command as reference") {
-      auto [file, data] = CreateTOMLMock("test", "");
+      const auto [file, data] = CreateTOMLMock("test", "");
 
       Litr::CommandBuilder builderRoot{file, data, "test"};
       Litr::CommandBuilder builderChild{file, data, "test"};

@@ -1,0 +1,2 @@
+[commands]
+update = ["first", 2, "third"]

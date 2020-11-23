@@ -5,14 +5,14 @@
 
 TEST_SUITE("ConfigLoader") {
   TEST_CASE("Loads a config file without issues") {
-    const Litr::Path path{"./Fixtures/empty-config.toml"};
+    const Litr::Path path{"./Fixtures/Config/empty.toml"};
     const Litr::ConfigLoader config{path};
 
     CHECK(config.HasErrors() == false);
   }
 
   TEST_CASE("Emits a custom syntax error on exception") {
-    const Litr::Path path{"./Fixtures/syntax-error-config.toml"};
+    const Litr::Path path{"./Fixtures/Config/syntax-error.toml"};
     const Litr::ConfigLoader config{path};
     const auto errors{config.GetErrors()};
 
@@ -21,16 +21,78 @@ TEST_SUITE("ConfigLoader") {
     CHECK(errors[0].Message == "There is a syntax error inside the configuration file.");
   }
 
-  TEST_CASE("Does nothing if no commands defined") {
-    const Litr::Path path{"./Fixtures/empty-commands-params-config.toml"};
+  TEST_CASE("Emits an error on malformed command") {
+    const Litr::Path path{"./Fixtures/Config/malformed-command.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "A command can be a string or table.");
+  }
+
+  TEST_CASE("Emits an error if command script is not a string") {
+    const Litr::Path path{"./Fixtures/Config/malformed-command-script.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+  }
+
+  TEST_CASE("Emits an error if command property unknown") {
+    const Litr::Path path{"./Fixtures/Config/unknown-command-property.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == R"(The command property "unknown" does not exist. Please refer to the docs.)");
+  }
+
+  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on malformed script array") {
+    const Litr::Path path{"./Fixtures/Config/command-script-array-malformed.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+  }
+
+  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on detailed malformed script array") {
+    const Litr::Path path{"./Fixtures/Config/command-detailed-script-array-malformed.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+  }
+
+  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on multiple malformed fields") {
+    const Litr::Path path{"./Fixtures/Config/command-description-and-output-malformed.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 2);
+    CHECK(errors[0].Message == R"(The "description" can can only be a string.)");
+    CHECK(errors[1].Message == R"(The "output" can either be "unchanged" or "silent".)");
+  }
+
+  TEST_CASE("Does nothing if no commands or parameters defined") {
+    const Litr::Path path{"./Fixtures/Config/empty-commands-params.toml"};
     const Litr::ConfigLoader config{path};
 
     CHECK(config.HasErrors() == false);
     CHECK(config.GetCommands().size() == 0);
+    CHECK(config.GetParameters().size() == 0);
   }
 
   TEST_CASE("Loads commands") {
-    const Litr::Path path{"./Fixtures/commands-params-config.toml"};
+    const Litr::Path path{"./Fixtures/Config/commands-params.toml"};
     const Litr::ConfigLoader config{path};
 
     SUBCASE("Successfully without errors") {
@@ -50,6 +112,19 @@ TEST_SUITE("ConfigLoader") {
       CHECK(command->Directory.size() == 1);
       CHECK(command->Directory[0] == "Directory");
       CHECK(command->ChildCommands.size() == 4);
+    }
+
+    SUBCASE("Resolves all fields on a command without sub commands") {
+      const auto command{config.GetCommand("update")};
+
+      CHECK(command->Name == "update");
+      CHECK(command->Script.size() == 1);
+      CHECK(command->Script[0] == "git pull && git submodule update --init");
+      CHECK(command->Description.empty());
+      CHECK(command->Example.empty());
+      CHECK(command->Output == Litr::Command::Output::UNCHANGED);
+      CHECK(command->Directory.empty());
+      CHECK(command->ChildCommands.empty());
     }
 
     SUBCASE("Resolves all fields on a sub command") {
@@ -91,6 +166,61 @@ TEST_SUITE("ConfigLoader") {
       CHECK(command->Name == "l3");
       CHECK(command->Script.size() == 1);
       CHECK(command->Script[0] == "Deep Script");
+    }
+  }
+
+  TEST_CASE("Emits an error if parameter name is reserved for Litr") {
+    const Litr::Path path{"./Fixtures/Config/reserved-parameter.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 2);
+    CHECK(errors[0].Message == R"(The parameter name "h" is reserved by Litr.)");
+    CHECK(errors[1].Message == R"(The parameter name "help" is reserved by Litr.)");
+  }
+
+  TEST_CASE("Emits an error if parameter definition is malformed") {
+    const Litr::Path path{"./Fixtures/Config/malformed-parameter.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "A parameter needs to be a string or table.");
+  }
+
+  TEST_CASE("Copies errors from ParameterBuilder to ConfigLoader on multiple malformed params") {
+    const Litr::Path path{"./Fixtures/Config/params-description-and-type-malformed.toml"};
+    const Litr::ConfigLoader config{path};
+    const auto errors{config.GetErrors()};
+
+    CHECK(config.HasErrors() == true);
+    CHECK(errors.size() == 2);
+    CHECK(errors[0].Message == R"(The "description" can can only be a string.)");
+    CHECK(errors[1].Message == R"(A "type" can can only be "string" or an array of options as strings.)");
+  }
+
+  TEST_CASE("Loads Parameters") {
+    const Litr::Path path{"./Fixtures/Config/commands-params.toml"};
+    const Litr::ConfigLoader config{path};
+
+    SUBCASE("Successfully without errors") {
+      CHECK(config.HasErrors() == false);
+      CHECK(config.GetParameters().size() == 2);
+    }
+
+    SUBCASE("Resolves all fields on a parameter") {
+      const auto param{config.GetParameter("target")};
+
+      CHECK(param->Name == "target");
+      CHECK(param->Description == "Description");
+      CHECK(param->Shortcut == "t");
+      CHECK(param->Default == "debug");
+      CHECK(param->Type == Litr::Parameter::ParameterType::Array);
+      CHECK(param->TypeArguments.size() == 2);
+      CHECK(param->TypeArguments[0] == "debug");
+      CHECK(param->TypeArguments[1] == "release");
     }
   }
 }

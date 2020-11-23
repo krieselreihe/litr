@@ -34,6 +34,9 @@ script = "Deep Script"
 
 [params.target]
 shortcut = "t"
-description = "Define the build target."
+description = "Description"
 type = ["debug", "release"]
 default = "debug"
+
+[params.another]
+description = "Description"

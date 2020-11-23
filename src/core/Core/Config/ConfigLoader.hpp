@@ -23,26 +23,23 @@ class ConfigLoader {
    * @todo: This should probably be moved. See implementation for details.
    */
   [[nodiscard]] Ref<Command> GetCommand(const std::string& name) const;
+  [[nodiscard]] Ref<Parameter> GetParameter(const std::string& name) const;
 
   [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
-  [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameter() const { return m_Parameters; };
+  [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameters() const { return m_Parameters; };
   [[nodiscard]] inline std::vector<ConfigurationError> GetErrors() const { return m_Errors; };
   [[nodiscard]] inline bool HasErrors() const { return !m_Errors.empty(); };
-
-  [[nodiscard]] static bool IsReservedParameter(const std::string& name);
 
  private:
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
   void CollectCommands(const toml::table& commands);
   void CollectParams(const toml::table& params);
 
-  [[nodiscard]] static Ref<Command> GetCommand(const std::string& name, const std::vector<Ref<Command>>& commands);
-  [[nodiscard]] static Ref<Command> GetCommand(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands);
+  void AppendErrors(const std::vector<ConfigurationError>& errors);
 
  private:
   std::vector<Ref<Command>> m_Commands{};
   std::vector<Ref<Parameter>> m_Parameters{};
-
   std::vector<ConfigurationError> m_Errors{};
 };
 
