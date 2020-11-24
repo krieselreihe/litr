@@ -62,7 +62,7 @@ static std::deque<std::string> SplitCommandQuery(const std::string& query) {
   return parts;
 }
 
-ConfigLoader::ConfigLoader(const Path& filePath) {
+ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_ErrorHandler(errorHandler) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
@@ -70,17 +70,19 @@ ConfigLoader::ConfigLoader(const Path& filePath) {
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
   } catch (const toml::syntax_error& err) {
-    m_Errors.emplace_back(
-        ConfigurationErrorType::MALFORMED_FILE,
-        "There is a syntax error inside the configuration file.",
-        err);
+    m_ErrorHandler->Push({
+      ErrorType::MALFORMED_FILE,
+      "There is a syntax error inside the configuration file.",
+      err
+    });
     return;
   }
 
   if (!config.is_table()) {
-    m_Errors.emplace_back(
-        ConfigurationErrorType::MALFORMED_FILE,
-        "Configuration is not a TOML table.");
+    m_ErrorHandler->Push({
+      ErrorType::MALFORMED_FILE,
+      "Configuration is not a TOML table."
+    });
     return;
   }
 
@@ -115,7 +117,7 @@ Ref<Parameter> ConfigLoader::GetParameter(const std::string& name) const {
 Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
-  CommandBuilder builder{commands, definition, name};
+  CommandBuilder builder{m_ErrorHandler, commands, definition, name};
 
   // Simple string form
   if (definition.is_string()) {
@@ -126,16 +128,16 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
   // Simple string array form
   if (definition.is_array()) {
     builder.AddScript(definition);
-    AppendErrors(builder.GetErrors());
     return builder.GetResult();
   }
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    m_Errors.emplace_back(
-        ConfigurationErrorType::MALFORMED_COMMAND,
-        "A command can be a string or table.",
-        commands.at(name));
+    m_ErrorHandler->Push({
+      ErrorType::MALFORMED_COMMAND,
+      "A command can be a string or table.",
+      commands.at(name)
+    });
     return builder.GetResult();
   }
 
@@ -157,10 +159,11 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
       } else if (scripts.is_array()) {
         builder.AddScript(scripts);
       } else {
-        m_Errors.emplace_back(
-            ConfigurationErrorType::MALFORMED_SCRIPT,
-            "A command script can be either a string or array of strings.",
-            definition.at(property));
+        m_ErrorHandler->Push({
+          ErrorType::MALFORMED_SCRIPT,
+          "A command script can be either a string or array of strings.",
+          definition.at(property)
+        });
       }
 
       properties.pop();
@@ -194,10 +197,11 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
     // Collect properties that cannot directly be resolved.
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::UNKNOWN_COMMAND_PROPERTY,
-          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
-          definition.at(property));
+      m_ErrorHandler->Push({
+        ErrorType::UNKNOWN_COMMAND_PROPERTY,
+        fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+        definition.at(property)
+      });
       properties.pop();
       continue;
     }
@@ -208,7 +212,6 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
     properties.pop();
   }
 
-  AppendErrors(builder.GetErrors());
   return builder.GetResult();
 }
 
@@ -224,13 +227,14 @@ void ConfigLoader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto& [name, definition] : params) {
-    ParameterBuilder builder{params, definition, name};
+    ParameterBuilder builder{m_ErrorHandler, params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::RESERVED_PARAM,
-          fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
-          params.at(name));
+      m_ErrorHandler->Push({
+        ErrorType::RESERVED_PARAM,
+        fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
+        params.at(name)
+      });
       continue;
     }
 
@@ -243,10 +247,11 @@ void ConfigLoader::CollectParams(const toml::table& params) {
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      m_Errors.emplace_back(
-          ConfigurationErrorType::MALFORMED_PARAM,
-          "A parameter needs to be a string or table.",
-          params.at(name));
+      m_ErrorHandler->Push({
+        ErrorType::MALFORMED_PARAM,
+        "A parameter needs to be a string or table.",
+        params.at(name)
+      });
       continue;
     }
 
@@ -255,13 +260,8 @@ void ConfigLoader::CollectParams(const toml::table& params) {
     builder.AddType();
     builder.AddDefault();
 
-    AppendErrors(builder.GetErrors());
     m_Parameters.emplace_back(builder.GetResult());
   }
-}
-
-void ConfigLoader::AppendErrors(const std::vector<ConfigurationError>& errors) {
-  std::copy(errors.begin(), errors.end(), std::back_inserter(m_Errors));
 }
 
 }  // namespace Litr

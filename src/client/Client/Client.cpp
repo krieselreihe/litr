@@ -30,9 +30,10 @@ int main() {
     }
 
     // Quick test ...
-    auto config{Litr::CreateScope<Litr::ConfigLoader>(configPath.GetFilePath())};
-    if (config->HasErrors()) {
-      Litr::ErrorReporter::PrintErrors(config->GetErrors());
+    auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
+    auto config{Litr::CreateScope<Litr::ConfigLoader>(errorHandler, configPath.GetFilePath())};
+    if (errorHandler->HasErrors()) {
+      Litr::ErrorReporter::PrintErrors(errorHandler->GetErrors());
     }
 
     // @todo: Test output.

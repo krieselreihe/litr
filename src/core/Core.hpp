@@ -20,7 +20,8 @@
 
 // Errors -----------------------------
 
-#include "Core/Errors/ConfigurationError.hpp"
+#include "Core/Errors/Error.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 #include "Core/Errors/ErrorReporter.hpp"
 
 // Debug ------------------------------

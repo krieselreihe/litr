@@ -4,10 +4,11 @@
 #include <fmt/color.h>
 
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 
 namespace Litr {
 
-static uint32_t countDigits(uint32_t number) {
+static uint32_t CountDigits(uint32_t number) {
   LITR_PROFILE_FUNCTION();
 
   if (number < 10) return 1;
@@ -19,7 +20,7 @@ static uint32_t countDigits(uint32_t number) {
   return count;
 }
 
-void ErrorReporter::PrintErrors(const std::vector<ConfigurationError>& errors) {
+void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
   LITR_PROFILE_FUNCTION();
 
   for (auto& error : errors) {
@@ -27,14 +28,15 @@ void ErrorReporter::PrintErrors(const std::vector<ConfigurationError>& errors) {
   }
 }
 
-void ErrorReporter::PrintError(const ConfigurationError& error) {
+void ErrorReporter::PrintError(const Error& error) {
   LITR_PROFILE_FUNCTION();
 
-  std::string type{ConfigurationError::GetTypeDescription(error)};
+  std::string type{ErrorHandler::GetTypeDescription(error)};
   fmt::print(
       fg(fmt::color::crimson),
       "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
-      type, error.Line, error.LineStr, " ", countDigits(error.Line), " ^ - ", error.Column, error.Message);
+      type, error.Line, error.LineStr, " ",
+             CountDigits(error.Line), " ^ - ", error.Column, error.Message);
 }
 
 }  // namespace Litr
