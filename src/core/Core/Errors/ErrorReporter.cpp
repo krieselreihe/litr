@@ -23,7 +23,7 @@ static uint32_t CountDigits(uint32_t number) {
 void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
   LITR_PROFILE_FUNCTION();
 
-  for (auto& error : errors) {
+  for (const auto& error : errors) {
     PrintError(error);
   }
 }
@@ -31,7 +31,7 @@ void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
 void ErrorReporter::PrintError(const Error& error) {
   LITR_PROFILE_FUNCTION();
 
-  std::string type{ErrorHandler::GetTypeDescription(error)};
+  const std::string type{ErrorHandler::GetTypeDescription(error)};
   fmt::print(
       fg(fmt::color::crimson),
       "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",

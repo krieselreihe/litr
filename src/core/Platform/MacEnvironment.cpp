@@ -7,19 +7,19 @@
 namespace Litr {
 
 static Path UserPath(const std::string& userName) {
-  Path path{fmt::format("/Users/{}", userName)};
+  const Path path{fmt::format("/Users/{}", userName)};
   return path;
 }
 
 Path Environment::GetHomeDirectory() {
   LITR_PROFILE_FUNCTION();
 
-  std::string userName{std::getenv("USER")};
+  const std::string userName{std::getenv("USER")};
   if (!userName.empty()) {
     return UserPath(userName);
   }
 
-  std::string loginName{std::getenv("LOGNAME")};
+  const std::string loginName{std::getenv("LOGNAME")};
   if (!loginName.empty()) {
     return UserPath(loginName);
   }

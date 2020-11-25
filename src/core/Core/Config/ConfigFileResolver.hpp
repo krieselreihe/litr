@@ -22,8 +22,8 @@ class ConfigFileResolver {
   [[nodiscard]] Path GetFileDirectory() const;
 
  private:
-  std::string m_FileName{"litr.toml"};
-  std::string m_HiddenFileName{".litr.toml"};
+  const std::string m_FileName{"litr.toml"};
+  const std::string m_HiddenFileName{".litr.toml"};
 
   Path m_Directory{};
   Path m_Path{};

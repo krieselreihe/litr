@@ -120,7 +120,7 @@ void CommandBuilder::AddDirectory() {
 void CommandBuilder::AddOutput() {
   LITR_PROFILE_FUNCTION();
 
-  std::string name{"output"};
+  const std::string name{"output"};
 
   if (m_Table.contains(name)) {
     const toml::value& output{toml::find(m_Table, name)};

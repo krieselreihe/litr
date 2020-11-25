@@ -48,8 +48,8 @@ Path ConfigFileResolver::GetFileDirectory() const {
 void ConfigFileResolver::FindFile(const Path& cwd) {
   LITR_PROFILE_FUNCTION();
 
-  Path filePath{cwd.Append(m_FileName)};
-  Path hiddenFilePath{cwd.Append(m_HiddenFileName)};
+  const Path filePath{cwd.Append(m_FileName)};
+  const Path hiddenFilePath{cwd.Append(m_HiddenFileName)};
 
   bool fileExists{FileSystem::Exists(filePath)};
   bool hiddenFileExists{FileSystem::Exists(hiddenFilePath)};

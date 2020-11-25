@@ -226,7 +226,7 @@ void ConfigLoader::CollectCommands(const toml::table& commands) {
 void ConfigLoader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
-  for (auto& [name, definition] : params) {
+  for (const auto& [name, definition] : params) {
     ParameterBuilder builder{m_ErrorHandler, params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {

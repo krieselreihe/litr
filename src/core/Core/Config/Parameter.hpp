@@ -12,7 +12,7 @@ struct Parameter {
 
   std::vector<std::string> TypeArguments{};
 
-  std::string Name;
+  const std::string Name;
   std::string Description{};
   std::string Shortcut{};
   std::string Default{};

@@ -18,8 +18,8 @@ enum class ErrorType {
 };
 
 struct Error {
-  ErrorType Type;
-  std::string Message;
+  const ErrorType Type;
+  const std::string Message;
   uint32_t Line{};
   uint32_t Column{};
   std::string LineStr{};

@@ -22,7 +22,7 @@ struct ProfileResult {
 };
 
 struct InstrumentationSession {
-  std::string Name;
+  const std::string Name;
 };
 
 class Instrumentor {
@@ -122,8 +122,8 @@ class Instrumentor {
 
 class InstrumentationTimer {
  public:
-  explicit InstrumentationTimer(const char* name) : m_Name(name), m_Stopped(false) {
-    m_StartTimePoint = std::chrono::steady_clock::now();
+  explicit InstrumentationTimer(const char* name)
+      : m_Name(name), m_Stopped(false), m_StartTimePoint(std::chrono::steady_clock::now()) {
   }
 
   ~InstrumentationTimer() {
@@ -133,10 +133,10 @@ class InstrumentationTimer {
   }
 
   void Stop() {
-    const auto endTimepoint{std::chrono::steady_clock::now()};
+    const auto endTimePoint{std::chrono::steady_clock::now()};
     const auto highResStart{FloatingPointMicroseconds{m_StartTimePoint.time_since_epoch()}};
     const auto elapsedTime{
-      std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() -
+      std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch() -
         std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimePoint).time_since_epoch()
     };
 
@@ -147,8 +147,8 @@ class InstrumentationTimer {
 
  private:
   const char* m_Name;
-  std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
   bool m_Stopped{false};
+  const std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
 };
 
 }  // namespace Litr
