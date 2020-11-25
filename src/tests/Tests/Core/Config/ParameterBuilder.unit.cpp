@@ -227,11 +227,37 @@ TEST_SUITE("ParameterBuilder") {
       CHECK(errorHandler->GetErrors()[0].Message == R"(The field "default" needs to be a string.)");
     }
 
+    SUBCASE("Emits an error if default value is not found inside type array") {
+      const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
+      const auto [file, data] = CreateTOMLMock("test", R"(type = ["Not default"]
+default = "Default")");
+
+      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      builder.AddType();
+      builder.AddDefault();
+
+      CHECK(errorHandler->GetErrors().size() == 1);
+      CHECK(errorHandler->GetErrors()[0].Message == R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
+    }
+
     SUBCASE("Sets default if defined as string") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(default = "something")");
 
       Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      builder.AddDefault();
+
+      CHECK(errorHandler->GetErrors().size() == 0);
+      CHECK(builder.GetResult()->Default == "something");
+    }
+
+    SUBCASE("Sets default if defined as string and type array contains value") {
+      const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
+      const auto [file, data] = CreateTOMLMock("test", R"(type = ["something"]
+default = "something")");
+
+      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      builder.AddType();
       builder.AddDefault();
 
       CHECK(errorHandler->GetErrors().size() == 0);

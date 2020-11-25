@@ -15,8 +15,10 @@ set_project_warnings(project_warnings)
 
 set(SPDLOG_FMT_EXTERNAL "ON")
 
-# Dependencies
+# Testing
 add_subdirectory(vendor/doctest)
+
+# Dependencies
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/toml11)

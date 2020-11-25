@@ -128,8 +128,26 @@ void ParameterBuilder::AddDefault() {
     const toml::value& def{toml::find(m_Table, name)};
 
     if (def.is_string()) {
-      // @todo: Check if "type" is an array, and if so that "def" is part of it.
-      m_Parameter->Default = def.as_string();
+      const std::string defaultValue{def.as_string()};
+
+      // Test if default value present in available options
+      if (m_Parameter->Type == Parameter::ParameterType::Array) {
+        const auto& args{m_Parameter->TypeArguments};
+        if (std::find(args.begin(), args.end(), defaultValue) == args.end()) {
+          m_ErrorHandler->Push({
+           ErrorType::MALFORMED_PARAM,
+           fmt::format(
+                    R"(Cannot find default value "{}" inside "type" list defined in line {}.)",
+                    defaultValue,
+                    m_Table.at("type").location().line()
+                  ),
+           m_Table.at(name)
+          });
+          return;
+        }
+      }
+
+      m_Parameter->Default = defaultValue;
       return;
     }
 
