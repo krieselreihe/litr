@@ -25,14 +25,12 @@ target_link_libraries(TestBase INTERFACE doctest)
 add_executable(ConfigLoader Tests/Core/Config/ConfigLoader.int.cpp $<TARGET_OBJECTS:TestRunner>)
 add_test(NAME ConfigLoader COMMAND ConfigLoader)
 target_link_libraries(ConfigLoader PRIVATE TestBase Core)
-target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/core)
 
 # --- ConfigFileResolver ---
 
 add_executable(ConfigFileResolver Tests/Core/Config/ConfigFileResolver.unit.cpp $<TARGET_OBJECTS:TestRunner>)
 add_test(NAME ConfigFileResolver COMMAND ConfigFileResolver)
 target_link_libraries(ConfigFileResolver PRIVATE TestBase Core)
-target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/core)
 
 # --- CommandBuilder / ParameterBuilder ---
 
@@ -44,6 +42,4 @@ add_executable(CommandAndParameterBuilder
 
 add_test(NAME CommandAndParameterBuilder COMMAND CommandAndParameterBuilder)
 target_link_libraries(CommandAndParameterBuilder PRIVATE TestBase Core)
-target_include_directories(TestBase INTERFACE
-  ${CMAKE_SOURCE_DIR}/src/tests
-  ${CMAKE_SOURCE_DIR}/src/core)
+target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/tests)
