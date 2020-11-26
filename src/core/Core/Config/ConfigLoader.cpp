@@ -10,7 +10,7 @@
 namespace Litr {
 
 static Ref<Command> GetCommandByName(const std::string& name, const std::vector<Ref<Command>>& commands) {
-  for (const auto& command : commands) {
+  for (const Ref<Command>& command : commands) {
     if (command->Name == name) {
       return command;
     }
@@ -22,7 +22,7 @@ static Ref<Command> GetCommandByName(const std::string& name, const std::vector<
 // Ignore recursion warning.
 // NOLINTNEXTLINE
 static Ref<Command> ResolveCommandByPath(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
-  const auto& command{GetCommandByName(names.front(), commands)};
+  const Ref<Command>& command{GetCommandByName(names.front(), commands)};
 
   if (command == nullptr) {
     return nullptr;
@@ -87,12 +87,12 @@ ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& fi
   }
 
   if (config.contains("commands")) {
-    const auto& commands{toml::find<toml::table>(config, "commands")};
+    const toml::table& commands{toml::find<toml::table>(config, "commands")};
     CollectCommands(commands);
   }
 
   if (config.contains("params")) {
-    const auto& params{toml::find<toml::table>(config, "params")};
+    const toml::table& params{toml::find<toml::table>(config, "params")};
     CollectParams(params);
   }
 }
@@ -103,7 +103,7 @@ Ref<Command> ConfigLoader::GetCommand(const std::string& name) const {
 }
 
 Ref<Parameter> ConfigLoader::GetParameter(const std::string& name) const {
-  for (const auto& param : m_Parameters) {
+  for (const Ref<Parameter>& param : m_Parameters) {
     if (param->Name == name) {
       return param;
     }

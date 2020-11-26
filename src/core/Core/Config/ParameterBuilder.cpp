@@ -132,7 +132,7 @@ void ParameterBuilder::AddDefault() {
 
       // Test if default value present in available options
       if (m_Parameter->Type == Parameter::ParameterType::Array) {
-        const auto& args{m_Parameter->TypeArguments};
+        const std::vector<std::string>& args{m_Parameter->TypeArguments};
         if (std::find(args.begin(), args.end(), defaultValue) == args.end()) {
           m_ErrorHandler->Push({
            ErrorType::MALFORMED_PARAM,
