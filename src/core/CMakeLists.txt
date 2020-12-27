@@ -23,7 +23,6 @@ add_library(${NAME} STATIC ${OS_FILES}
   Core/Config/ParameterBuilder.cpp Core/Config/ParameterBuilder.hpp)
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/core)
-
 target_compile_features(${NAME} PRIVATE cxx_std_17)
 target_link_libraries(${NAME}
   PRIVATE project_warnings tsl::ordered_map

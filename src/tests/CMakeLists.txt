@@ -35,7 +35,7 @@ target_link_libraries(ConfigFileResolver PRIVATE TestBase Core)
 # --- CommandBuilder / ParameterBuilder ---
 
 add_executable(CommandAndParameterBuilder
-  Helpers/TOML.cpp Helpers/TOML.hpp
+  Helpers/Toml.cpp Helpers/Toml.hpp
   Tests/Core/Config/CommandBuilder.unit.cpp
   Tests/Core/Config/ParameterBuilder.unit.cpp
   $<TARGET_OBJECTS:TestRunner>)

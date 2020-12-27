@@ -97,7 +97,7 @@ void ParameterBuilder::AddType() {
 
     if (type.is_array()) {
       m_Parameter->Type = Parameter::ParameterType::Array;
-      for (const auto& option : type.as_array()) {
+      for (auto&& option : type.as_array()) {
         if (option.is_string()) {
           m_Parameter->TypeArguments.emplace_back(option.as_string());
         } else {
