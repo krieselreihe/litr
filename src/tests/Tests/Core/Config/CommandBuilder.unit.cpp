@@ -3,7 +3,7 @@
 #include <doctest/doctest.h>
 
 #include "Core/Error/Handler.hpp"
-#include "Helpers/TOML.hpp"
+#include "Helpers/Toml.hpp"
 
 TEST_SUITE("Config::CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {
