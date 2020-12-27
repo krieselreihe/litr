@@ -25,5 +25,5 @@ add_library(${NAME} STATIC ${OS_FILES}
 target_include_directories(${NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/core)
 target_compile_features(${NAME} PRIVATE cxx_std_17)
 target_link_libraries(${NAME}
-  PRIVATE project_warnings tsl::ordered_map
-  PUBLIC fmt spdlog toml11)
+  PRIVATE project_warnings
+  PUBLIC fmt spdlog toml11 tsl::ordered_map)

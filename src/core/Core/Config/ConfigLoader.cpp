@@ -87,12 +87,12 @@ ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& fi
   }
 
   if (config.contains("commands")) {
-    const toml::table& commands{toml::find<toml::table>(config, "commands")};
+    const toml::table& commands{toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "commands")};
     CollectCommands(commands);
   }
 
   if (config.contains("params")) {
-    const toml::table& params{toml::find<toml::table>(config, "params")};
+    const toml::table& params{toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "params")};
     CollectParams(params);
   }
 }
