@@ -27,25 +27,23 @@ struct Error {
   Error(ErrorType type, std::string message) : Type(type), Message(std::move(message)) {
   }
 
-  Error(ErrorType type, std::string message, const toml::value& context) : Type(type), Message(std::move(message)) {
+  Error(ErrorType type, std::string message, const toml::value& context)
+      : Type(type),
+        Message(std::move(message)),
+        Line(context.location().line()),
+        Column(context.location().column()),
+        LineStr(context.location().line_str()) {
     LITR_PROFILE_FUNCTION();
-
-    const toml::source_location& location{context.location()};
-
-    Line = location.line();
-    Column = location.column();
-    LineStr = location.line_str();
   }
 
-  Error(ErrorType type, std::string message, const toml::exception& err) : Type(type), Message(std::move(message)) {
+  Error(ErrorType type, std::string message, const toml::exception& err)
+      : Type(type),
+        Message(std::move(message)),
+        Line(err.location().line()),
+        Column(err.location().column()),
+        LineStr(err.location().line_str()) {
     LITR_PROFILE_FUNCTION();
-
-    const toml::source_location& location{err.location()};
-
-    Line = location.line();
-    Column = location.column();
-    LineStr = location.line_str();
   }
-};
+} __attribute__((aligned(64)));
 
 }  // namespace Litr

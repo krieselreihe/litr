@@ -143,7 +143,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
 
   // Collect command property names
   std::stack<std::string> properties{};
-  for (const auto& property : definition.as_table()) {
+  for (auto&& property : definition.as_table()) {
     properties.push(property.first);
   }
 
@@ -218,7 +218,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
 void ConfigLoader::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
-  for (const auto& [name, definition] : commands) {
+  for (auto&& [name, definition] : commands) {
     m_Commands.emplace_back(CreateCommand(commands, definition, name));
   }
 }
@@ -226,7 +226,7 @@ void ConfigLoader::CollectCommands(const toml::table& commands) {
 void ConfigLoader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
-  for (const auto& [name, definition] : params) {
+  for (auto&& [name, definition] : params) {
     ParameterBuilder builder{m_ErrorHandler, params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {

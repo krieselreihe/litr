@@ -24,7 +24,7 @@ void CommandBuilder::AddScript(const std::vector<std::string>& scripts) {
 void CommandBuilder::AddScript(const toml::value& scripts) {
   LITR_PROFILE_FUNCTION();
 
-  for (const auto& script : scripts.as_array()) {
+  for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
       m_ErrorHandler->Push({
         ErrorType::MALFORMED_SCRIPT,
@@ -94,7 +94,7 @@ void CommandBuilder::AddDirectory() {
     }
 
     if (directories.is_array()) {
-      for (const auto& directory : directories.as_array()) {
+      for (auto&& directory : directories.as_array()) {
         if (!directory.is_string()) {
           m_ErrorHandler->Push({
             ErrorType::MALFORMED_COMMAND,

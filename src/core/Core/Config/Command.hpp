@@ -25,7 +25,7 @@ struct Command {
 
   explicit Command(std::string name) : Name(std::move(name)) {
   }
-};
+} __attribute__((aligned(128)));
 
 }  // namespace Litr
 
@@ -41,7 +41,7 @@ struct fmt::formatter<Litr::Command> {
   auto format(const Litr::Command& c, FormatContext& ctx) {
     std::string childView{};
     if (!c.ChildCommands.empty()) {
-      for (const auto& child : c.ChildCommands) {
+      for (auto&& child : c.ChildCommands) {
         childView.append(fmt::format("\n    - Sub{}", *child));
       }
     }
