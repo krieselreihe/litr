@@ -29,7 +29,7 @@ int main() {
       }
     }
 
-    // Quick test ...
+    // Print errors from resolving the config file
     auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     auto config{Litr::CreateScope<Litr::ConfigLoader>(errorHandler, configPath.GetFilePath())};
     if (errorHandler->HasErrors()) {

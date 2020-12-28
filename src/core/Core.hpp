@@ -21,6 +21,8 @@
 // CLI --------------------------------
 
 #include "Core/CLI/Shell.hpp"
+#include "Core/CLI/Scanner.hpp"
+#include "Core/CLI/Parser.hpp"
 
 // Errors -----------------------------
 

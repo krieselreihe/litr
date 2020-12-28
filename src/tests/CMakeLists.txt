@@ -43,3 +43,9 @@ add_executable(CommandAndParameterBuilder
 add_test(NAME CommandAndParameterBuilder COMMAND CommandAndParameterBuilder)
 target_link_libraries(CommandAndParameterBuilder PRIVATE TestBase Core)
 target_include_directories(TestBase INTERFACE ${CMAKE_SOURCE_DIR}/src/tests)
+
+# --- CLI ---
+
+add_executable(CLI Tests/Core/CLI/Scanner.unit.cpp $<TARGET_OBJECTS:TestRunner>)
+add_test(NAME CLI COMMAND CLI)
+target_link_libraries(CLI PRIVATE TestBase Core)
