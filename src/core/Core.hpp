@@ -18,6 +18,10 @@
 #include "Core/Config/ConfigLoader.hpp"
 #include "Core/Config/Parameter.hpp"
 
+// CLI --------------------------------
+
+#include "Core/CLI/Shell.hpp"
+
 // Errors -----------------------------
 
 #include "Core/Errors/Error.hpp"

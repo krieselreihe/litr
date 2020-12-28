@@ -37,8 +37,17 @@ int main() {
     }
 
     // @todo: Test output.
+
     for (const auto& command : config->GetCommands()) {
       LITR_INFO("{}", *command);
+    }
+
+    LITR_INFO("========================================");
+    auto testCommand{config->GetCommand("hello")};
+    if (testCommand != nullptr) {
+      LITR_INFO("TEST COMMAND: {}", testCommand->Script[0]);
+      Litr::Shell::Result result{Litr::Shell::Exec(testCommand->Script[0])};
+      LITR_INFO("OUTPUT (Status code {}): {}", result.Status, result.Message);
     }
   }
 

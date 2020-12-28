@@ -20,7 +20,8 @@ add_library(${NAME} STATIC ${OS_FILES}
   Core/Config/ConfigLoader.cpp Core/Config/ConfigLoader.hpp
   Core/Config/Command.hpp Core/Config/Parameter.hpp
   Core/Config/CommandBuilder.cpp Core/Config/CommandBuilder.hpp
-  Core/Config/ParameterBuilder.cpp Core/Config/ParameterBuilder.hpp)
+  Core/Config/ParameterBuilder.cpp Core/Config/ParameterBuilder.hpp
+  Core/CLI/Shell.cpp Core/CLI/Shell.hpp)
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/core)
 target_compile_features(${NAME} PRIVATE cxx_std_17)

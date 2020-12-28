@@ -6,6 +6,8 @@ build = [
   "ninja -C build/${target}"
 ]
 
+hello = "ls -lsa"
+
 [commands.run]
 script = "./build/${target}/litr/client/Client"
 
