@@ -1,6 +1,6 @@
-#include "TOML.hpp"
-
 #include <fmt/format.h>
+
+#include "Toml.hpp"
 
 std::pair<toml::table, toml::value> CreateTOMLMock(const std::string& name, const std::string& toml) {
   std::string rFile{fmt::format(R"([{}]

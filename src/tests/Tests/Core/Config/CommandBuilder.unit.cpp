@@ -1,8 +1,9 @@
 #include <doctest/doctest.h>
 
-#include "Helpers/TOML.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Helpers/Toml.hpp"
+
 #include "Core/Config/CommandBuilder.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 
 TEST_SUITE("CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {

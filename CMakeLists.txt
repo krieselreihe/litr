@@ -27,4 +27,5 @@ add_subdirectory(vendor/ordered-map)
 # Application libraries and files
 add_subdirectory(src/tests)
 add_subdirectory(src/core)
+add_subdirectory(src/toms)
 add_subdirectory(src/client)

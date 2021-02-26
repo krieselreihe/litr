@@ -1,6 +1,7 @@
 #include <doctest/doctest.h>
 
-#include "Helpers/TOML.hpp"
+#include "Helpers/Toml.hpp"
+
 #include "Core/Errors/ErrorHandler.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
 
