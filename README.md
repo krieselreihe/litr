@@ -41,3 +41,7 @@ To find out more go to the [wikis setup section](https://github.com/krieselreihe
 ## Development
 
 Find more information about how to contribute in the [contribution guide](CONTRIBUTING.md).
+
+## License
+
+Permissive [MIT License](LICENSE).

@@ -5,11 +5,14 @@
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Utils.hpp"
 #include "Core/Log.hpp"
 
 namespace Litr {
 
 static Ref<Command> GetCommandByName(const std::string& name, const std::vector<Ref<Command>>& commands) {
+  LITR_PROFILE_FUNCTION();
+
   for (const Ref<Command>& command : commands) {
     if (command->Name == name) {
       return command;
@@ -22,6 +25,8 @@ static Ref<Command> GetCommandByName(const std::string& name, const std::vector<
 // Ignore recursion warning.
 // NOLINTNEXTLINE
 static Ref<Command> ResolveCommandByPath(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
+  LITR_PROFILE_FUNCTION();
+
   const Ref<Command>& command{GetCommandByName(names.front(), commands)};
 
   if (command == nullptr) {
@@ -51,14 +56,10 @@ static Ref<Command> ResolveCommandByPath(std::deque<std::string>& names, const s
 }
 
 static std::deque<std::string> SplitCommandQuery(const std::string& query) {
-  std::stringstream ss{query};
-  std::string name;
-  std::deque<std::string> parts;
+  LITR_PROFILE_FUNCTION();
 
-  while (std::getline(ss, name, '.')) {
-    parts.push_back(name);
-  }
-
+  std::deque<std::string> parts{};
+  Utils::SplitInto(query, '.', parts);
   return parts;
 }
 
@@ -98,11 +99,15 @@ ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& fi
 }
 
 Ref<Command> ConfigLoader::GetCommand(const std::string& name) const {
+  LITR_PROFILE_FUNCTION();
+
   std::deque names{SplitCommandQuery(name)};
   return ResolveCommandByPath(names, m_Commands);
 }
 
 Ref<Parameter> ConfigLoader::GetParameter(const std::string& name) const {
+  LITR_PROFILE_FUNCTION();
+
   for (const Ref<Parameter>& param : m_Parameters) {
     if (param->Name == name) {
       return param;

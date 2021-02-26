@@ -7,7 +7,7 @@
 TEST_SUITE("ConfigLoader") {
   TEST_CASE("Loads a config file without issues") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/empty.toml"};
+    const Litr::Path path{"../../Fixtures/Config/empty.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
 
     CHECK(errorHandler->HasErrors() == false);
@@ -15,7 +15,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits a custom syntax error on exception") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/syntax-error.toml"};
+    const Litr::Path path{"../../Fixtures/Config/syntax-error.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -26,7 +26,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits an error on malformed command") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/malformed-command.toml"};
+    const Litr::Path path{"../../Fixtures/Config/malformed-command.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -37,7 +37,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits an error if command script is not a string") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/malformed-command-script.toml"};
+    const Litr::Path path{"../../Fixtures/Config/malformed-command-script.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -48,7 +48,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits an error if command property unknown") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/unknown-command-property.toml"};
+    const Litr::Path path{"../../Fixtures/Config/unknown-command-property.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -59,7 +59,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on malformed script array") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/command-script-array-malformed.toml"};
+    const Litr::Path path{"../../Fixtures/Config/command-script-array-malformed.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -70,7 +70,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on detailed malformed script array") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/command-detailed-script-array-malformed.toml"};
+    const Litr::Path path{"../../Fixtures/Config/command-detailed-script-array-malformed.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -81,7 +81,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on multiple malformed fields") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/command-description-and-output-malformed.toml"};
+    const Litr::Path path{"../../Fixtures/Config/command-description-and-output-malformed.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -93,7 +93,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Does nothing if no commands or parameters defined") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/empty-commands-params.toml"};
+    const Litr::Path path{"../../Fixtures/Config/empty-commands-params.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
 
     CHECK(errorHandler->HasErrors() == false);
@@ -103,7 +103,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Loads commands") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/commands-params.toml"};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
 
     SUBCASE("Successfully without errors") {
@@ -182,7 +182,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits an error if parameter name is reserved for Litr") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/reserved-parameter.toml"};
+    const Litr::Path path{"../../Fixtures/Config/reserved-parameter.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -194,7 +194,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Emits an error if parameter definition is malformed") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/malformed-parameter.toml"};
+    const Litr::Path path{"../../Fixtures/Config/malformed-parameter.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -205,7 +205,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Copies errors from ParameterBuilder to ConfigLoader on multiple malformed params") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/params-description-and-type-malformed.toml"};
+    const Litr::Path path{"../../Fixtures/Config/params-description-and-type-malformed.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
@@ -217,7 +217,7 @@ TEST_SUITE("ConfigLoader") {
 
   TEST_CASE("Loads Parameters") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
-    const Litr::Path path{"./Fixtures/Config/commands-params.toml"};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
     const Litr::ConfigLoader config{errorHandler, path};
 
     SUBCASE("Successfully without errors") {

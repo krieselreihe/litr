@@ -2,19 +2,21 @@
 
 #include <string>
 #include <toml.hpp>
+#include <utility>
 
 #include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr {
 
 enum class ErrorType {
-  RESERVED_PARAM,
-  MALFORMED_FILE,
-  MALFORMED_COMMAND,
-  MALFORMED_PARAM,
-  MALFORMED_SCRIPT,
-  UNKNOWN_COMMAND_PROPERTY,
-  UNKNOWN_PARAM_VALUE
+  RESERVED_PARAM,            // Reserved configuration parameter name
+  MALFORMED_FILE,            // Configuration file malformed
+  MALFORMED_COMMAND,         // Command configuration malformed
+  MALFORMED_PARAM,           // Parameter configuration malformed
+  MALFORMED_SCRIPT,          // Configuration command script malformed
+  UNKNOWN_COMMAND_PROPERTY,  // Unknown option used for command in configuration
+  UNKNOWN_PARAM_VALUE,       // Unknown option used for parameter in configuration
+  PARSER_ERROR               // Error while parsing CLI input arguments
 };
 
 struct Error {
@@ -25,6 +27,10 @@ struct Error {
   std::string LineStr{};
 
   Error(ErrorType type, std::string message) : Type(type), Message(std::move(message)) {
+  }
+
+  Error(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
+      : Type(type), Message(std::move(message)), Line(line), Column(column), LineStr(std::move(lineStr)) {
   }
 
   Error(ErrorType type, std::string message, const toml::value& context)

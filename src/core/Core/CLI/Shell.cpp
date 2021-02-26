@@ -1,15 +1,21 @@
 #include "Shell.hpp"
 
+#include "Core/Debug/Instrumentor.hpp"
+
 #include <cstdio>
 #include <functional>
 
 namespace Litr {
 
 Shell::Result Shell::Exec(const std::string& command) {
+  LITR_PROFILE_FUNCTION();
+
   return Shell::Exec(command, []([[maybe_unused]] const std::string& _buffer) {});
 }
 
 Shell::Result Shell::Exec(const std::string& command, const Shell::ExecCallback& callback) {
+  LITR_PROFILE_FUNCTION();
+
   Result result{};
   std::string cmd{command};
   cmd.append(" 2>&1");
@@ -27,12 +33,14 @@ Shell::Result Shell::Exec(const std::string& command, const Shell::ExecCallback&
       }
     }
 
-    // Dividing by 256 to get the status code
-    int statusCode{pclose(stream) / 256};
-    result.Status = statusCode;
+    result.Status = GetStatusCode(pclose(stream));
   }
 
   return result;
+}
+
+int Shell::GetStatusCode(int streamStatus) {
+  return streamStatus / 256;
 }
 
 }  // namespace Litr

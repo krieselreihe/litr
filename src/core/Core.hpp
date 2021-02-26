@@ -5,6 +5,7 @@
 #include "Core/Assert.hpp"
 #include "Core/Base.hpp"
 #include "Core/Log.hpp"
+#include "Core/Utils.hpp"
 
 // Main -------------------------------
 
@@ -21,8 +22,10 @@
 // CLI --------------------------------
 
 #include "Core/CLI/Shell.hpp"
+#include "Core/CLI/Token.hpp"
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Parser.hpp"
+#include "Core/CLI/Instruction.hpp"
 
 // Errors -----------------------------
 
@@ -33,3 +36,4 @@
 // Debug ------------------------------
 
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Debug/Disassembler.hpp"
