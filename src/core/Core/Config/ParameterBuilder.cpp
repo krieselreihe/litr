@@ -160,6 +160,8 @@ void ParameterBuilder::AddDefault() {
 }
 
 bool ParameterBuilder::IsReservedName(const std::string& name) {
+  LITR_PROFILE_FUNCTION();
+
   const std::array<std::string, 2> reserved{"help", "h"};
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }

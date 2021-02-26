@@ -28,6 +28,8 @@ std::string ErrorHandler::GetTypeDescription(const Error& err) {
       return "Command property does not exist!";
     case ErrorType::UNKNOWN_PARAM_VALUE:
       return "Parameter value is not known!";
+    case ErrorType::PARSER_ERROR:
+      return "Problem parsing command line arguments!";
   }
 }
 

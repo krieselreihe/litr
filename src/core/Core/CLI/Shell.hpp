@@ -15,6 +15,9 @@ class Shell {
 
   [[nodiscard]] static Result Exec(const std::string& command);
   static Result Exec(const std::string& command, const Shell::ExecCallback& callback);
+
+ private:
+  static int GetStatusCode(int streamStatus);
 };
 
 }  // namespace Litr

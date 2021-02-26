@@ -36,7 +36,7 @@ void ErrorReporter::PrintError(const Error& error) {
       fg(fmt::color::crimson),
       "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
       type, error.Line, error.LineStr, " ",
-             CountDigits(error.Line), " ^ - ", error.Column, error.Message);
+             CountDigits(error.Line), "^ - ", error.Column, error.Message);
 }
 
 }  // namespace Litr

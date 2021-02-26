@@ -2,28 +2,17 @@
 
 #include <string>
 
+#include "Core/CLI/Token.hpp"
+
 namespace Litr {
 
 class Scanner {
  public:
-  enum class TokenType {
-    COMMA, EQUAL,
-    COMMAND, SHORT_PARAMETER, LONG_PARAMETER, STRING, NUMBER,
-    ERROR,
-    EOS  // End of string
-  };
-
-  struct Token {
-    TokenType Type;
-    const char* Start;
-    int Length;
-    int Line;
-  } __attribute__((aligned(32))) __attribute__((packed));
-
   explicit Scanner(const char* source);
 
   [[nodiscard]] Token ScanToken();
   [[nodiscard]] static std::string GetTokenValue(const Token& token);
+  [[nodiscard]] static std::string GetTokenValue(Token* token);
 
  private:
   void SkipWhitespace();
@@ -49,7 +38,7 @@ class Scanner {
  private:
   const char* m_Start;
   const char* m_Current;
-  int m_Line{1};
+  uint32_t m_Column{1};
 };
 
 }  // namespace Litr

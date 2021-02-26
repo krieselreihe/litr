@@ -119,14 +119,16 @@ After [building the application](#build) you can either run the client in debug 
 
 ## Tests
 
-After [building the application](#build) you can run unit tests for the build output.
+After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
+
+**Note:** With CMake 3.20 it will be possible to specify the `--test-dir` option for ctest [[source](https://cmake.org/cmake/help/latest/release/3.20.html#ctest)], making test execution easier.
 
 ```shell script
 # Run all tests for debugging build
-./build/debug/litr/tests/*Test
+cd build/debug/src/tests && ctest && ../../../..
 
 # Run all tests for release build
-./build/release/litr/tests/*Test
+cd build/release/src/tests && ctest && ../../../..
 ```
 
 ## Profiling

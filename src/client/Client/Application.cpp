@@ -13,14 +13,14 @@ Application::Application() {
       fmt::print("No configuration file found!\n");
       m_ExitStatus = EXIT_FAILURE;
     }
-    case Litr::ConfigFileResolver::Status::DUPLICATE: {
+    case ConfigFileResolver::Status::DUPLICATE: {
       fmt::print(
           "You defined both, litr.toml and .litr.toml in {0}."
           "This is probably an error and you only want one of them.\n",
           configPath.GetFileDirectory());
       m_ExitStatus = EXIT_FAILURE;
     }
-    case Litr::ConfigFileResolver::Status::FOUND: {
+    case ConfigFileResolver::Status::FOUND: {
       fmt::print("Configuration file found under: {0}\n", configPath.GetFilePath());
     }
   }
@@ -38,29 +38,42 @@ int Application::Run(int argc, char* argv[]) {
 
   // Create source string from arguments. Start with 1 to skip the program name.
   for (int i = 1; i < argc; ++i) {
-    m_Source.append(" ").append(argv[i]);
+    // !!! HACK ALERT START !!!
+    // @todo: https://github.com/krieselreihe/litr/issues/20
+    std::string argument{argv[i]};
+    std::size_t found{argument.find('=')};
+
+    if (found != std::string::npos) {
+      std::vector<std::string> parts{};
+      Litr::Utils::SplitInto(argument, '=', parts);
+      argument = parts[0].append("=\"").append(parts[1]).append("\"");
+    }
+    // !!! HACK ALERT END !!!
+
+    m_Source.append(" ").append(argument);
   }
+
+  // @todo: Test simple parser output
+  const auto instruction{CreateRef<Instruction>()};
+  Parser parser{m_ErrorHandler, instruction, m_Source};
 
   // Print any current errors.
   if (m_ErrorHandler->HasErrors()) {
     ErrorReporter::PrintErrors(m_ErrorHandler->GetErrors());
   }
 
-  // @todo: Test simple parser output
-  Litr::Parser parser{m_Source};
-
 #ifdef SOME_TEST_CODE
   // @todo: Test output.
 
-  for (const auto& command : config->GetCommands()) {
+  for (auto&& command : m_Config->GetCommands()) {
     LITR_INFO("{}", *command);
   }
 
   LITR_INFO("========================================");
-  auto testCommand{config->GetCommand("hello")};
+  auto testCommand{m_Config->GetCommand("hello")};
   if (testCommand != nullptr) {
     LITR_INFO("TEST COMMAND: {}", testCommand->Script[0]);
-    Litr::Shell::Result result{Litr::Shell::Exec(testCommand->Script[0])};
+    Shell::Result result{Shell::Exec(testCommand->Script[0])};
     LITR_INFO("OUTPUT (Status code {}): {}", result.Status, result.Message);
   }
 #endif

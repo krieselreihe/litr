@@ -1,22 +1,21 @@
 #include "Scanner.hpp"
 
+#include "Core/Debug/Instrumentor.hpp"
+
 namespace Litr {
 
 Scanner::Scanner(const char* source) : m_Start(source), m_Current(source) {
 }
 
 void Scanner::SkipWhitespace() {
+  LITR_PROFILE_FUNCTION();
+
   for (;;) {
     char c = Peek();
     switch (c) {
       case ' ':
       case '\r':
       case '\t': {
-        Advance();
-        break;
-      }
-      case '\n': {
-        m_Line++;
         Advance();
         break;
       }
@@ -28,10 +27,14 @@ void Scanner::SkipWhitespace() {
 }
 
 char Scanner::Peek() {
+  LITR_PROFILE_FUNCTION();
+
   return *m_Current;
 }
 
 char Scanner::PeekNext() const {
+  LITR_PROFILE_FUNCTION();
+
   if (IsAtEnd()) {
     return '\0';
   }
@@ -40,11 +43,16 @@ char Scanner::PeekNext() const {
 }
 
 char Scanner::Advance() {
+  LITR_PROFILE_FUNCTION();
+
   m_Current++;
+  m_Column++;
   return m_Current[-1];
 }
 
 bool Scanner::Match(char expected) {
+  LITR_PROFILE_FUNCTION();
+
   if (IsAtEnd()) {
     return false;
   }
@@ -54,10 +62,13 @@ bool Scanner::Match(char expected) {
   }
 
   m_Current++;
+  m_Column++;
   return true;
 }
 
-Scanner::Token Scanner::ScanToken() {
+Token Scanner::ScanToken() {
+  LITR_PROFILE_FUNCTION();
+
   SkipWhitespace();
 
   m_Start = m_Current;
@@ -80,17 +91,29 @@ Scanner::Token Scanner::ScanToken() {
   }
 }
 
-std::string Scanner::GetTokenValue(const Scanner::Token& token) {
-  return std::string(token.Start, static_cast<unsigned long>(token.Length));
+std::string Scanner::GetTokenValue(const Token& token) {
+  LITR_PROFILE_FUNCTION();
+
+  return std::string(token.Start, token.Length);
 }
 
-Scanner::Token Scanner::MakeToken(Scanner::TokenType type) const {
-  Token token{type, m_Start, static_cast<int>(m_Current - m_Start), m_Line};
+std::string Scanner::GetTokenValue(Token* token) {
+  LITR_PROFILE_FUNCTION();
+
+  return std::string(token->Start, token->Length);
+}
+
+Token Scanner::MakeToken(TokenType type) const {
+  LITR_PROFILE_FUNCTION();
+
+  Token token{type, m_Start, static_cast<size_t>(m_Current - m_Start), m_Column};
   return token;
 }
 
-Scanner::Token Scanner::ErrorToken(const char* message) const {
-  Token token{TokenType::ERROR, message, static_cast<int>(strlen(message)), m_Line};
+Token Scanner::ErrorToken(const char* message) const {
+  LITR_PROFILE_FUNCTION();
+
+  Token token{TokenType::ERROR, message, strlen(message), m_Column};
   return token;
 }
 
@@ -110,7 +133,9 @@ bool Scanner::IsAtEnd() const {
   return *m_Current == '\0';
 }
 
-Scanner::Token Scanner::String() {
+Token Scanner::String() {
+  LITR_PROFILE_FUNCTION();
+
   while (Peek() != '"' && !IsAtEnd()) {
     Advance();
   }
@@ -124,7 +149,9 @@ Scanner::Token Scanner::String() {
   return MakeToken(TokenType::STRING);
 }
 
-Scanner::Token Scanner::Number() {
+Token Scanner::Number() {
+  LITR_PROFILE_FUNCTION();
+
   while (IsDigit(Peek())) {
     Advance();
   }
@@ -142,7 +169,9 @@ Scanner::Token Scanner::Number() {
   return MakeToken(TokenType::NUMBER);
 }
 
-Scanner::Token Scanner::Command() {
+Token Scanner::Command() {
+  LITR_PROFILE_FUNCTION();
+
   while (IsAlpha(Peek()) || IsDigit(Peek())) {
     Advance();
   }
@@ -150,7 +179,9 @@ Scanner::Token Scanner::Command() {
   return MakeToken(TokenType::COMMAND);
 }
 
-Scanner::Token Scanner::LongParameter() {
+Token Scanner::LongParameter() {
+  LITR_PROFILE_FUNCTION();
+
   bool hasError{false};
 
   if (IsDigit(Peek()) || Peek() == '_') {
@@ -169,7 +200,9 @@ Scanner::Token Scanner::LongParameter() {
   return MakeToken(TokenType::LONG_PARAMETER);
 }
 
-Scanner::Token Scanner::ShortParameter() {
+Token Scanner::ShortParameter() {
+  LITR_PROFILE_FUNCTION();
+
   if (!IsShortAlpha(Advance())) {
     return ErrorToken("A short parameter can only be A-Za-z as name.");
   }

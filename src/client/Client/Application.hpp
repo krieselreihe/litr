@@ -13,7 +13,7 @@ class Application {
 
  private:
   Ref<ConfigLoader> m_Config;
-  Ref<ErrorHandler> m_ErrorHandler{CreateRef<Litr::ErrorHandler>()};
+  Ref<ErrorHandler> m_ErrorHandler{CreateRef<ErrorHandler>()};
 
   std::string m_Source{};
   int m_ExitStatus{EXIT_SUCCESS};
