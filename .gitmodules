@@ -1,20 +1,20 @@
 [submodule "vendor/doctest"]
 	path = vendor/doctest
-	url = git@github.com:onqtam/doctest.git
+	url = https://github.com/onqtam/doctest.git
 	branch = 2.4.0
 [submodule "vendor/fmt"]
 	path = vendor/fmt
-	url = git@github.com:fmtlib/fmt.git
+	url = https://github.com/fmtlib/fmt.git
 	branch = 7.0.3
 [submodule "vendor/spdlog"]
 	path = vendor/spdlog
-	url = git@github.com:gabime/spdlog.git
+	url = https://github.com/gabime/spdlog.git
 	branch = v1.8.1
 [submodule "vendor/toml11"]
 	path = vendor/toml11
-	url = git@github.com:ToruNiina/toml11.git
+	url = https://github.com/ToruNiina/toml11.git
 	branch = v3.6.0
 [submodule "vendor/ordered-map"]
 	path = vendor/ordered-map
-	url = git@github.com:krieselreihe/ordered-map.git
+	url = https://github.com/krieselreihe/ordered-map.git
 	branch = task/fix-implicit-sign-conversion
