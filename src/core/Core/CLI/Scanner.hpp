@@ -4,7 +4,7 @@
 
 #include "Core/CLI/Token.hpp"
 
-namespace Litr {
+namespace Litr::CLI {
 
 class Scanner {
  public:
@@ -41,4 +41,4 @@ class Scanner {
   uint32_t m_Column{1};
 };
 
-}  // namespace Litr
+}  // namespace Litr::CLI

@@ -5,8 +5,8 @@
 
 namespace Litr::Debug {
 
-size_t DisassembleInstruction(const Ref<Instruction>& instruction, size_t offset);
-void Disassemble(const Ref<Instruction>& instruction, const std::string& name);
+size_t DisassembleInstruction(const Ref<CLI::Instruction>& instruction, size_t offset);
+void Disassemble(const Ref<CLI::Instruction>& instruction, const std::string& name);
 
 }  // namespace Litr::Debug
 

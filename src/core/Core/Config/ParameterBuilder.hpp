@@ -8,7 +8,7 @@
 #include "Core/Errors/Error.hpp"
 #include "Core/Errors/ErrorHandler.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
 class ParameterBuilder {
  public:
@@ -31,4 +31,4 @@ class ParameterBuilder {
   const Ref<Parameter> m_Parameter;
 };
 
-}  // namespace Litr
+}  // namespace Litr::Config

@@ -1,6 +1,6 @@
 #include "ParameterBuilder.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
 ParameterBuilder::ParameterBuilder(const Ref<ErrorHandler>& errorHandler, const toml::table& file, const toml::value& data, const std::string& name)
     : m_ErrorHandler(errorHandler), m_File(file), m_Table(data), m_Parameter(CreateRef<Parameter>(name)) {
@@ -166,4 +166,4 @@ bool ParameterBuilder::IsReservedName(const std::string& name) {
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 
-}  // namespace Litr
+}  // namespace Litr::Config

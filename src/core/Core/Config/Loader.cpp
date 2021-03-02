@@ -1,69 +1,16 @@
-#include "ConfigLoader.hpp"
+#include "Loader.hpp"
 
 #include <tsl/ordered_map.h>
 
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/Utils.hpp"
 #include "Core/Log.hpp"
+#include "Core/Utils.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
-static Ref<Command> GetCommandByName(const std::string& name, const std::vector<Ref<Command>>& commands) {
-  LITR_PROFILE_FUNCTION();
-
-  for (const Ref<Command>& command : commands) {
-    if (command->Name == name) {
-      return command;
-    }
-  }
-
-  return nullptr;
-}
-
-// Ignore recursion warning.
-// NOLINTNEXTLINE
-static Ref<Command> ResolveCommandByPath(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
-  LITR_PROFILE_FUNCTION();
-
-  const Ref<Command>& command{GetCommandByName(names.front(), commands)};
-
-  if (command == nullptr) {
-    return nullptr;
-  }
-
-  names.pop_front();
-
-  if (names.empty()) {
-    return command;
-  }
-
-  if (command->ChildCommands.empty()) {
-    if (!names.empty()) {
-      // @todo: This is an error, but not a hard one as the user could access sub commands that
-      // do not exist. But I also do not want to emit a user error as this is not the place for
-      // this. Maybe this whole `GetCommand` function should not exist here and rather be moved
-      // to the client.
-    }
-
-    return nullptr;
-  }
-
-  // Ignore recursion warning.
-  // NOLINTNEXTLINE
-  return ResolveCommandByPath(names, command->ChildCommands);
-}
-
-static std::deque<std::string> SplitCommandQuery(const std::string& query) {
-  LITR_PROFILE_FUNCTION();
-
-  std::deque<std::string> parts{};
-  Utils::SplitInto(query, '.', parts);
-  return parts;
-}
-
-ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_ErrorHandler(errorHandler) {
+Loader::Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_ErrorHandler(errorHandler) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
@@ -98,28 +45,9 @@ ConfigLoader::ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& fi
   }
 }
 
-Ref<Command> ConfigLoader::GetCommand(const std::string& name) const {
-  LITR_PROFILE_FUNCTION();
-
-  std::deque names{SplitCommandQuery(name)};
-  return ResolveCommandByPath(names, m_Commands);
-}
-
-Ref<Parameter> ConfigLoader::GetParameter(const std::string& name) const {
-  LITR_PROFILE_FUNCTION();
-
-  for (const Ref<Parameter>& param : m_Parameters) {
-    if (param->Name == name) {
-      return param;
-    }
-  }
-
-  return nullptr;
-}
-
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
+Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{m_ErrorHandler, commands, definition, name};
@@ -153,7 +81,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
   }
 
   while (!properties.empty()) {
-    LITR_PROFILE_SCOPE("ConfigLoader::CreateCommand::CollectCommandProperties(while)");
+    LITR_PROFILE_SCOPE("Config::Loader::CreateCommand::CollectCommandProperties(while)");
     const std::string property{properties.top()};
 
     if (property == "script") {
@@ -220,7 +148,7 @@ Ref<Command> ConfigLoader::CreateCommand(const toml::table& commands, const toml
   return builder.GetResult();
 }
 
-void ConfigLoader::CollectCommands(const toml::table& commands) {
+void Loader::CollectCommands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : commands) {
@@ -228,7 +156,7 @@ void ConfigLoader::CollectCommands(const toml::table& commands) {
   }
 }
 
-void ConfigLoader::CollectParams(const toml::table& params) {
+void Loader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : params) {
@@ -269,4 +197,4 @@ void ConfigLoader::CollectParams(const toml::table& params) {
   }
 }
 
-}  // namespace Litr
+}  // namespace Litr::Config

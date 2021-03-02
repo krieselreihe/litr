@@ -11,29 +11,29 @@ static size_t SimpleInstruction(const std::string& name, size_t offset) {
 }
 
 /** @private */
-static size_t ConstantInstruction(const std::string& name, const Ref<Instruction>& instruction, size_t offset) {
+static size_t ConstantInstruction(const std::string& name, const Ref<CLI::Instruction>& instruction, size_t offset) {
   const std::byte index{instruction->Read(offset)};
-  const Instruction::Value constant{instruction->ReadConstant(index)};
+  const CLI::Instruction::Value constant{instruction->ReadConstant(index)};
 
   fmt::print("{:<16} {:4d} '{}'\n", name, index, constant);
   return offset + 1;
 }
 
-size_t DisassembleInstruction(const Ref<Instruction>& instruction, size_t offset) {
+size_t DisassembleInstruction(const Ref<CLI::Instruction>& instruction, size_t offset) {
   fmt::print("{:04d} ", offset);
 
-  const auto code{static_cast<Instruction::Code>(instruction->Read(offset++))};
+  const auto code{static_cast<CLI::Instruction::Code>(instruction->Read(offset++))};
 
   switch (code) {
-    case Instruction::Code::CONSTANT:
+    case CLI::Instruction::Code::CONSTANT:
       return ConstantInstruction("CONSTANT", instruction, offset);
-    case Instruction::Code::DEFINE:
+    case CLI::Instruction::Code::DEFINE:
       return ConstantInstruction("DEFINE", instruction, offset);
-    case Instruction::Code::BEGIN_SCOPE:
+    case CLI::Instruction::Code::BEGIN_SCOPE:
       return ConstantInstruction("BEGIN_SCOPE", instruction, offset);
-    case Instruction::Code::EXECUTE:
+    case CLI::Instruction::Code::EXECUTE:
       return ConstantInstruction("EXECUTE", instruction, offset);
-    case Instruction::Code::CLEAR:
+    case CLI::Instruction::Code::CLEAR:
       return SimpleInstruction("CLEAR", offset);
     default:
       fmt::print("Unknown Instruction::Code {:d}\n", code);
@@ -41,7 +41,7 @@ size_t DisassembleInstruction(const Ref<Instruction>& instruction, size_t offset
   }
 }
 
-void Disassemble(const Ref<Instruction>& instruction, const std::string& name) {
+void Disassemble(const Ref<CLI::Instruction>& instruction, const std::string& name) {
   fmt::print("=== {} ===\n", name);
 
   size_t offset{0};

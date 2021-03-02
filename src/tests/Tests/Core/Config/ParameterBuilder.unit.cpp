@@ -9,9 +9,9 @@ TEST_SUITE("ParameterBuilder") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const auto [file, data] = CreateTOMLMock("test", "");
 
-    Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
-    Litr::Ref<Litr::Parameter> builderResult{builder.GetResult()};
-    Litr::Parameter compare{"test"};
+    Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
+    Litr::Ref<Litr::Config::Parameter> builderResult{builder.GetResult()};
+    Litr::Config::Parameter compare{"test"};
 
     CHECK(errorHandler->GetErrors().size() == 0);
     CHECK(sizeof(*builderResult) == sizeof(compare));
@@ -22,7 +22,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -33,7 +33,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "description = 42");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -44,7 +44,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -55,7 +55,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription("Text");
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -68,7 +68,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddShortcut();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -79,7 +79,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "shortcut = 42");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddShortcut();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -90,7 +90,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "help")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddShortcut();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -101,7 +101,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "h")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddShortcut();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -112,7 +112,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "t")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddShortcut();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -125,18 +125,18 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Parameter::ParameterType::String);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
     }
 
     SUBCASE("Emits an error if string is set with an unknown option") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = "unknown")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -147,11 +147,11 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = "string")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Parameter::ParameterType::String);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
     }
 
     // @todo: Not sure if this should actually be an error.
@@ -160,18 +160,18 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = [])");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Parameter::ParameterType::Array);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::Array);
     }
 
     SUBCASE("Emits an error if a non string value is contained in the type array") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["1", 2, "3"])");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -182,12 +182,12 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["test", "debug"])");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
-      Litr::Ref<Litr::Parameter> result{builder.GetResult()};
+      Litr::Ref<Litr::Config::Parameter> result{builder.GetResult()};
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(result->Type == Litr::Parameter::ParameterType::Array);
+      CHECK(result->Type == Litr::Config::Parameter::ParameterType::Array);
       CHECK(result->TypeArguments[0] == "test");
       CHECK(result->TypeArguments[1] == "debug");
     }
@@ -196,7 +196,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(type = 32)");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -209,7 +209,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDefault();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -220,7 +220,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(default = 1)");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDefault();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -232,7 +232,7 @@ TEST_SUITE("ParameterBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["Not default"]
 default = "Default")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
       builder.AddDefault();
 
@@ -244,7 +244,7 @@ default = "Default")");
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(default = "something")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddDefault();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -256,7 +256,7 @@ default = "Default")");
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["something"]
 default = "something")");
 
-      Litr::ParameterBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::ParameterBuilder builder{errorHandler, file, data, "test"};
       builder.AddType();
       builder.AddDefault();
 

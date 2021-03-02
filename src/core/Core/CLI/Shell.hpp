@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace Litr {
+namespace Litr::CLI {
 
 class Shell {
  public:
@@ -20,4 +20,4 @@ class Shell {
   static int GetStatusCode(int streamStatus);
 };
 
-}  // namespace Litr
+}  // namespace Litr::CLI

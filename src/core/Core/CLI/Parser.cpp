@@ -6,7 +6,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Debug/Disassembler.hpp"
 
-namespace Litr {
+namespace Litr::CLI {
 
 Parser::Parser(const Ref<ErrorHandler>& errorHandler, const Ref<Instruction>& instruction, const std::string& source)
     : m_Scanner(source.c_str()), m_ErrorHandler(errorHandler), m_Instruction(instruction) {
@@ -256,4 +256,4 @@ std::string Parser::GetScopePath() const {
   return value;
 }
 
-}  // namespace Litr
+}  // namespace Litr::CLI

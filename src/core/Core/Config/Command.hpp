@@ -8,7 +8,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
 struct Command {
   enum class Output { UNCHANGED = 0, SILENT = 1 };
@@ -27,18 +27,18 @@ struct Command {
   }
 } __attribute__((aligned(128)));
 
-}  // namespace Litr
+}  // namespace Litr::Config
 
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<Litr::Command> {
+struct fmt::formatter<Litr::Config::Command> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Litr::Command& c, FormatContext& ctx) {
+  auto format(const Litr::Config::Command& c, FormatContext& ctx) {
     std::string childView{};
     if (!c.ChildCommands.empty()) {
       for (auto&& child : c.ChildCommands) {

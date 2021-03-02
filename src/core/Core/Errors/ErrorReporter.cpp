@@ -31,6 +31,8 @@ void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
 void ErrorReporter::PrintError(const Error& error) {
   LITR_PROFILE_FUNCTION();
 
+  // @todo: Handle errors only containing a type and message.
+
   const std::string type{ErrorHandler::GetTypeDescription(error)};
   fmt::print(
       fg(fmt::color::crimson),

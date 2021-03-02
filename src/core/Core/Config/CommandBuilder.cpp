@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 
-namespace Litr {
+namespace Litr::Config {
 
 CommandBuilder::CommandBuilder(const Ref<ErrorHandler>& errorHandler, const toml::table& file, const toml::value& data, const std::string& name)
     : m_ErrorHandler(errorHandler), m_File(file), m_Table(data), m_Command(CreateRef<Command>(name)) {
@@ -151,4 +151,4 @@ void CommandBuilder::AddChildCommand(const Ref<Command>& command) {
   m_Command->ChildCommands.emplace_back(command);
 }
 
-}  // namespace Litr
+}  // namespace Litr::Config

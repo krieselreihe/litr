@@ -8,7 +8,7 @@
 #include "Core/Errors/Error.hpp"
 #include "Core/Errors/ErrorHandler.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
 class CommandBuilder {
  public:
@@ -33,4 +33,4 @@ class CommandBuilder {
   const Ref<Command> m_Command;
 };
 
-}  // namespace Litr
+}  // namespace Litr::Config

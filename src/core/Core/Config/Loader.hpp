@@ -12,19 +12,12 @@
 #include "Core/Errors/ErrorHandler.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
-class ConfigLoader {
+class Loader {
  public:
-  explicit ConfigLoader(const Ref<ErrorHandler>& errorHandler, const Path& filePath);
-  virtual ~ConfigLoader() = default;
-
-  /**
-   * Can use a dot-notation to access nested commands.
-   * @todo: This should probably be moved. See implementation for details.
-   */
-  [[nodiscard]] Ref<Command> GetCommand(const std::string& name) const;
-  [[nodiscard]] Ref<Parameter> GetParameter(const std::string& name) const;
+  explicit Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath);
+  virtual ~Loader() = default;
 
   [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
   [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameters() const { return m_Parameters; };
@@ -41,4 +34,4 @@ class ConfigLoader {
   std::vector<Ref<Parameter>> m_Parameters{};
 };
 
-}  // namespace Litr
+}  // namespace Litr::Config

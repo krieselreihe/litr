@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 
-namespace Litr {
+namespace Litr::CLI {
 
 class Instruction {
  public:
@@ -36,4 +36,4 @@ class Instruction {
   std::vector<Value> m_Constants{};
 };
 
-}  // namespace Litr
+}  // namespace Litr::CLI

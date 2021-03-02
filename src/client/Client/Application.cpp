@@ -6,21 +6,21 @@ namespace Litr {
 
 Application::Application() {
   Path cwd{FileSystem::GetCurrentWorkingDirectory()};
-  ConfigFileResolver configPath{cwd};
+  Config::FileResolver configPath{cwd};
 
   switch (configPath.GetStatus()) {
-    case ConfigFileResolver::Status::NOT_FOUND: {
+    case Config::FileResolver::Status::NOT_FOUND: {
       fmt::print("No configuration file found!\n");
       m_ExitStatus = EXIT_FAILURE;
     }
-    case ConfigFileResolver::Status::DUPLICATE: {
+    case Config::FileResolver::Status::DUPLICATE: {
       fmt::print(
           "You defined both, litr.toml and .litr.toml in {0}."
           "This is probably an error and you only want one of them.\n",
           configPath.GetFileDirectory());
       m_ExitStatus = EXIT_FAILURE;
     }
-    case ConfigFileResolver::Status::FOUND: {
+    case Config::FileResolver::Status::FOUND: {
       fmt::print("Configuration file found under: {0}\n", configPath.GetFilePath());
     }
   }
@@ -29,7 +29,7 @@ Application::Application() {
     return;
   }
 
-  m_Config = CreateRef<ConfigLoader>(m_ErrorHandler, configPath.GetFilePath());
+  m_Config = CreateRef<Config::Loader>(m_ErrorHandler, configPath.GetFilePath());
 }
 
 int Application::Run(int argc, char* argv[]) {
@@ -54,8 +54,8 @@ int Application::Run(int argc, char* argv[]) {
   }
 
   // @todo: Test simple parser output
-  const auto instruction{CreateRef<Instruction>()};
-  Parser parser{m_ErrorHandler, instruction, m_Source};
+  const auto instruction{CreateRef<CLI::Instruction>()};
+  CLI::Parser parser{m_ErrorHandler, instruction, m_Source};
 
   // Print any current errors.
   if (m_ErrorHandler->HasErrors()) {

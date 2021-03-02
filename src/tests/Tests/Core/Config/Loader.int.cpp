@@ -1,14 +1,15 @@
 #include <doctest/doctest.h>
 
+#include "Core/Config/Loader.hpp"
+#include "Core/Config/Query.hpp"
 #include "Core/Errors/ErrorHandler.hpp"
 #include "Core/FileSystem.hpp"
-#include "Core/Config/ConfigLoader.hpp"
 
-TEST_SUITE("ConfigLoader") {
+TEST_SUITE("Config::Loader") {
   TEST_CASE("Loads a config file without issues") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/empty.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
 
     CHECK(errorHandler->HasErrors() == false);
   }
@@ -16,7 +17,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits a custom syntax error on exception") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/syntax-error.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -27,7 +28,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits an error on malformed command") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/malformed-command.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -38,7 +39,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits an error if command script is not a string") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/malformed-command-script.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -49,7 +50,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits an error if command property unknown") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/unknown-command-property.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -57,10 +58,10 @@ TEST_SUITE("ConfigLoader") {
     CHECK(errors[0].Message == R"(The command property "unknown" does not exist. Please refer to the docs.)");
   }
 
-  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on malformed script array") {
+  TEST_CASE("Copies errors from CommandBuilder to Loader on malformed script array") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/command-script-array-malformed.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -68,10 +69,10 @@ TEST_SUITE("ConfigLoader") {
     CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
   }
 
-  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on detailed malformed script array") {
+  TEST_CASE("Copies errors from CommandBuilder to Loader on detailed malformed script array") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/command-detailed-script-array-malformed.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -79,10 +80,10 @@ TEST_SUITE("ConfigLoader") {
     CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
   }
 
-  TEST_CASE("Copies errors from CommandBuilder to ConfigLoader on multiple malformed fields") {
+  TEST_CASE("Copies errors from CommandBuilder to Loader on multiple malformed fields") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/command-description-and-output-malformed.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -94,7 +95,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Does nothing if no commands or parameters defined") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/empty-commands-params.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
 
     CHECK(errorHandler->HasErrors() == false);
     CHECK(config.GetCommands().size() == 0);
@@ -104,45 +105,48 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Loads commands") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const auto config{Litr::CreateRef<Litr::Config::Loader>(errorHandler, path)};
 
     SUBCASE("Successfully without errors") {
       CHECK(errorHandler->HasErrors() == false);
-      CHECK(config.GetCommands().size() == 3);
+      CHECK(config->GetCommands().size() == 3);
     }
 
     SUBCASE("Resolves all fields on a command") {
-      const auto command{config.GetCommand("run")};
+      const Litr::Config::Query query{config};
+      const auto command{query.GetCommand("run")};
 
       CHECK(command->Name == "run");
       CHECK(command->Script.size() == 1);
       CHECK(command->Script[0] == "Script");
       CHECK(command->Description == "Description");
       CHECK(command->Example == "Example");
-      CHECK(command->Output == Litr::Command::Output::SILENT);
+      CHECK(command->Output == Litr::Config::Command::Output::SILENT);
       CHECK(command->Directory.size() == 1);
       CHECK(command->Directory[0] == "Directory");
       CHECK(command->ChildCommands.size() == 4);
     }
 
     SUBCASE("Resolves all fields on a command without sub commands") {
-      const auto command{config.GetCommand("update")};
+      const Litr::Config::Query query{config};
+      const auto command{query.GetCommand("update")};
 
       CHECK(command->Name == "update");
       CHECK(command->Script.size() == 1);
       CHECK(command->Script[0] == "git pull && git submodule update --init");
       CHECK(command->Description.empty());
       CHECK(command->Example.empty());
-      CHECK(command->Output == Litr::Command::Output::UNCHANGED);
+      CHECK(command->Output == Litr::Config::Command::Output::UNCHANGED);
       CHECK(command->Directory.empty());
       CHECK(command->ChildCommands.empty());
     }
 
     SUBCASE("Resolves all fields on a sub command") {
-      const auto command1{config.GetCommand("run.first")};
-      const auto command2{config.GetCommand("run.second")};
-      const auto command3{config.GetCommand("run.third")};
-      const auto command4{config.GetCommand("run.fourth")};
+      const Litr::Config::Query query{config};
+      const auto command1{query.GetCommand("run.first")};
+      const auto command2{query.GetCommand("run.second")};
+      const auto command3{query.GetCommand("run.third")};
+      const auto command4{query.GetCommand("run.fourth")};
 
       CHECK(command1 != nullptr);
       CHECK(command2 != nullptr);
@@ -171,7 +175,8 @@ TEST_SUITE("ConfigLoader") {
     }
 
     SUBCASE("Resolves a very deep nested script") {
-      const auto command{config.GetCommand("run.fourth.l1.l2.l3")};
+      const Litr::Config::Query query{config};
+      const auto command{query.GetCommand("run.fourth.l1.l2.l3")};
 
       CHECK(command != nullptr);
       CHECK(command->Name == "l3");
@@ -183,7 +188,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits an error if parameter name is reserved for Litr") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/reserved-parameter.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -195,7 +200,7 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Emits an error if parameter definition is malformed") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/malformed-parameter.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -203,10 +208,10 @@ TEST_SUITE("ConfigLoader") {
     CHECK(errors[0].Message == "A parameter needs to be a string or table.");
   }
 
-  TEST_CASE("Copies errors from ParameterBuilder to ConfigLoader on multiple malformed params") {
+  TEST_CASE("Copies errors from ParameterBuilder to Loader on multiple malformed params") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/params-description-and-type-malformed.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const Litr::Config::Loader config{errorHandler, path};
     const auto errors{errorHandler->GetErrors()};
 
     CHECK(errorHandler->HasErrors() == true);
@@ -218,21 +223,22 @@ TEST_SUITE("ConfigLoader") {
   TEST_CASE("Loads Parameters") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const Litr::ConfigLoader config{errorHandler, path};
+    const auto config{Litr::CreateRef<Litr::Config::Loader>(errorHandler, path)};
 
     SUBCASE("Successfully without errors") {
       CHECK(errorHandler->HasErrors() == false);
-      CHECK(config.GetParameters().size() == 2);
+      CHECK(config->GetParameters().size() == 2);
     }
 
     SUBCASE("Resolves all fields on a parameter") {
-      const auto param{config.GetParameter("target")};
+      const Litr::Config::Query query{config};
+      const auto param{query.GetParameter("target")};
 
       CHECK(param->Name == "target");
       CHECK(param->Description == "Description");
       CHECK(param->Shortcut == "t");
       CHECK(param->Default == "debug");
-      CHECK(param->Type == Litr::Parameter::ParameterType::Array);
+      CHECK(param->Type == Litr::Config::Parameter::ParameterType::Array);
       CHECK(param->TypeArguments.size() == 2);
       CHECK(param->TypeArguments[0] == "debug");
       CHECK(param->TypeArguments[1] == "release");

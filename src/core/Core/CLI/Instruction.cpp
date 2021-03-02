@@ -2,7 +2,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace Litr::CLI {
 
 Instruction::Instruction(std::vector<std::byte> data) : m_ByteCode(std::move(data)) {
 }
@@ -48,4 +48,4 @@ Instruction::Value Instruction::ReadConstant(std::byte index) const {
   return m_Constants[static_cast<size_t>(index)];
 }
 
-}  // namespace Litr
+}  // namespace Litr::CLI

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Litr {
+namespace Litr::CLI {
 
 enum class TokenType {
   COMMA,
@@ -21,4 +21,4 @@ struct Token {
   uint32_t Column;
 } __attribute__((aligned(32))) __attribute__((packed));
 
-}  // namespace Litr
+}  // namespace Litr::CLI

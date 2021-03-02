@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace Litr {
+namespace Litr::Config {
 
 struct Parameter {
   enum class ParameterType { String = 0, Array = 1 };
@@ -23,18 +23,18 @@ struct Parameter {
   }
 } __attribute__((aligned(128)));
 
-}  // namespace Litr
+}  // namespace Litr::Config
 
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<Litr::Parameter> {
+struct fmt::formatter<Litr::Config::Parameter> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Litr::Parameter& p, FormatContext& ctx) {
+  auto format(const Litr::Config::Parameter& p, FormatContext& ctx) {
     if (!p.Description.empty()) {
       return format_to(ctx.out(), "Param: {} - {}", p.Name, p.Description);
     }

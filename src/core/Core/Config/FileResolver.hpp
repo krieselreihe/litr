@@ -4,9 +4,9 @@
 
 #include "Core/FileSystem.hpp"
 
-namespace Litr {
+namespace Litr::Config {
 
-class ConfigFileResolver {
+class FileResolver {
  public:
   enum class Status {
     FOUND,
@@ -14,8 +14,8 @@ class ConfigFileResolver {
     DUPLICATE,
   };
 
-  explicit ConfigFileResolver(Path cwd);
-  explicit ConfigFileResolver(const std::string& cwd);
+  explicit FileResolver(Path cwd);
+  explicit FileResolver(const std::string& cwd);
 
   [[nodiscard]] Status GetStatus() const;
   [[nodiscard]] Path GetFilePath() const;
@@ -32,4 +32,4 @@ class ConfigFileResolver {
   void FindFile(const Path& cwd);
 };
 
-}  // namespace Litr
+}  // namespace Litr::Config

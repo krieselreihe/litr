@@ -9,7 +9,7 @@
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Instruction.hpp"
 
-namespace Litr {
+namespace Litr::CLI {
 
 class Parser {
  public:
@@ -59,4 +59,4 @@ class Parser {
   bool m_PanicMode{false};
 };
 
-}  // namespace Litr
+}  // namespace Litr::CLI

@@ -4,14 +4,14 @@
 #include "Core/Errors/ErrorHandler.hpp"
 #include "Core/Config/CommandBuilder.hpp"
 
-TEST_SUITE("CommandBuilder") {
+TEST_SUITE("Config::CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {
     const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const auto [file, data] = CreateTOMLMock("test", "");
 
-    Litr::CommandBuilder builder{errorHandler, file, data, "test"};
-    Litr::Ref<Litr::Command> builderResult{builder.GetResult()};
-    Litr::Command compare{"test"};
+    Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
+    Litr::Ref<Litr::Config::Command> builderResult{builder.GetResult()};
+    Litr::Config::Command compare{"test"};
 
     CHECK(errorHandler->GetErrors().size() == 0);
     CHECK(sizeof(*builderResult) == sizeof(compare));
@@ -22,7 +22,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddScriptLine("first line");
       builder.AddScriptLine("second line");
 
@@ -39,7 +39,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       const std::vector script{"first line", "second line"};
       builder.AddScript(script);
 
@@ -54,7 +54,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "scripts = [1]");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -65,7 +65,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "scripts = [1, 2, 3]");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -76,7 +76,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddScript(toml::find(data, "scripts"));
 
       const auto result{builder.GetResult()};
@@ -92,7 +92,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -103,7 +103,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(description = 42)");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -114,7 +114,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDescription();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -127,7 +127,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddExample();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -138,7 +138,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(example = 42)");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddExample();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -149,7 +149,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(example = "Text")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddExample();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -162,7 +162,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -173,7 +173,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(dir = 42)");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -184,7 +184,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(dir = [1])");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -195,7 +195,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(dir = [1, 2])");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 2);
@@ -207,7 +207,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1"])");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -218,7 +218,7 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1", "folder2"])");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddDirectory();
 
       CHECK(errorHandler->GetErrors().size() == 0);
@@ -232,18 +232,18 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddOutput();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Output == Litr::Command::Output::UNCHANGED);
+      CHECK(builder.GetResult()->Output == Litr::Config::Command::Output::UNCHANGED);
     }
 
     SUBCASE("Emits an error if output type is not known") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(output = "unknown")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddOutput();
 
       CHECK(errorHandler->GetErrors().size() == 1);
@@ -254,22 +254,22 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(output = "silent")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddOutput();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Output == Litr::Command::Output::SILENT);
+      CHECK(builder.GetResult()->Output == Litr::Config::Command::Output::SILENT);
     }
 
     SUBCASE("Sets the output to unchanged if the option is provided") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", R"(output = "unchanged")");
 
-      Litr::CommandBuilder builder{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builder{errorHandler, file, data, "test"};
       builder.AddOutput();
 
       CHECK(errorHandler->GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Output == Litr::Command::Output::UNCHANGED);
+      CHECK(builder.GetResult()->Output == Litr::Config::Command::Output::UNCHANGED);
     }
   }
 
@@ -278,8 +278,8 @@ TEST_SUITE("CommandBuilder") {
       const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
       const auto [file, data] = CreateTOMLMock("test", "");
 
-      Litr::CommandBuilder builderRoot{errorHandler, file, data, "test"};
-      Litr::CommandBuilder builderChild{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builderRoot{errorHandler, file, data, "test"};
+      Litr::Config::CommandBuilder builderChild{errorHandler, file, data, "test"};
 
       builderRoot.AddChildCommand(builderChild.GetResult());
 

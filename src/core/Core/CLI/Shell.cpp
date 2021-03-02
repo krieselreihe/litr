@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <functional>
 
-namespace Litr {
+namespace Litr::CLI {
 
 Shell::Result Shell::Exec(const std::string& command) {
   LITR_PROFILE_FUNCTION();
@@ -43,4 +43,4 @@ int Shell::GetStatusCode(int streamStatus) {
   return streamStatus / 256;
 }
 
-}  // namespace Litr
+}  // namespace Litr::CLI

@@ -1,11 +1,11 @@
 #include <doctest/doctest.h>
 
-#include "Core/Config/ConfigFileResolver.hpp"
+#include "Core/Config/FileResolver.hpp"
 
-TEST_SUITE("ConfigFileResolver") {
+TEST_SUITE("Config::FileResolver") {
   TEST_CASE("File not found") {
-    Litr::ConfigFileResolver config{"/some/path/to/nowhere"};
-    CHECK(config.GetStatus() == Litr::ConfigFileResolver::Status::NOT_FOUND);
+    Litr::Config::FileResolver config{"/some/path/to/nowhere"};
+    CHECK(config.GetStatus() == Litr::Config::FileResolver::Status::NOT_FOUND);
     CHECK(config.GetFilePath() == "");
   }
 
