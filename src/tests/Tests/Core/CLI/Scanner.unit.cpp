@@ -1,4 +1,5 @@
 #include <doctest/doctest.h>
+
 #include <array>
 
 // Not sure why, but doctest really wants iostream here when

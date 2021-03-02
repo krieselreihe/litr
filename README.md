@@ -42,6 +42,8 @@ To find out more go to the [wikis setup section](https://github.com/krieselreihe
 
 ## Development
 
+[![Build Status](https://travis-ci.com/krieselreihe/litr.svg?branch=main)](https://travis-ci.com/krieselreihe/litr)
+
 Find more information about how to contribute in the [contribution guide](CONTRIBUTING.md).
 
 ## License
