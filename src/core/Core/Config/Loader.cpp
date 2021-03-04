@@ -1,5 +1,6 @@
 #include "Loader.hpp"
 
+#include <stack>
 #include <tsl/ordered_map.h>
 
 #include "Core/Config/CommandBuilder.hpp"

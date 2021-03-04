@@ -1,0 +1,37 @@
+dist: xenial
+language: cpp
+sudo: false
+cache: ccache
+
+compiler:
+  - clang
+  - gcc
+
+os:
+#  - linux
+  - osx
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-xenial-7
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-7
+      - cmake
+      - gcc-8
+      - g++-8
+  homebrew:
+    update: true
+    packages:
+      - cmake
+      - llvm
+      - gcc@8
+
+before_script:
+  - cmake --version
+
+script:
+  - cmake -DCMAKE_BUILD_TYPE=Release .
+  - cmake --build .
+  - cd src/tests && ctest
