@@ -27,6 +27,7 @@ Log::Log() {
 
   s_ClientLogger = CreateRef<spdlog::logger>("CLIENT", begin(logSinks), end(logSinks));
   spdlog::register_logger(s_ClientLogger);
+  spdlog::set_default_logger(s_ClientLogger);
   s_ClientLogger->set_level(level);
   s_ClientLogger->flush_on(level);
 }

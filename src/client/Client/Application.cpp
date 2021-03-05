@@ -5,6 +5,8 @@
 namespace Litr {
 
 Application::Application() {
+  LITR_PROFILE_FUNCTION();
+
   Path cwd{FileSystem::GetCurrentWorkingDirectory()};
   Config::FileResolver configPath{cwd};
 
