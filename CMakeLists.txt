@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
 
 project(
-  src
+  Litr
   VERSION 1.0.0
-  DESCRIPTION "Language Independent Task Runner lets you configure and then run any tasks you want for any language."
+  DESCRIPTION "Language Independent Task Runner lets you configure and run any tasks you want for any language."
   LANGUAGES CXX)
 
 include(cmake/StandardProjectSettings.cmake)
