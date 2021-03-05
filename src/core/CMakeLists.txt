@@ -1,6 +1,6 @@
 set(NAME "Core")
 
-include(${CMAKE_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 
 add_library(${NAME} STATIC
   Core/Debug/Instrumentor.hpp Core/Debug/Disassembler.cpp Core/Debug/Disassembler.hpp
@@ -28,7 +28,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   target_sources(${NAME} PRIVATE Platform/MacEnvironment.cpp)
 endif()
 
-target_include_directories(${NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/core)
+target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_17)
 target_link_libraries(${NAME}
   PRIVATE project_warnings
