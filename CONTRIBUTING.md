@@ -85,10 +85,10 @@ Build the configuration files with cmake:
 cmake -GNinja -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug --build build/debug
 ```
 
-Build the application with Ninja:
+Build the application:
 
 ```shell script
-ninja -C build/debug
+cmake --build build/debug
 ```
 
 ### Release
@@ -99,10 +99,28 @@ Build the configuration files with cmake:
 cmake -GNinja -DCMAKE_BUILD_TYPE=Release --build build/release
 ```
 
-Build the application with Ninja:
+Build the application:
 
 ```shell script
-ninja -C build/release
+cmake --build build/release
+```
+
+### Different compiler
+
+To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be set, specifying the path to the compiler.
+
+Example for clang on MacOS, creating a debug build:
+
+```shell
+cmake -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ --build build/debug
+cmake --build build/debug
+```
+
+Example for gcc on MacOS, creating a debug build:
+
+```shell
+cmake -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ --build build/debug
+cmake --build build/debug
 ```
 
 ## Run
@@ -111,10 +129,10 @@ After [building the application](#build) you can either run the client in debug 
 
 ```shell script
 # Debug
-./build/debug/litr/client/Client
+./build/debug/src/client/Client
 
 # Release
-./build/release/litr/client/Client
+./build/release/src/client/Client
 ```
 
 ## Tests
@@ -140,7 +158,7 @@ There is a profiling build you can generate running cmake with `PROFILE=ON` (bui
 cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release --build build/profile
 
 # Build profile runner
-ninja -C build/profile
+cmake --build build/profile
 ```
 
 Running the profiler executable will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run:

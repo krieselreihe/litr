@@ -1,7 +1,10 @@
 #include <doctest/doctest.h>
 #include <array>
 
-#include "Core/CLI/Token.hpp"
+// Not sure why, but doctest really wants iostream here when
+// using g++. Who am I to judge.
+#include <iostream>
+
 #include "Core/CLI/Scanner.hpp"
 
 #define CHECK_DEFINITION(scanner, definition)                        \

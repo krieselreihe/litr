@@ -3,7 +3,6 @@
 #include "Core/Debug/Instrumentor.hpp"
 
 #include <cstdio>
-#include <functional>
 
 namespace Litr::CLI {
 
