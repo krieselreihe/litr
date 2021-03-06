@@ -8,15 +8,23 @@ namespace Litr {
 
 class Application {
  public:
+  enum class ExitStatus : int {
+    SUCCESS = 0,
+    FAILURE = 1
+  };
+
   Application();
-  int Run(int argc, char* argv[]);
+  ExitStatus Run(int argc, char* argv[]);
+
+ private:
+  [[nodiscard]] static std::string SourceFromArguments(int argc, char* argv[]);
 
  private:
   Ref<Config::Loader> m_Config;
   Ref<ErrorHandler> m_ErrorHandler{CreateRef<ErrorHandler>()};
 
   std::string m_Source{};
-  int m_ExitStatus{EXIT_SUCCESS};
+  ExitStatus m_ExitStatus{ExitStatus::SUCCESS};
 };
 
 }  // namespace Litr
