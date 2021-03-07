@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include <fmt/printf.h>
+#include <fmt/color.h>
 
 namespace Litr {
 
@@ -12,18 +13,22 @@ Application::Application() {
 
   switch (configPath.GetStatus()) {
     case Config::FileResolver::Status::NOT_FOUND: {
-      fmt::print("No configuration file found!\n");
+      fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
       m_ExitStatus = ExitStatus::FAILURE;
+      break;
     }
     case Config::FileResolver::Status::DUPLICATE: {
       fmt::print(
-          "You defined both, litr.toml and .litr.toml in {0}."
+          fg(fmt::color::gold),
+          "You defined both, litr.toml and .litr.toml in {0}. "
           "This is probably an error and you only want one of them.\n",
           configPath.GetFileDirectory());
       m_ExitStatus = ExitStatus::FAILURE;
+      break;
     }
     case Config::FileResolver::Status::FOUND: {
       fmt::print("Configuration file found under: {0}\n", configPath.GetFilePath());
+      break;
     }
   }
 
@@ -34,45 +39,34 @@ Application::Application() {
   m_Config = CreateRef<Config::Loader>(m_ErrorHandler, configPath.GetFilePath());
 }
 
-Application::ExitStatus Application::Run(int argc, char* argv[]) {
+ExitStatus Application::Run(int argc, char* argv[]) {
   LITR_PROFILE_FUNCTION();
+
+  if (m_ExitStatus == ExitStatus::FAILURE) {
+    return m_ExitStatus;
+  }
 
   fmt::print("Hello, Litr!\n");
   m_Source = SourceFromArguments(argc, argv);
 
-  // @todo: Test simple parser output
   const auto instruction{CreateRef<CLI::Instruction>()};
-  CLI::Parser parser{m_ErrorHandler, instruction, m_Source};
+  const CLI::Parser parser{m_ErrorHandler, instruction, m_Source};
 
-  // Print any current errors.
+  // Print parser errors if any:
   if (m_ErrorHandler->HasErrors()) {
     ErrorReporter::PrintErrors(m_ErrorHandler->GetErrors());
+    return ExitStatus::FAILURE;
   }
 
-  // @todo: Quick and dirty interpreter
-  size_t offset{0};
-  while (offset < instruction->Count()) {
-    const auto code{static_cast<CLI::Instruction::Code>(instruction->Read(offset++))};
-    if (code == CLI::Instruction::Code::EXECUTE) {
-      const std::byte index{instruction->Read(offset)};
-      const CLI::Instruction::Value name{instruction->ReadConstant(index)};
+  CLI::Interpreter interpreter{m_ErrorHandler, instruction, m_Config};
+  interpreter.Execute([](const std::string& result) {
+    fmt::print("{}", result);
+  });
 
-      Config::Query query{m_Config};
-      Ref<Config::Command> command{query.GetCommand(name)};
-
-      if (command == nullptr) {
-        LITR_ERROR("Command \"{}\" not found!", name);
-        return ExitStatus::FAILURE;
-      }
-
-      for (auto&& script : command->Script) {
-        CLI::Shell::Exec(script, [](const std::string& result) {
-          fmt::print("{}", result);
-        });
-      }
-
-      offset++;
-    }
+  // Print interpreter errors if any:
+  if (m_ErrorHandler->HasErrors()) {
+    ErrorReporter::PrintErrors(m_ErrorHandler->GetErrors());
+    return ExitStatus::FAILURE;
   }
 
   return m_ExitStatus;
@@ -90,7 +84,7 @@ std::string Application::SourceFromArguments(int argc, char** argv) {
 
     if (found != std::string::npos) {
       std::vector<std::string> parts{};
-      Litr::Utils::SplitInto(argument, '=', parts);
+      Utils::SplitInto(argument, '=', parts);
       argument = parts[0].append("=\"").append(parts[1]).append("\"");
     }
     // !!! HACK ALERT END !!!

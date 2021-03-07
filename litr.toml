@@ -10,6 +10,17 @@ build = [
 script = "ls -lsa"
 [commands.hello.test]
 script = "echo 'HELLO WORLD'"
+[commands.hello.error]
+script = "ls -"
+
+[commands.deep]
+script = "echo 'DEEP'"
+[commands.deep.first]
+script = "echo 'DEEP FIRST'"
+[commands.deep.second]
+script = "echo 'DEEP SECOND'"
+[commands.deep.second.deep]
+script = "echo 'DEEP SECOND DEEP'"
 
 [commands.run]
 script = "./build/${target}/litr/client/Client"

@@ -30,6 +30,10 @@ std::string ErrorHandler::GetTypeDescription(const Error& err) {
       return "Parameter value is not known!";
     case ErrorType::PARSER_ERROR:
       return "Problem parsing command line arguments!";
+    case ErrorType::COMMAND_NOT_FOUND:
+      return "Command not found!";
+    case ErrorType::EXECUTION_FAILURE:
+      return "Problem executing a command!";
   }
 }
 

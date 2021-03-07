@@ -8,11 +8,6 @@ namespace Litr {
 
 class Application {
  public:
-  enum class ExitStatus : int {
-    SUCCESS = 0,
-    FAILURE = 1
-  };
-
   Application();
   ExitStatus Run(int argc, char* argv[]);
 

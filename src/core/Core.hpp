@@ -27,6 +27,7 @@
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Parser.hpp"
 #include "Core/CLI/Instruction.hpp"
+#include "Core/CLI/Interpreter.hpp"
 
 // Errors -----------------------------
 

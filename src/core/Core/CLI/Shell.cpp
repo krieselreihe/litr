@@ -38,8 +38,8 @@ Shell::Result Shell::Exec(const std::string& command, const Shell::ExecCallback&
   return result;
 }
 
-int Shell::GetStatusCode(int streamStatus) {
-  return streamStatus / 256;
+ExitStatus Shell::GetStatusCode(int streamStatus) {
+  return static_cast<ExitStatus>(streamStatus / 256);
 }
 
 }  // namespace Litr::CLI

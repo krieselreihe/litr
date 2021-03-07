@@ -31,14 +31,29 @@ void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
 void ErrorReporter::PrintError(const Error& error) {
   LITR_PROFILE_FUNCTION();
 
-  // @todo: Handle errors only containing a type and message.
-
-  const std::string type{ErrorHandler::GetTypeDescription(error)};
-  fmt::print(
-      fg(fmt::color::crimson),
-      "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
-      type, error.Line, error.LineStr, " ",
-             CountDigits(error.Line), "^ - ", error.Column, error.Message);
+  switch (error.Type) {
+    case ErrorType::MALFORMED_FILE:
+    case ErrorType::MALFORMED_COMMAND:
+    case ErrorType::MALFORMED_PARAM:
+    case ErrorType::MALFORMED_SCRIPT:
+    case ErrorType::RESERVED_PARAM:
+    case ErrorType::UNKNOWN_COMMAND_PROPERTY:
+    case ErrorType::UNKNOWN_PARAM_VALUE:
+    case ErrorType::PARSER_ERROR: {
+      const std::string type{ErrorHandler::GetTypeDescription(error)};
+      fmt::print(
+          fg(fmt::color::crimson),
+          "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
+          type, error.Line, error.LineStr, " ",
+          CountDigits(error.Line), "^ - ", error.Column, error.Message);
+      break;
+    }
+    case ErrorType::COMMAND_NOT_FOUND:
+    case ErrorType::EXECUTION_FAILURE: {
+      fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Message);
+      break;
+    }
+  }
 }
 
 }  // namespace Litr

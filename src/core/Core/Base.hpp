@@ -20,4 +20,9 @@ constexpr Ref<T> CreateRef(Args&&... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+enum class ExitStatus : int {
+  SUCCESS = 0,
+  FAILURE = 1
+};
+
 }  // namespace Litr

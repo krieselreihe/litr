@@ -16,7 +16,9 @@ enum class ErrorType {
   MALFORMED_SCRIPT,          // Configuration command script malformed
   UNKNOWN_COMMAND_PROPERTY,  // Unknown option used for command in configuration
   UNKNOWN_PARAM_VALUE,       // Unknown option used for parameter in configuration
-  PARSER_ERROR               // Error while parsing CLI input arguments
+  PARSER_ERROR,              // Error while parsing CLI input arguments
+  COMMAND_NOT_FOUND,         // On execution, command not found
+  EXECUTION_FAILURE          // Issue executing a command
 };
 
 struct Error {
