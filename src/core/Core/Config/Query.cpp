@@ -2,6 +2,8 @@
 
 #include "Core/Utils.hpp"
 
+#include "Core/Debug/Instrumentor.hpp"
+
 namespace Litr::Config {
 
 Query::Query(const Ref<Loader>& config) : m_Config(config) {

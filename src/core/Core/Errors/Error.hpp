@@ -29,10 +29,12 @@ struct Error {
   std::string LineStr{};
 
   Error(ErrorType type, std::string message) : Type(type), Message(std::move(message)) {
+    LITR_PROFILE_FUNCTION();
   }
 
   Error(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
       : Type(type), Message(std::move(message)), Line(line), Column(column), LineStr(std::move(lineStr)) {
+    LITR_PROFILE_FUNCTION();
   }
 
   Error(ErrorType type, std::string message, const toml::value& context)

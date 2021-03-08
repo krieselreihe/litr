@@ -7,7 +7,25 @@ namespace Litr {
 void ErrorHandler::Push(const Error& err) {
   LITR_PROFILE_FUNCTION();
 
-  m_Errors.push_back(err);
+  Get().m_Errors.push_back(err);
+}
+
+void ErrorHandler::Flush() {
+  LITR_PROFILE_FUNCTION();
+
+  Get().m_Errors.clear();
+}
+
+std::vector<Error> ErrorHandler::GetErrors() {
+  LITR_PROFILE_FUNCTION();
+
+  return Get().m_Errors;
+}
+
+bool ErrorHandler::HasErrors() {
+  LITR_PROFILE_FUNCTION();
+
+  return !Get().m_Errors.empty();
 }
 
 std::string ErrorHandler::GetTypeDescription(const Error& err) {

@@ -2,10 +2,12 @@
 
 #include <fmt/format.h>
 
+#include "Core/Errors/ErrorHandler.hpp"
+
 namespace Litr::Config {
 
-CommandBuilder::CommandBuilder(const Ref<ErrorHandler>& errorHandler, const toml::table& file, const toml::value& data, const std::string& name)
-    : m_ErrorHandler(errorHandler), m_File(file), m_Table(data), m_Command(CreateRef<Command>(name)) {
+CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name)
+    : m_File(file), m_Table(data), m_Command(CreateRef<Command>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_Command);
 }
 
@@ -26,7 +28,7 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
 
   for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
-      m_ErrorHandler->Push({
+      ErrorHandler::Push({
         ErrorType::MALFORMED_SCRIPT,
         "A command script can be either a string or array of strings.",
         m_File.at(m_Command->Name)
@@ -52,7 +54,7 @@ void CommandBuilder::AddDescription() {
       return;
     }
 
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_COMMAND,
       fmt::format(R"(The "{}" can can only be a string.)", name),
       m_Table.at(name)
@@ -72,7 +74,7 @@ void CommandBuilder::AddExample() {
       return;
     }
 
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_COMMAND,
       fmt::format(R"(The "{}" can can only be a string.)", name),
       m_Table.at(name)
@@ -96,7 +98,7 @@ void CommandBuilder::AddDirectory() {
     if (directories.is_array()) {
       for (auto&& directory : directories.as_array()) {
         if (!directory.is_string()) {
-          m_ErrorHandler->Push({
+          ErrorHandler::Push({
             ErrorType::MALFORMED_COMMAND,
             fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
             m_Table.at(name)
@@ -109,7 +111,7 @@ void CommandBuilder::AddDirectory() {
       return;
     }
 
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_COMMAND,
       fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
       m_Table.at(name)
@@ -137,7 +139,7 @@ void CommandBuilder::AddOutput() {
       }
     }
 
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_COMMAND,
       fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
       m_Table.at(name)

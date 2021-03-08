@@ -36,7 +36,7 @@ Application::Application() {
     return;
   }
 
-  m_Config = CreateRef<Config::Loader>(m_ErrorHandler, configPath.GetFilePath());
+  m_Config = CreateRef<Config::Loader>(configPath.GetFilePath());
 }
 
 ExitStatus Application::Run(int argc, char* argv[]) {
@@ -50,22 +50,22 @@ ExitStatus Application::Run(int argc, char* argv[]) {
   m_Source = SourceFromArguments(argc, argv);
 
   const auto instruction{CreateRef<CLI::Instruction>()};
-  const CLI::Parser parser{m_ErrorHandler, instruction, m_Source};
+  const CLI::Parser parser{instruction, m_Source};
 
   // Print parser errors if any:
-  if (m_ErrorHandler->HasErrors()) {
-    ErrorReporter::PrintErrors(m_ErrorHandler->GetErrors());
+  if (ErrorHandler::HasErrors()) {
+    ErrorReporter::PrintErrors(ErrorHandler::GetErrors());
     return ExitStatus::FAILURE;
   }
 
-  CLI::Interpreter interpreter{m_ErrorHandler, instruction, m_Config};
+  CLI::Interpreter interpreter{instruction, m_Config};
   interpreter.Execute([](const std::string& result) {
     fmt::print("{}", result);
   });
 
   // Print interpreter errors if any:
-  if (m_ErrorHandler->HasErrors()) {
-    ErrorReporter::PrintErrors(m_ErrorHandler->GetErrors());
+  if (ErrorHandler::HasErrors()) {
+    ErrorReporter::PrintErrors(ErrorHandler::GetErrors());
     return ExitStatus::FAILURE;
   }
 

@@ -4,7 +4,6 @@
 #include <deque>
 
 #include "Core/Base.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
 #include "Core/CLI/Token.hpp"
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Instruction.hpp"
@@ -13,7 +12,7 @@ namespace Litr::CLI {
 
 class Parser {
  public:
-  explicit Parser(const Ref<ErrorHandler>& errorHandler, const Ref<Instruction>& instruction, const std::string& source);
+  explicit Parser(const Ref<Instruction>& instruction, const std::string& source);
 
   void Advance();
   void Consume(TokenType type, const char* message);
@@ -48,7 +47,6 @@ class Parser {
   [[nodiscard]] std::string GetScopePath() const;
 
   Scanner m_Scanner;
-  const Ref<ErrorHandler>& m_ErrorHandler;
   const Ref<Instruction>& m_Instruction;
 
   Token m_Current{};

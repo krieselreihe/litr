@@ -1,12 +1,12 @@
 #include "Interpreter.hpp"
 
 #include "Core/CLI/Shell.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 
 namespace Litr::CLI {
 
-Interpreter::Interpreter(const Ref<ErrorHandler>& errorHandler, const Ref<Instruction>& instruction,
-                         const Ref<Config::Loader>& config)
-    : m_ErrorHandler(errorHandler), m_Instruction(instruction), m_Config(config), m_Query(m_Config) {
+Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config)
+    : m_Instruction(instruction), m_Config(config), m_Query(m_Config) {
 }
 
 void Interpreter::Execute(Interpreter::Callback callback) {
@@ -89,7 +89,7 @@ void Interpreter::CallInstruction() {
 // NOLINTNEXTLINE
 void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command) {
   if (command == nullptr) {
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
         ErrorType::COMMAND_NOT_FOUND,
         fmt::format("Command with the name \"{}\" could not be found.", name)
     });
@@ -104,7 +104,7 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
 
     const Shell::Result result{Shell::Exec(script, m_Callback)};
     if (result.Status == ExitStatus::FAILURE) {
-      m_ErrorHandler->Push({
+      ErrorHandler::Push({
           ErrorType::EXECUTION_FAILURE,
           fmt::format("Problem executing the command defined in \"{}\".", name)
       });

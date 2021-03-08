@@ -8,13 +8,24 @@ namespace Litr {
 
 class ErrorHandler {
  public:
-  virtual ~ErrorHandler() = default;
-  virtual void Push(const Error& err);
+  ErrorHandler(const ErrorHandler&) = delete;
+  ErrorHandler& operator=(const ErrorHandler&) = delete;
 
-  [[nodiscard]] inline std::vector<Error> GetErrors() const { return m_Errors; }
-  [[nodiscard]] inline bool HasErrors() const { return !m_Errors.empty(); };
+  static void Push(const Error& err);
+  static void Flush();
+
+  [[nodiscard]] static std::vector<Error> GetErrors();
+  [[nodiscard]] static bool HasErrors();
 
   [[nodiscard]] static std::string GetTypeDescription(const Error& err);
+
+ private:
+  ErrorHandler() = default;
+
+  static ErrorHandler& Get() {
+    static ErrorHandler instance{};
+    return instance;
+  }
 
  private:
   std::vector<Error> m_Errors{};

@@ -2,14 +2,15 @@
 
 #include "Core/CLI/Scanner.hpp"
 #include "Core/Utils.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Debug/Disassembler.hpp"
 
 namespace Litr::CLI {
 
-Parser::Parser(const Ref<ErrorHandler>& errorHandler, const Ref<Instruction>& instruction, const std::string& source)
-    : m_Scanner(source.c_str()), m_ErrorHandler(errorHandler), m_Instruction(instruction) {
+Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
+    : m_Scanner(source.c_str()), m_Instruction(instruction) {
   LITR_PROFILE_FUNCTION();
 
   Advance();
@@ -229,7 +230,7 @@ void Parser::ErrorAt(Token* token, const char* message) {
 
   outMessage.append(fmt::format(": {}\n", message));
 
-  m_ErrorHandler->Push({
+  ErrorHandler::Push({
       ErrorType::PARSER_ERROR,
       outMessage,
       1,

@@ -4,9 +4,8 @@
 
 TEST_SUITE("Config::Query") {
   TEST_CASE("GetCommand()") {
-    const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(errorHandler, path)};
+    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
     const Litr::Config::Query query{config};
 
     SUBCASE("Get top level command") {
@@ -31,9 +30,8 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("GetParameter()") {
-    const auto errorHandler{Litr::CreateRef<Litr::ErrorHandler>()};
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(errorHandler, path)};
+    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
     const Litr::Config::Query query{config};
 
     SUBCASE("Get parameter by name") {

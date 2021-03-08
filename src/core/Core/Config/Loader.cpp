@@ -5,13 +5,15 @@
 
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
-#include "Core/Debug/Instrumentor.hpp"
+#include "Core/Errors/ErrorHandler.hpp"
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
 
+#include "Core/Debug/Instrumentor.hpp"
+
 namespace Litr::Config {
 
-Loader::Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_ErrorHandler(errorHandler) {
+Loader::Loader(const Path& filePath) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
@@ -19,7 +21,7 @@ Loader::Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
   } catch (const toml::syntax_error& err) {
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_FILE,
       "There is a syntax error inside the configuration file.",
       err
@@ -28,7 +30,7 @@ Loader::Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_
   }
 
   if (!config.is_table()) {
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_FILE,
       "Configuration is not a TOML table."
     });
@@ -51,7 +53,7 @@ Loader::Loader(const Ref<ErrorHandler>& errorHandler, const Path& filePath) : m_
 Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
-  CommandBuilder builder{m_ErrorHandler, commands, definition, name};
+  CommandBuilder builder{commands, definition, name};
 
   // Simple string form
   if (definition.is_string()) {
@@ -67,7 +69,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    m_ErrorHandler->Push({
+    ErrorHandler::Push({
       ErrorType::MALFORMED_COMMAND,
       "A command can be a string or table.",
       commands.at(name)
@@ -93,7 +95,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
       } else if (scripts.is_array()) {
         builder.AddScript(scripts);
       } else {
-        m_ErrorHandler->Push({
+        ErrorHandler::Push({
           ErrorType::MALFORMED_SCRIPT,
           "A command script can be either a string or array of strings.",
           definition.at(property)
@@ -131,7 +133,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     // Collect properties that cannot directly be resolved.
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
-      m_ErrorHandler->Push({
+      ErrorHandler::Push({
         ErrorType::UNKNOWN_COMMAND_PROPERTY,
         fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
         definition.at(property)
@@ -161,10 +163,10 @@ void Loader::CollectParams(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : params) {
-    ParameterBuilder builder{m_ErrorHandler, params, definition, name};
+    ParameterBuilder builder{params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {
-      m_ErrorHandler->Push({
+      ErrorHandler::Push({
         ErrorType::RESERVED_PARAM,
         fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
         params.at(name)
@@ -181,7 +183,7 @@ void Loader::CollectParams(const toml::table& params) {
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      m_ErrorHandler->Push({
+      ErrorHandler::Push({
         ErrorType::MALFORMED_PARAM,
         "A parameter needs to be a string or table.",
         params.at(name)

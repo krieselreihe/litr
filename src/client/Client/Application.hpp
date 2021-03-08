@@ -16,7 +16,6 @@ class Application {
 
  private:
   Ref<Config::Loader> m_Config;
-  Ref<ErrorHandler> m_ErrorHandler{CreateRef<ErrorHandler>()};
 
   std::string m_Source{};
   ExitStatus m_ExitStatus{ExitStatus::SUCCESS};

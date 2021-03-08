@@ -20,8 +20,7 @@ struct Variable {
 
 class Interpreter {
  public:
-  Interpreter(const Ref<ErrorHandler>& errorHandler, const Ref<Instruction>& instruction,
-              const Ref<Config::Loader>& config);
+  Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
   using Callback = void (*)(const std::string& result);
   void Execute(Interpreter::Callback callback);
@@ -40,7 +39,6 @@ class Interpreter {
   void CallCommand(const std::string& name, const Ref<Config::Command>& command);
 
  private:
-  const Ref<ErrorHandler>& m_ErrorHandler;
   const Ref<Instruction>& m_Instruction;
   const Ref<Config::Loader>& m_Config;
   const Config::Query m_Query;
