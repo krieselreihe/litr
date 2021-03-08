@@ -1,11 +1,10 @@
 #include "Parser.hpp"
 
 #include "Core/CLI/Scanner.hpp"
-#include "Core/Utils.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
-
-#include "Core/Debug/Instrumentor.hpp"
 #include "Core/Debug/Disassembler.hpp"
+#include "Core/Debug/Instrumentor.hpp"
+#include "Core/Error/Handler.hpp"
+#include "Core/Utils.hpp"
 
 namespace Litr::CLI {
 
@@ -230,8 +229,8 @@ void Parser::ErrorAt(Token* token, const char* message) {
 
   outMessage.append(fmt::format(": {}\n", message));
 
-  ErrorHandler::Push({
-      ErrorType::PARSER_ERROR,
+  Error::Handler::Push({
+      Error::ErrorType::PARSER_ERROR,
       outMessage,
       1,
       0, // token->Column,

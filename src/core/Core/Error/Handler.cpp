@@ -1,34 +1,34 @@
-#include "ErrorHandler.hpp"
+#include "Handler.hpp"
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace Litr::Error {
 
-void ErrorHandler::Push(const Error& err) {
+void Handler::Push(const BaseError& err) {
   LITR_PROFILE_FUNCTION();
 
   Get().m_Errors.push_back(err);
 }
 
-void ErrorHandler::Flush() {
+void Handler::Flush() {
   LITR_PROFILE_FUNCTION();
 
   Get().m_Errors.clear();
 }
 
-std::vector<Error> ErrorHandler::GetErrors() {
+std::vector<BaseError> Handler::GetErrors() {
   LITR_PROFILE_FUNCTION();
 
   return Get().m_Errors;
 }
 
-bool ErrorHandler::HasErrors() {
+bool Handler::HasErrors() {
   LITR_PROFILE_FUNCTION();
 
   return !Get().m_Errors.empty();
 }
 
-std::string ErrorHandler::GetTypeDescription(const Error& err) {
+std::string Handler::GetTypeDescription(const BaseError& err) {
   LITR_PROFILE_FUNCTION();
 
   switch (err.Type) {
@@ -55,4 +55,4 @@ std::string ErrorHandler::GetTypeDescription(const Error& err) {
   }
 }
 
-}  // namespace Litr
+}  // namespace Litr::Error

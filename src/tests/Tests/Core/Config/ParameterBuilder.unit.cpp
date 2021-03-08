@@ -1,8 +1,9 @@
+#include "Core/Config/ParameterBuilder.hpp"
+
 #include <doctest/doctest.h>
 
+#include "Core/Error/Handler.hpp"
 #include "Helpers/TOML.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
-#include "Core/Config/ParameterBuilder.hpp"
 
 TEST_SUITE("ParameterBuilder") {
   TEST_CASE("Initiates a Parameter on construction") {
@@ -12,9 +13,9 @@ TEST_SUITE("ParameterBuilder") {
     Litr::Ref<Litr::Config::Parameter> builderResult{builder.GetResult()};
     Litr::Config::Parameter compare{"test"};
 
-    CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+    CHECK(Litr::Error::Handler::GetErrors().size() == 0);
     CHECK(sizeof(*builderResult) == sizeof(compare));
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("ParameterBuilder::AddDescription") {
@@ -24,9 +25,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(You're missing the "description" field.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(You're missing the "description" field.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if description is not a string") {
@@ -35,9 +36,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The "description" can can only be a string.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can can only be a string.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Extracts a description from toml data") {
@@ -46,9 +47,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Description == "Text");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Applies a description directly from a string") {
@@ -57,9 +58,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription("Text");
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Description == "Text");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
   }
 
@@ -70,9 +71,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Shortcut.empty());
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if shortcut is not a string") {
@@ -81,9 +82,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(A "shortcut" can can only be a string.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "shortcut" can can only be a string.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'help'") {
@@ -92,9 +93,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The shortcut name "help" is reserved by Litr.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "help" is reserved by Litr.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'h'") {
@@ -103,9 +104,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The shortcut name "h" is reserved by Litr.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "h" is reserved by Litr.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Extracts the shortcut from toml data") {
@@ -114,9 +115,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Shortcut == "t");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
   }
 
@@ -127,9 +128,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if string is set with an unknown option") {
@@ -138,9 +139,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The "type" option as string can only be "string". Provided value "unknown" is not known.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "type" option as string can only be "string". Provided value "unknown" is not known.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Sets the type successfully to String if options is string") {
@@ -149,9 +150,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     // @todo: Not sure if this should actually be an error.
@@ -162,9 +163,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::Array);
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if a non string value is contained in the type array") {
@@ -173,9 +174,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The options provided in "type" are not all strings.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The options provided in "type" are not all strings.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Sets the type to Array with and populates TypeArguments") {
@@ -185,11 +186,11 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
       Litr::Ref<Litr::Config::Parameter> result{builder.GetResult()};
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(result->Type == Litr::Config::Parameter::ParameterType::Array);
       CHECK(result->TypeArguments[0] == "test");
       CHECK(result->TypeArguments[1] == "debug");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if type is neither a string nor an array") {
@@ -198,9 +199,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(A "type" can can only be "string" or an array of options as strings.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "type" can can only be "string" or an array of options as strings.)");
+      Litr::Error::Handler::Flush();
     }
   }
 
@@ -211,9 +212,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Default.empty());
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if default is not a string") {
@@ -222,9 +223,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(The field "default" needs to be a string.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The field "default" needs to be a string.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Emits an error if default value is not found inside type array") {
@@ -235,9 +236,9 @@ default = "Default")");
       builder.AddType();
       builder.AddDefault();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 1);
-      CHECK(Litr::ErrorHandler::GetErrors()[0].Message == R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
-      Litr::ErrorHandler::Flush();
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Sets default if defined as string") {
@@ -246,9 +247,9 @@ default = "Default")");
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Default == "something");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
 
     SUBCASE("Sets default if defined as string and type array contains value") {
@@ -259,9 +260,9 @@ default = "something")");
       builder.AddType();
       builder.AddDefault();
 
-      CHECK(Litr::ErrorHandler::GetErrors().size() == 0);
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Default == "something");
-      Litr::ErrorHandler::Flush();
+      Litr::Error::Handler::Flush();
     }
   }
 }

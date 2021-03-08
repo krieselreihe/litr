@@ -31,9 +31,9 @@
 
 // Errors -----------------------------
 
-#include "Core/Errors/Error.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
-#include "Core/Errors/ErrorReporter.hpp"
+#include "Core/Error/BaseError.hpp"
+#include "Core/Error/Reporter.hpp"
+#include "Core/Error/Handler.hpp"
 
 // Debug ------------------------------
 

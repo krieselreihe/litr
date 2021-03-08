@@ -6,7 +6,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace Litr::Error {
 
 enum class ErrorType {
   RESERVED_PARAM,            // Reserved configuration parameter name
@@ -21,23 +21,23 @@ enum class ErrorType {
   EXECUTION_FAILURE          // Issue executing a command
 };
 
-struct Error {
+struct BaseError {
   const ErrorType Type;
   const std::string Message;
   uint32_t Line{};
   uint32_t Column{};
   std::string LineStr{};
 
-  Error(ErrorType type, std::string message) : Type(type), Message(std::move(message)) {
+  BaseError(ErrorType type, std::string message) : Type(type), Message(std::move(message)) {
     LITR_PROFILE_FUNCTION();
   }
 
-  Error(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
+  BaseError(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
       : Type(type), Message(std::move(message)), Line(line), Column(column), LineStr(std::move(lineStr)) {
     LITR_PROFILE_FUNCTION();
   }
 
-  Error(ErrorType type, std::string message, const toml::value& context)
+  BaseError(ErrorType type, std::string message, const toml::value& context)
       : Type(type),
         Message(std::move(message)),
         Line(context.location().line()),
@@ -46,7 +46,7 @@ struct Error {
     LITR_PROFILE_FUNCTION();
   }
 
-  Error(ErrorType type, std::string message, const toml::exception& err)
+  BaseError(ErrorType type, std::string message, const toml::exception& err)
       : Type(type),
         Message(std::move(message)),
         Line(err.location().line()),
@@ -56,4 +56,4 @@ struct Error {
   }
 } __attribute__((aligned(64)));
 
-}  // namespace Litr
+}  // namespace Litr::Error

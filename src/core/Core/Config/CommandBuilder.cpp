@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Core/Error/Handler.hpp"
 
 namespace Litr::Config {
 
@@ -28,10 +28,10 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
 
   for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
-      ErrorHandler::Push({
-        ErrorType::MALFORMED_SCRIPT,
-        "A command script can be either a string or array of strings.",
-        m_File.at(m_Command->Name)
+      Error::Handler::Push({
+          Error::ErrorType::MALFORMED_SCRIPT,
+          "A command script can be either a string or array of strings.",
+          m_File.at(m_Command->Name)
       });
       // Stop after first error in an array of scripts, to avoid being to verbose.
       break;
@@ -54,10 +54,10 @@ void CommandBuilder::AddDescription() {
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_COMMAND,
-      fmt::format(R"(The "{}" can can only be a string.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can can only be a string.)", name),
+        m_Table.at(name)
     });
   }
 }
@@ -74,10 +74,10 @@ void CommandBuilder::AddExample() {
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_COMMAND,
-      fmt::format(R"(The "{}" can can only be a string.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can can only be a string.)", name),
+        m_Table.at(name)
     });
   }
 }
@@ -98,10 +98,10 @@ void CommandBuilder::AddDirectory() {
     if (directories.is_array()) {
       for (auto&& directory : directories.as_array()) {
         if (!directory.is_string()) {
-          ErrorHandler::Push({
-            ErrorType::MALFORMED_COMMAND,
-            fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
-            m_Table.at(name)
+          Error::Handler::Push({
+              Error::ErrorType::MALFORMED_COMMAND,
+              fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
+              m_Table.at(name)
           });
           continue;
         }
@@ -111,10 +111,10 @@ void CommandBuilder::AddDirectory() {
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_COMMAND,
-      fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
+        m_Table.at(name)
     });
   }
 }
@@ -139,10 +139,10 @@ void CommandBuilder::AddOutput() {
       }
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_COMMAND,
-      fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_COMMAND,
+        fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
+        m_Table.at(name)
     });
   }
 }

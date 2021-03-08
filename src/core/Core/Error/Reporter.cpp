@@ -1,12 +1,12 @@
-#include "ErrorReporter.hpp"
+#include "Reporter.hpp"
 
-#include <fmt/format.h>
 #include <fmt/color.h>
+#include <fmt/format.h>
 
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Core/Error/Handler.hpp"
 
-namespace Litr {
+namespace Litr::Error {
 
 static uint32_t CountDigits(uint32_t number) {
   LITR_PROFILE_FUNCTION();
@@ -20,15 +20,15 @@ static uint32_t CountDigits(uint32_t number) {
   return count;
 }
 
-void ErrorReporter::PrintErrors(const std::vector<Error>& errors) {
+void Reporter::PrintErrors(const std::vector<BaseError>& errors) {
   LITR_PROFILE_FUNCTION();
 
-  for (const Error& error : errors) {
+  for (const BaseError& error : errors) {
     PrintError(error);
   }
 }
 
-void ErrorReporter::PrintError(const Error& error) {
+void Reporter::PrintError(const BaseError& error) {
   LITR_PROFILE_FUNCTION();
 
   switch (error.Type) {
@@ -40,7 +40,7 @@ void ErrorReporter::PrintError(const Error& error) {
     case ErrorType::UNKNOWN_COMMAND_PROPERTY:
     case ErrorType::UNKNOWN_PARAM_VALUE:
     case ErrorType::PARSER_ERROR: {
-      const std::string type{ErrorHandler::GetTypeDescription(error)};
+      const std::string type{Handler::GetTypeDescription(error)};
       fmt::print(
           fg(fmt::color::crimson),
           "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
@@ -56,4 +56,4 @@ void ErrorReporter::PrintError(const Error& error) {
   }
 }
 
-}  // namespace Litr
+}  // namespace Litr::Error

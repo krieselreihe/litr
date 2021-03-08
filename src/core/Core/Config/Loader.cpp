@@ -1,15 +1,15 @@
 #include "Loader.hpp"
 
-#include <stack>
 #include <tsl/ordered_map.h>
+
+#include <stack>
 
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Core/Debug/Instrumentor.hpp"
+#include "Core/Error/Handler.hpp"
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
-
-#include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr::Config {
 
@@ -21,18 +21,18 @@ Loader::Loader(const Path& filePath) {
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
   } catch (const toml::syntax_error& err) {
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_FILE,
-      "There is a syntax error inside the configuration file.",
-      err
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_FILE,
+        "There is a syntax error inside the configuration file.",
+        err
     });
     return;
   }
 
   if (!config.is_table()) {
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_FILE,
-      "Configuration is not a TOML table."
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_FILE,
+        "Configuration is not a TOML table."
     });
     return;
   }
@@ -69,10 +69,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_COMMAND,
-      "A command can be a string or table.",
-      commands.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_COMMAND,
+        "A command can be a string or table.",
+        commands.at(name)
     });
     return builder.GetResult();
   }
@@ -95,10 +95,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
       } else if (scripts.is_array()) {
         builder.AddScript(scripts);
       } else {
-        ErrorHandler::Push({
-          ErrorType::MALFORMED_SCRIPT,
-          "A command script can be either a string or array of strings.",
-          definition.at(property)
+        Error::Handler::Push({
+            Error::ErrorType::MALFORMED_SCRIPT,
+            "A command script can be either a string or array of strings.",
+            definition.at(property)
         });
       }
 
@@ -133,10 +133,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     // Collect properties that cannot directly be resolved.
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
-      ErrorHandler::Push({
-        ErrorType::UNKNOWN_COMMAND_PROPERTY,
-        fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
-        definition.at(property)
+      Error::Handler::Push({
+          Error::ErrorType::UNKNOWN_COMMAND_PROPERTY,
+          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+          definition.at(property)
       });
       properties.pop();
       continue;
@@ -166,10 +166,10 @@ void Loader::CollectParams(const toml::table& params) {
     ParameterBuilder builder{params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {
-      ErrorHandler::Push({
-        ErrorType::RESERVED_PARAM,
-        fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
-        params.at(name)
+      Error::Handler::Push({
+          Error::ErrorType::RESERVED_PARAM,
+          fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
+          params.at(name)
       });
       continue;
     }
@@ -183,10 +183,10 @@ void Loader::CollectParams(const toml::table& params) {
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      ErrorHandler::Push({
-        ErrorType::MALFORMED_PARAM,
-        "A parameter needs to be a string or table.",
-        params.at(name)
+      Error::Handler::Push({
+          Error::ErrorType::MALFORMED_PARAM,
+          "A parameter needs to be a string or table.",
+          params.at(name)
       });
       continue;
     }

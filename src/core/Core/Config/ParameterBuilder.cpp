@@ -1,9 +1,8 @@
 #include "ParameterBuilder.hpp"
 
-#include "Core/Log.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
-
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Error/Handler.hpp"
+#include "Core/Log.hpp"
 
 namespace Litr::Config {
 
@@ -18,10 +17,10 @@ void ParameterBuilder::AddDescription() {
   const std::string name{"description"};
 
   if (!m_Table.contains(name)) {
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_PARAM,
-      R"(You're missing the "description" field.)",
-      m_File.at(m_Parameter->Name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_PARAM,
+        R"(You're missing the "description" field.)",
+        m_File.at(m_Parameter->Name)
     });
     return;
   }
@@ -29,10 +28,10 @@ void ParameterBuilder::AddDescription() {
   const toml::value& description{toml::find(m_Table, name)};
 
   if (!description.is_string()) {
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_PARAM,
-      fmt::format(R"(The "{}" can can only be a string.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_PARAM,
+        fmt::format(R"(The "{}" can can only be a string.)", name),
+        m_Table.at(name)
     });
     return;
   }
@@ -58,10 +57,10 @@ void ParameterBuilder::AddShortcut() {
       const std::string shortcutStr{shortcut.as_string()};
 
       if (IsReservedName(shortcutStr)) {
-        ErrorHandler::Push({
-          ErrorType::RESERVED_PARAM,
-          fmt::format(R"(The shortcut name "{}" is reserved by Litr.)", shortcutStr),
-          m_Table.at(name)
+        Error::Handler::Push({
+            Error::ErrorType::RESERVED_PARAM,
+            fmt::format(R"(The shortcut name "{}" is reserved by Litr.)", shortcutStr),
+            m_Table.at(name)
         });
         return;
       }
@@ -70,10 +69,10 @@ void ParameterBuilder::AddShortcut() {
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_PARAM,
-      fmt::format(R"(A "{}" can can only be a string.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_PARAM,
+        fmt::format(R"(A "{}" can can only be a string.)", name),
+        m_Table.at(name)
     });
   }
 }
@@ -90,11 +89,11 @@ void ParameterBuilder::AddType() {
       if (type.as_string() == "string") {
         m_Parameter->Type = Parameter::ParameterType::String;
       } else {
-        ErrorHandler::Push({
-          ErrorType::UNKNOWN_PARAM_VALUE,
-          fmt::format(R"(The "{}" option as string can only be "string". Provided value "{}" is not known.)", name,
-                      static_cast<std::string>(type.as_string())),
-          m_Table.at(name)
+        Error::Handler::Push({
+            Error::ErrorType::UNKNOWN_PARAM_VALUE,
+            fmt::format(R"(The "{}" option as string can only be "string". Provided value "{}" is not known.)", name,
+                        static_cast<std::string>(type.as_string())),
+            m_Table.at(name)
         });
       }
       return;
@@ -106,20 +105,20 @@ void ParameterBuilder::AddType() {
         if (option.is_string()) {
           m_Parameter->TypeArguments.emplace_back(option.as_string());
         } else {
-          ErrorHandler::Push({
-            ErrorType::MALFORMED_PARAM,
-            fmt::format(R"(The options provided in "{}" are not all strings.)", name),
-            m_Table.at(name)
+          Error::Handler::Push({
+              Error::ErrorType::MALFORMED_PARAM,
+              fmt::format(R"(The options provided in "{}" are not all strings.)", name),
+              m_Table.at(name)
           });
         }
       }
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_PARAM,
-      fmt::format(R"(A "{}" can can only be "string" or an array of options as strings.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_PARAM,
+        fmt::format(R"(A "{}" can can only be "string" or an array of options as strings.)", name),
+        m_Table.at(name)
     });
   }
 }
@@ -139,14 +138,14 @@ void ParameterBuilder::AddDefault() {
       if (m_Parameter->Type == Parameter::ParameterType::Array) {
         const std::vector<std::string>& args{m_Parameter->TypeArguments};
         if (std::find(args.begin(), args.end(), defaultValue) == args.end()) {
-          ErrorHandler::Push({
-           ErrorType::MALFORMED_PARAM,
-           fmt::format(
-                    R"(Cannot find default value "{}" inside "type" list defined in line {}.)",
-                    defaultValue,
-                    m_Table.at("type").location().line()
+          Error::Handler::Push({
+              Error::ErrorType::MALFORMED_PARAM,
+              fmt::format(
+                  R"(Cannot find default value "{}" inside "type" list defined in line {}.)",
+                  defaultValue,
+                  m_Table.at("type").location().line()
                   ),
-           m_Table.at(name)
+              m_Table.at(name)
           });
           return;
         }
@@ -156,10 +155,10 @@ void ParameterBuilder::AddDefault() {
       return;
     }
 
-    ErrorHandler::Push({
-      ErrorType::MALFORMED_PARAM,
-      fmt::format(R"(The field "{}" needs to be a string.)", name),
-      m_Table.at(name)
+    Error::Handler::Push({
+        Error::ErrorType::MALFORMED_PARAM,
+        fmt::format(R"(The field "{}" needs to be a string.)", name),
+        m_Table.at(name)
     });
   }
 }

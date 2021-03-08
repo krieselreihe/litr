@@ -1,9 +1,11 @@
+#include "Core/CLI/Parser.hpp"
+
 #include <doctest/doctest.h>
 #include <fmt/format.h>
+
 #include <array>
 
-#include "Core/CLI/Parser.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Core/Error/Handler.hpp"
 
 #define NO_VALUE ""
 #define CHECK_DEFINITION(instruction, definition)                                                \
@@ -56,7 +58,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Single short parameter") {
@@ -71,7 +73,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Single command") {
@@ -86,7 +88,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Multiple commands") {
@@ -102,7 +104,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Multiple comma separated commands") {
@@ -120,7 +122,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Long parameter with string values and commands") {
@@ -140,7 +142,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Mixed parameters with mixed values") {
@@ -156,7 +158,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid comma operator") {
@@ -167,10 +169,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid comma operators with parameter") {
@@ -181,10 +183,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid comma operators with command") {
@@ -195,10 +197,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid multiple comma operators") {
@@ -209,10 +211,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid multiple comma operators with commands") {
@@ -223,10 +225,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Even more invalid multiple comma operators with commands") {
@@ -237,10 +239,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Invalid multiple comma operators with closing command") {
@@ -251,10 +253,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Valid nested command execution") {
@@ -272,7 +274,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Valid multiple nested command execution") {
@@ -293,7 +295,7 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == false);
     CHECK_DEFINITION(instruction, definition);
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Unsupported characters") {
@@ -304,10 +306,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse: Unexpected character.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Unsupported string between commands") {
@@ -318,10 +320,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at '\"debug\"': This is not allowed here.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Unsupported number between commands") {
@@ -332,10 +334,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at '23': This is not allowed here.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Unsupported characters between commands") {
@@ -346,10 +348,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse: Unexpected character.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Assignment missing parameter") {
@@ -360,10 +362,10 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at '=': You are missing a parameter in front of the assignment.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 
   TEST_CASE("Duplicated assignment operator") {
@@ -374,9 +376,9 @@ TEST_SUITE("Parser") {
 
     CHECK(parser.HasErrors() == true);
 
-    const auto errors{Litr::ErrorHandler::GetErrors()};
+    const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
     CHECK(errors[0].Message == "Cannot parse at '=': Value assignment missing.\n");
-    Litr::ErrorHandler::Flush();
+    Litr::Error::Handler::Flush();
   }
 }

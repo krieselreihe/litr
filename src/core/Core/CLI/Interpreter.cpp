@@ -1,7 +1,7 @@
 #include "Interpreter.hpp"
 
 #include "Core/CLI/Shell.hpp"
-#include "Core/Errors/ErrorHandler.hpp"
+#include "Core/Error/Handler.hpp"
 
 namespace Litr::CLI {
 
@@ -89,8 +89,8 @@ void Interpreter::CallInstruction() {
 // NOLINTNEXTLINE
 void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command) {
   if (command == nullptr) {
-    ErrorHandler::Push({
-        ErrorType::COMMAND_NOT_FOUND,
+    Error::Handler::Push({
+        Error::ErrorType::COMMAND_NOT_FOUND,
         fmt::format("Command with the name \"{}\" could not be found.", name)
     });
     return;
@@ -104,8 +104,8 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
 
     const Shell::Result result{Shell::Exec(script, m_Callback)};
     if (result.Status == ExitStatus::FAILURE) {
-      ErrorHandler::Push({
-          ErrorType::EXECUTION_FAILURE,
+      Error::Handler::Push({
+          Error::ErrorType::EXECUTION_FAILURE,
           fmt::format("Problem executing the command defined in \"{}\".", name)
       });
     }
