@@ -17,19 +17,36 @@ void Interpreter::Execute(Interpreter::Callback callback) {
   }
 }
 
+Instruction::Value Interpreter::ReadCurrentValue() const {
+  const std::byte index{m_Instruction->Read(m_Offset)};
+  return m_Instruction->ReadConstant(index);
+}
+
+std::vector<Variable> Interpreter::GetCurrentVariables() const {
+  std::vector<Variable> variables{};
+  for (auto&& scope : m_Scope) {
+    for (auto&& variable : scope) {
+      variables.push_back(variable);
+    }
+  }
+  return variables;
+}
+
 void Interpreter::ExecuteInstruction() {
-  const auto code{static_cast<CLI::Instruction::Code>(m_Instruction->Read(m_Offset++))};
+  const auto code{static_cast<Instruction::Code>(m_Instruction->Read(m_Offset++))};
 
   switch (code) {
-    // @todo: Implement rest
-    // NOLINTNEXTLINE
     case Instruction::Code::CLEAR:
+      ClearScope();
       break;
     case Instruction::Code::DEFINE:
+      DefineVariable();
       break;
     case Instruction::Code::CONSTANT:
+      SetConstant();
       break;
     case Instruction::Code::BEGIN_SCOPE:
+      BeginScope();
       break;
     case Instruction::Code::EXECUTE:
       CallInstruction();
@@ -39,10 +56,29 @@ void Interpreter::ExecuteInstruction() {
   }
 }
 
-void Interpreter::CallInstruction() {
-  const std::byte index{m_Instruction->Read(m_Offset)};
-  const CLI::Instruction::Value name{m_Instruction->ReadConstant(index)};
+void Interpreter::BeginScope() {
+  m_Scope.emplace_back(std::vector<Variable>());
+  m_Offset++;
+}
 
+void Interpreter::ClearScope() {
+  m_Scope.pop_back();
+}
+
+void Interpreter::DefineVariable() {
+  const Instruction::Value name{ReadCurrentValue()};
+  m_Scope.back().emplace_back(name);
+  m_Offset++;
+}
+
+void Interpreter::SetConstant() {
+  const Instruction::Value name{ReadCurrentValue()};
+  m_Scope.back().back().Value = name;
+  m_Offset++;
+}
+
+void Interpreter::CallInstruction() {
+  const Instruction::Value name{ReadCurrentValue()};
   const Ref<Config::Command> command{m_Query.GetCommand(name)};
   CallCommand(name, command);
 
@@ -60,8 +96,13 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
     return;
   }
 
+  // const auto variables{GetCurrentVariables()};
+
   for (auto&& script : command->Script) {
-    const CLI::Shell::Result result{CLI::Shell::Exec(script, m_Callback)};
+    // @todo: Implement
+    // InsertVariables(script, variables);
+
+    const Shell::Result result{Shell::Exec(script, m_Callback)};
     if (result.Status == ExitStatus::FAILURE) {
       m_ErrorHandler->Push({
           ErrorType::EXECUTION_FAILURE,

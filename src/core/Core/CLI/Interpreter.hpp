@@ -1,14 +1,22 @@
 #pragma once
 
 #include <functional>
+#include <deque>
+#include <utility>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/Config/Loader.hpp"
 #include "Core/Config/Query.hpp"
 
-// static void NoOp([[maybe_unused]] const std::string& result) {}
-
 namespace Litr::CLI {
+
+struct Variable {
+  std::string Name;
+  std::string Value{};
+
+  explicit Variable(std::string name) : Name(std::move(name)) {
+  }
+};
 
 class Interpreter {
  public:
@@ -19,7 +27,15 @@ class Interpreter {
   void Execute(Interpreter::Callback callback);
 
  private:
+  [[nodiscard]] Instruction::Value ReadCurrentValue() const;
+  [[nodiscard]] std::vector<Variable> GetCurrentVariables() const;
+
   void ExecuteInstruction();
+
+  void BeginScope();
+  void ClearScope();
+  void DefineVariable();
+  void SetConstant();
   void CallInstruction();
   void CallCommand(const std::string& name, const Ref<Config::Command>& command);
 
@@ -31,6 +47,9 @@ class Interpreter {
 
   size_t m_Offset{0};
   Interpreter::Callback m_Callback{nullptr};
+
+  // Initialize with empty scope
+  std::vector<std::vector<Variable>> m_Scope{std::vector<Variable>()};
 };
 
 }  // namespace Litr::CLI
