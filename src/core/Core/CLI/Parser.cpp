@@ -229,14 +229,13 @@ void Parser::ErrorAt(Token* token, const char* message) {
 
   outMessage.append(fmt::format(": {}\n", message));
 
-  Error::Handler::Push({
-      Error::ErrorType::PARSER_ERROR,
+  Error::Handler::Push(Error::ParserError(
       outMessage,
       1,
       0, // token->Column,
       // @todo: Shows currently only shortened line string.
       std::string(token->Start)
-  });
+  ));
 
   m_HasError = true;
 }

@@ -1,7 +1,6 @@
 #include "Loader.hpp"
 
 #include <tsl/ordered_map.h>
-
 #include <stack>
 
 #include "Core/Config/CommandBuilder.hpp"
@@ -21,19 +20,17 @@ Loader::Loader(const Path& filePath) {
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
   } catch (const toml::syntax_error& err) {
-    Error::Handler::Push({
-        Error::ErrorType::MALFORMED_FILE,
+    Error::Handler::Push(Error::MalformedFileError(
         "There is a syntax error inside the configuration file.",
         err
-    });
+    ));
     return;
   }
 
   if (!config.is_table()) {
-    Error::Handler::Push({
-        Error::ErrorType::MALFORMED_FILE,
+    Error::Handler::Push(Error::MalformedFileError(
         "Configuration is not a TOML table."
-    });
+    ));
     return;
   }
 
@@ -69,11 +66,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    Error::Handler::Push({
-        Error::ErrorType::MALFORMED_COMMAND,
+    Error::Handler::Push(Error::MalformedCommandError(
         "A command can be a string or table.",
         commands.at(name)
-    });
+    ));
     return builder.GetResult();
   }
 
@@ -95,11 +91,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
       } else if (scripts.is_array()) {
         builder.AddScript(scripts);
       } else {
-        Error::Handler::Push({
-            Error::ErrorType::MALFORMED_SCRIPT,
+        Error::Handler::Push(Error::MalformedScriptError(
             "A command script can be either a string or array of strings.",
             definition.at(property)
-        });
+        ));
       }
 
       properties.pop();
@@ -133,11 +128,10 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     // Collect properties that cannot directly be resolved.
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
-      Error::Handler::Push({
-          Error::ErrorType::UNKNOWN_COMMAND_PROPERTY,
+      Error::Handler::Push(Error::UnknownCommandPropertyError(
           fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property)
-      });
+      ));
       properties.pop();
       continue;
     }
@@ -166,11 +160,10 @@ void Loader::CollectParams(const toml::table& params) {
     ParameterBuilder builder{params, definition, name};
 
     if (ParameterBuilder::IsReservedName(name)) {
-      Error::Handler::Push({
-          Error::ErrorType::RESERVED_PARAM,
+      Error::Handler::Push(Error::ReservedParamError(
           fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
           params.at(name)
-      });
+      ));
       continue;
     }
 
@@ -183,11 +176,10 @@ void Loader::CollectParams(const toml::table& params) {
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      Error::Handler::Push({
-          Error::ErrorType::MALFORMED_PARAM,
+      Error::Handler::Push(Error::MalformedParamError(
           "A parameter needs to be a string or table.",
           params.at(name)
-      });
+      ));
       continue;
     }
 

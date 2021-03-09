@@ -17,8 +17,6 @@ class Handler {
   [[nodiscard]] static std::vector<BaseError> GetErrors();
   [[nodiscard]] static bool HasErrors();
 
-  [[nodiscard]] static std::string GetTypeDescription(const BaseError& err);
-
  private:
   Handler() = default;
 

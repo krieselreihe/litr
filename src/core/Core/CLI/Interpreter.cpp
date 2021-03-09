@@ -89,10 +89,9 @@ void Interpreter::CallInstruction() {
 // NOLINTNEXTLINE
 void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command) {
   if (command == nullptr) {
-    Error::Handler::Push({
-        Error::ErrorType::COMMAND_NOT_FOUND,
+    Error::Handler::Push(Error::CommandNotFoundError(
         fmt::format("Command with the name \"{}\" could not be found.", name)
-    });
+    ));
     return;
   }
 
@@ -104,10 +103,9 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
 
     const Shell::Result result{Shell::Exec(script, m_Callback)};
     if (result.Status == ExitStatus::FAILURE) {
-      Error::Handler::Push({
-          Error::ErrorType::EXECUTION_FAILURE,
+      Error::Handler::Push(Error::ExecutionFailureError(
           fmt::format("Problem executing the command defined in \"{}\".", name)
-      });
+      ));
     }
   }
 

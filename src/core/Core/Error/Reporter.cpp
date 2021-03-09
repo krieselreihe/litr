@@ -4,7 +4,6 @@
 #include <fmt/format.h>
 
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/Error/Handler.hpp"
 
 namespace Litr::Error {
 
@@ -32,24 +31,23 @@ void Reporter::PrintError(const BaseError& error) {
   LITR_PROFILE_FUNCTION();
 
   switch (error.Type) {
-    case ErrorType::MALFORMED_FILE:
-    case ErrorType::MALFORMED_COMMAND:
-    case ErrorType::MALFORMED_PARAM:
-    case ErrorType::MALFORMED_SCRIPT:
-    case ErrorType::RESERVED_PARAM:
-    case ErrorType::UNKNOWN_COMMAND_PROPERTY:
-    case ErrorType::UNKNOWN_PARAM_VALUE:
-    case ErrorType::PARSER_ERROR: {
-      const std::string type{Handler::GetTypeDescription(error)};
+    case BaseError::ErrorType::MALFORMED_FILE:
+    case BaseError::ErrorType::MALFORMED_COMMAND:
+    case BaseError::ErrorType::MALFORMED_PARAM:
+    case BaseError::ErrorType::MALFORMED_SCRIPT:
+    case BaseError::ErrorType::RESERVED_PARAM:
+    case BaseError::ErrorType::UNKNOWN_COMMAND_PROPERTY:
+    case BaseError::ErrorType::UNKNOWN_PARAM_VALUE:
+    case BaseError::ErrorType::PARSER: {
       fmt::print(
           fg(fmt::color::crimson),
           "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
-          type, error.Line, error.LineStr, " ",
+          error.Description, error.Line, error.LineStr, " ",
           CountDigits(error.Line), "^ - ", error.Column, error.Message);
       break;
     }
-    case ErrorType::COMMAND_NOT_FOUND:
-    case ErrorType::EXECUTION_FAILURE: {
+    case BaseError::ErrorType::COMMAND_NOT_FOUND:
+    case BaseError::ErrorType::EXECUTION_FAILURE: {
       fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Message);
       break;
     }
