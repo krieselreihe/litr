@@ -22,8 +22,7 @@ class Interpreter {
  public:
   Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
-  using Callback = void (*)(const std::string& result);
-  void Execute(Interpreter::Callback callback);
+  void Execute();
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;
@@ -37,6 +36,9 @@ class Interpreter {
   void SetConstant();
   void CallInstruction();
   void CallCommand(const std::string& name, const Ref<Config::Command>& command);
+  void CallChildCommands(const Ref<Config::Command>& command);
+
+  static void Print(const std::string& result);
 
  private:
   const Ref<Instruction>& m_Instruction;
@@ -44,7 +46,6 @@ class Interpreter {
   const Config::Query m_Query;
 
   size_t m_Offset{0};
-  Interpreter::Callback m_Callback{nullptr};
 
   // Initialize with empty scope
   std::vector<std::vector<Variable>> m_Scope{std::vector<Variable>()};

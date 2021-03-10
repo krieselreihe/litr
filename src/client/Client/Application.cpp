@@ -58,9 +58,7 @@ ExitStatus Application::Run(int argc, char* argv[]) {
   }
 
   CLI::Interpreter interpreter{instruction, m_Config};
-  interpreter.Execute([](const std::string& result) {
-    fmt::print("{}", result);
-  });
+  interpreter.Execute();
 
   // Print interpreter errors if any:
   if (Error::Handler::HasErrors()) {

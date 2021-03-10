@@ -1,5 +1,7 @@
 #include "Interpreter.hpp"
 
+#include <fmt/printf.h>
+
 #include "Core/CLI/Shell.hpp"
 #include "Core/Error/Handler.hpp"
 
@@ -9,9 +11,7 @@ Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<Config::
     : m_Instruction(instruction), m_Config(config), m_Query(m_Config) {
 }
 
-void Interpreter::Execute(Interpreter::Callback callback) {
-  m_Callback = callback;
-
+void Interpreter::Execute() {
   while (m_Offset < m_Instruction->Count()) {
     ExecuteInstruction();
   }
@@ -101,7 +101,13 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
     // @todo: Implement
     // InsertVariables(script, variables);
 
-    const Shell::Result result{Shell::Exec(script, m_Callback)};
+    Shell::Result result;
+    if (command->Output == Config::Command::Output::SILENT) {
+      result = Shell::Exec(script);
+    } else {
+      result = Shell::Exec(script, Print);
+    }
+
     if (result.Status == ExitStatus::FAILURE) {
       Error::Handler::Push(Error::ExecutionFailureError(
           fmt::format("Problem executing the command defined in \"{}\".", name)
@@ -109,12 +115,21 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
     }
   }
 
-  // Execute child commands
+  CallChildCommands(command);
+}
+
+// Ignore recursive call of child commands.
+// NOLINTNEXTLINE
+void Interpreter::CallChildCommands(const Ref<Config::Command>& command) {
   if (!command->ChildCommands.empty()) {
     for (auto&& childCommand : command->ChildCommands) {
       CallCommand(childCommand->Name, childCommand);
     }
   }
+}
+
+void Interpreter::Print(const std::string& result) {
+  fmt::print("{}", result);
 }
 
 }  // namespace Litr::CLI
