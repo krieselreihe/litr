@@ -30,7 +30,12 @@ endif()
 
 option(DEBUG "Enable debug statements and asserts" OFF)
 if (DEBUG)
-  add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS LITR_ENABLE_DISASSEMBLE)
+  add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)
+endif()
+
+option(DISASSEMBLE "Disassemble any parser statements on program execution" OFF)
+if (DISASSEMBLE)
+  add_compile_definitions(LITR_ENABLE_DISASSEMBLE)
 endif()
 
 option(PROFILE "Enable profiling tools" OFF)

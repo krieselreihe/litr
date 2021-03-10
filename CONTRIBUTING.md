@@ -91,6 +91,12 @@ Build the application:
 cmake --build build/debug
 ```
 
+Run cmake with the following options if needed:
+
+* Disassemble any parser statements for debugging using `-DDISASSEMBLE`.
+* Disable any logging via `-DDEACTIVATE_LOGGING`.
+* Enable detailed execution flow tracing `-DTRACE`
+
 ### Release
 
 Build the configuration files with cmake:
