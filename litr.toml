@@ -12,6 +12,8 @@ script = "ls -lsa"
 script = "echo 'HELLO WORLD'"
 [commands.hello.error]
 script = "ls -"
+[commands.hello.another]
+script = "echo 'Works!'"
 
 [commands.deep]
 script = "echo 'DEEP'"

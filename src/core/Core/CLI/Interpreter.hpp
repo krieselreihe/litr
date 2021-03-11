@@ -3,6 +3,7 @@
 #include <functional>
 #include <deque>
 #include <utility>
+#include <string>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/Config/Loader.hpp"
@@ -35,8 +36,8 @@ class Interpreter {
   void DefineVariable();
   void SetConstant();
   void CallInstruction();
-  void CallCommand(const std::string& name, const Ref<Config::Command>& command);
-  void CallChildCommands(const Ref<Config::Command>& command);
+  void CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope = "");
+  void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
 
   static void Print(const std::string& result);
 
@@ -46,6 +47,7 @@ class Interpreter {
   const Config::Query m_Query;
 
   size_t m_Offset{0};
+  bool m_StopExecution{false};
 
   // Initialize with empty scope
   std::vector<std::vector<Variable>> m_Scope{std::vector<Variable>()};

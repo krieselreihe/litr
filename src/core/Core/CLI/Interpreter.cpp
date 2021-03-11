@@ -1,5 +1,6 @@
 #include "Interpreter.hpp"
 
+#include <algorithm>
 #include <fmt/printf.h>
 
 #include "Core/CLI/Shell.hpp"
@@ -7,12 +8,17 @@
 
 namespace Litr::CLI {
 
+static void CommandPathToHumanReadable(std::string& path) {
+  std::replace(path.begin(), path.end(), '.', ' ');
+}
+
 Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config)
     : m_Instruction(instruction), m_Config(config), m_Query(m_Config) {
 }
 
 void Interpreter::Execute() {
   while (m_Offset < m_Instruction->Count()) {
+    if (m_StopExecution) return;
     ExecuteInstruction();
   }
 }
@@ -87,10 +93,14 @@ void Interpreter::CallInstruction() {
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command) {
+void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope) {
+  std::string commandPath{scope + name};
+  CommandPathToHumanReadable(commandPath);
+
   if (command == nullptr) {
+    m_StopExecution = true;
     Error::Handler::Push(Error::CommandNotFoundError(
-        fmt::format("Command with the name \"{}\" could not be found.", name)
+        fmt::format("Command \"{}\" could not be found.", commandPath)
     ));
     return;
   }
@@ -109,21 +119,25 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
     }
 
     if (result.Status == ExitStatus::FAILURE) {
+      m_StopExecution = true;
       Error::Handler::Push(Error::ExecutionFailureError(
-          fmt::format("Problem executing the command defined in \"{}\".", name)
+          fmt::format("Problem executing the command defined in \"{}\".", commandPath)
       ));
     }
   }
 
-  CallChildCommands(command);
+  if (!m_StopExecution) {
+    CallChildCommands(command, commandPath.append(" "));
+  }
 }
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::CallChildCommands(const Ref<Config::Command>& command) {
+void Interpreter::CallChildCommands(const Ref<Config::Command>& command, const std::string& scope) {
   if (!command->ChildCommands.empty()) {
     for (auto&& childCommand : command->ChildCommands) {
-      CallCommand(childCommand->Name, childCommand);
+      if (m_StopExecution) return;
+      CallCommand(childCommand->Name, childCommand, scope);
     }
   }
 }
