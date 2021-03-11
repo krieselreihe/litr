@@ -5,6 +5,7 @@
 
 #include "Core/CLI/Shell.hpp"
 #include "Core/Error/Handler.hpp"
+#include "Core/Script/Parser.hpp"
 
 namespace Litr::CLI {
 
@@ -105,17 +106,14 @@ void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command
     return;
   }
 
-  // const auto variables{GetCurrentVariables()};
-
   for (auto&& script : command->Script) {
-    // @todo: Implement
-    // InsertVariables(script, variables);
-
     Shell::Result result;
+    std::string parsedScript{ParseScript(script)};
+
     if (command->Output == Config::Command::Output::SILENT) {
-      result = Shell::Exec(script);
+      result = Shell::Exec(parsedScript);
     } else {
-      result = Shell::Exec(script, Print);
+      result = Shell::Exec(parsedScript, Print);
     }
 
     if (result.Status == ExitStatus::FAILURE) {
@@ -140,6 +138,12 @@ void Interpreter::CallChildCommands(const Ref<Config::Command>& command, const s
       CallCommand(childCommand->Name, childCommand, scope);
     }
   }
+}
+
+std::string Interpreter::ParseScript(const std::string& script) const {
+  std::vector<Variable> variables{GetCurrentVariables()};
+  Script::Parser parser{script, variables};
+  return parser.GetScript();
 }
 
 void Interpreter::Print(const std::string& result) {

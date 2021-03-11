@@ -29,6 +29,10 @@
 #include "Core/CLI/Instruction.hpp"
 #include "Core/CLI/Interpreter.hpp"
 
+// Script -----------------------------
+
+#include "Core/Script/Parser.hpp"
+
 // Errors -----------------------------
 
 #include "Core/Error/BaseError.hpp"

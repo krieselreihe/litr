@@ -17,7 +17,7 @@ struct Variable {
 
   explicit Variable(std::string name) : Name(std::move(name)) {
   }
-};
+} __attribute__((aligned(64)));
 
 class Interpreter {
  public:
@@ -38,6 +38,8 @@ class Interpreter {
   void CallInstruction();
   void CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope = "");
   void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
+
+  [[nodiscard]] std::string ParseScript(const std::string& script) const;
 
   static void Print(const std::string& result);
 
