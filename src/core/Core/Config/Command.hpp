@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Core/Base.hpp"
+#include "Core/Config/Location.hpp"
 
 namespace Litr::Config {
 
@@ -22,6 +23,7 @@ struct Command {
   std::vector<Ref<Command>> ChildCommands{};
 
   Output Output{Output::UNCHANGED};
+  std::vector<Location> Locations{};
 
   explicit Command(std::string name) : Name(std::move(name)) {
   }
@@ -29,6 +31,7 @@ struct Command {
 
 }  // namespace Litr::Config
 
+#ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
 struct fmt::formatter<Litr::Config::Command> {
@@ -53,3 +56,4 @@ struct fmt::formatter<Litr::Config::Command> {
     return format_to(ctx.out(), "Script: {}{}", c.Name, childView);
   }
 };
+#endif

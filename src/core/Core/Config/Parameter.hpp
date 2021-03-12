@@ -25,6 +25,7 @@ struct Parameter {
 
 }  // namespace Litr::Config
 
+#ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
 struct fmt::formatter<Litr::Config::Parameter> {
@@ -42,3 +43,4 @@ struct fmt::formatter<Litr::Config::Parameter> {
     return format_to(ctx.out(), "Param: {}", p.Name);
   }
 };
+#endif

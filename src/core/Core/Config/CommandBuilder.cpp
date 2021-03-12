@@ -17,10 +17,20 @@ void CommandBuilder::AddScriptLine(const std::string& line) {
   m_Command->Script.emplace_back(line);
 }
 
+void CommandBuilder::AddScriptLine(const std::string& line, const toml::value& context) {
+  AddScriptLine(line);
+  AddLocation(context);
+}
+
 void CommandBuilder::AddScript(const std::vector<std::string>& scripts) {
   LITR_PROFILE_FUNCTION();
 
   m_Command->Script = scripts;
+}
+
+void CommandBuilder::AddScript(const std::vector<std::string>& scripts, const toml::value& context) {
+  AddScript(scripts);
+  for (auto&& entry : context.as_array()) AddLocation(entry);
 }
 
 void CommandBuilder::AddScript(const toml::value& scripts) {
@@ -36,7 +46,7 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
       break;
     }
 
-    AddScriptLine(script.as_string());
+    AddScriptLine(script.as_string(), script);
   }
 }
 
@@ -145,6 +155,14 @@ void CommandBuilder::AddChildCommand(const Ref<Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   m_Command->ChildCommands.emplace_back(command);
+}
+
+void CommandBuilder::AddLocation(const toml::value& context) {
+  m_Command->Locations.emplace_back(
+      context.location().line(),
+      context.location().column(),
+      context.location().line_str()
+  );
 }
 
 }  // namespace Litr::Config

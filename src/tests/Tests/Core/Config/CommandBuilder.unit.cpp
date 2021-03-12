@@ -86,6 +86,24 @@ TEST_SUITE("Config::CommandBuilder") {
       CHECK(result->Script[1] == "second line");
       Litr::Error::Handler::Flush();
     }
+
+    SUBCASE("Retains locations information") {
+      const auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
+
+      Litr::Config::CommandBuilder builder{file, data, "test"};
+      builder.AddScript(toml::find(data, "scripts"));
+
+      const auto result{builder.GetResult()};
+
+      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
+      CHECK(result->Locations[0].Line == 1);
+      CHECK(result->Locations[0].Column == 12);
+      CHECK(result->Locations[0].LineStr == R"(scripts = ["first line", "second line"])");
+      CHECK(result->Locations[1].Line == 1);
+      CHECK(result->Locations[1].Column == 26);
+      CHECK(result->Locations[1].LineStr == R"(scripts = ["first line", "second line"])");
+      Litr::Error::Handler::Flush();
+    }
   }
 
   TEST_CASE("CommandBuilder::AddDescription") {

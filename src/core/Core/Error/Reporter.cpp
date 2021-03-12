@@ -42,8 +42,8 @@ void Reporter::PrintError(const BaseError& error) {
       fmt::print(
           fg(fmt::color::crimson),
           "Error: {}\n{:d} | {}\n{:>{}} | {:>{}}{}\n",
-          error.Description, error.Line, error.LineStr, " ",
-          CountDigits(error.Line), "^ - ", error.Column, error.Message);
+          error.Description, error.Location.Line, error.Location.LineStr, " ",
+          CountDigits(error.Location.Line), "^ - ", error.Location.Column, error.Message);
       break;
     }
     case BaseError::ErrorType::COMMAND_NOT_FOUND:

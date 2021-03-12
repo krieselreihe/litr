@@ -19,6 +19,7 @@
 #include "Core/Config/Loader.hpp"
 #include "Core/Config/Parameter.hpp"
 #include "Core/Config/Query.hpp"
+#include "Core/Config/Location.hpp"
 
 // CLI --------------------------------
 

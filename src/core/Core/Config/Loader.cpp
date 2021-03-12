@@ -54,7 +54,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
 
   // Simple string form
   if (definition.is_string()) {
-    builder.AddScriptLine(definition.as_string());
+    builder.AddScriptLine(definition.as_string(), definition);
     return builder.GetResult();
   }
 
@@ -87,7 +87,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
       const toml::value& scripts{toml::find(definition, "script")};
 
       if (scripts.is_string()) {
-        builder.AddScriptLine(scripts.as_string());
+        builder.AddScriptLine(scripts.as_string(), scripts);
       } else if (scripts.is_array()) {
         builder.AddScript(scripts);
       } else {

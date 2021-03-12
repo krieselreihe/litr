@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Config/Location.hpp"
 
 namespace Litr::Error {
 
@@ -31,25 +32,21 @@ class BaseError {
   }
 
   BaseError(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
-      : Type(type), Message(std::move(message)), Line(line), Column(column), LineStr(std::move(lineStr)) {
+      : Type(type), Message(std::move(message)), Location(line, column, std::move(lineStr)) {
     LITR_PROFILE_FUNCTION();
   }
 
   BaseError(ErrorType type, std::string message, const toml::value& context)
       : Type(type),
         Message(std::move(message)),
-        Line(context.location().line()),
-        Column(context.location().column()),
-        LineStr(context.location().line_str()) {
+        Location(context.location().line(), context.location().column(), context.location().line_str()) {
     LITR_PROFILE_FUNCTION();
   }
 
   BaseError(ErrorType type, std::string message, const toml::exception& err)
       : Type(type),
         Message(std::move(message)),
-        Line(err.location().line()),
-        Column(err.location().column()),
-        LineStr(err.location().line_str()) {
+        Location(err.location().line(), err.location().column(), err.location().line_str()) {
     LITR_PROFILE_FUNCTION();
   }
 
@@ -60,10 +57,7 @@ class BaseError {
   const std::string Message;
 
   std::string Description{};
-
-  uint32_t Line{};
-  uint32_t Column{};
-  std::string LineStr{};
+  Config::Location Location{};
 };
 
 class ReservedParamError : public BaseError {

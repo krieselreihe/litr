@@ -2,8 +2,8 @@
 update = "git pull && git submodule update --init"
 build = [
   # Not sure about this `pascal_case` function here, yet.
-  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=${pascal_case(target)} --build build/${target}",
-  "ninja -C build/${target}"
+  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=%{pascal_case(target)} --build build/%{target}",
+  "ninja -C build/%{target}"
 ]
 
 [commands.hello]
@@ -25,7 +25,7 @@ script = "echo 'DEEP SECOND'"
 script = "echo 'DEEP SECOND DEEP'"
 
 [commands.run]
-script = "./build/${target}/litr/client/Client"
+script = "./build/%{target}/litr/client/Client"
 
 [commands.run.first]
 script = "run first"
