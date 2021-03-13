@@ -4,8 +4,8 @@
 
 namespace Litr::Script {
 
-Parser::Parser(std::string script, std::vector<CLI::Variable> variables)
-    : m_Script(std::move(script)), m_Variables(std::move(variables)) {
+Parser::Parser(std::string script, Config::Location location, std::vector<CLI::Variable> variables)
+    : m_Script(std::move(script)), m_Location(std::move(location)), m_Variables(std::move(variables)) {
   // @todo:
   // - On error, show place in config line where the error is
   // - Properly parse inside %{}, but ignore outside.

@@ -8,6 +8,7 @@
 #include "Core/CLI/Instruction.hpp"
 #include "Core/Config/Loader.hpp"
 #include "Core/Config/Query.hpp"
+#include "Core/Config/Location.hpp"
 
 namespace Litr::CLI {
 
@@ -27,7 +28,7 @@ class Interpreter {
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;
-  [[nodiscard]] std::vector<Variable> GetCurrentVariables() const;
+  [[nodiscard]] std::vector<Variable> GetScopeVariables() const;
 
   void ExecuteInstruction();
 
@@ -39,7 +40,8 @@ class Interpreter {
   void CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope = "");
   void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
 
-  [[nodiscard]] std::string ParseScript(const std::string& script) const;
+  [[nodiscard]] std::vector<std::string> ParseScripts(const Ref<Config::Command>& command);
+  [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);
 
   static void Print(const std::string& result);
 
@@ -49,7 +51,6 @@ class Interpreter {
   const Config::Query m_Query;
 
   size_t m_Offset{0};
-  bool m_StopExecution{false};
 
   // Initialize with empty scope
   std::vector<std::vector<Variable>> m_Scope{std::vector<Variable>()};
