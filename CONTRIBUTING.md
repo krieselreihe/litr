@@ -11,6 +11,7 @@ You want do contribute to this repo? Nice! And of course: **you are the best!** 
 - [Run](#run)
 - [Tests](#tests)
 - [Profiling](#profiling)
+- [Files and Directories](#files-and-directories)
 
 ---
 
@@ -172,3 +173,49 @@ Running the profiler executable will generate a `litr-profile.json` file that ca
 ```shell script
 ./build/profile/src/client/Client
 ```
+
+## Files and Directories
+
+Here an overview of some essential files and folders when working with the code.
+
+### Client
+
+**What:** Contains all client code to run the application inside the terminal.
+
+### Core
+
+**What:** The core library code.
+
+#### Debug
+
+- `src/core/Core/Debug`: Code for debugging the application
+
+#### Error
+
+- `src/core/Core/Error`: Error handling related code
+- `src/core/Core/Error/BaseError.hpp`: Base error class
+
+#### Config
+
+- `src/core/Core/Config`: All code related to loading and handling the configuration file
+- `src/core/Core/Config/Loader.hpp`: Configuration file loader
+- `src/core/Core/Config/Command.hpp`: Configuration command description
+- `src/core/Core/Config/Parameter.hpp`: Configuration parameter description
+
+#### CLI
+
+- `src/core/Core/CLI/Parser.hpp`: Command line argument parser
+- `src/core/Core/CLI/Interpreter.cpp`: Execute parsed instructions
+- `src/core/Core/CLI/Shell.hpp`: Script runner
+
+#### Script
+
+- `src/core/Core/Script/Parser.cpp`: Parse variables and functions in command scripts
+
+### Tests
+
+**What:** All test code for unit and integration tests.
+
+- `src/tests/Fixtures`: Tests fixtures, e.g. test configuration files for integration tests
+- `src/tests/Helpers`: Test helper functions
+- `src/tests/Tests`: Test cases
