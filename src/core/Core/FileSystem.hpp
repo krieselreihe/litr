@@ -10,6 +10,9 @@ namespace Litr {
 
 class Path {
  public:
+  using Iterator = std::filesystem::path::iterator;
+  using ConstIterator = std::filesystem::path::const_iterator;
+
   Path() = default;
   explicit Path(std::string path);
   virtual ~Path() = default;
@@ -22,12 +25,19 @@ class Path {
   [[nodiscard]] Path Append(const std::string& path) const;
   [[nodiscard]] Path Append(const Path& path) const;
 
+  [[nodiscard]] size_t Count() const;
+
   explicit operator std::string() const { return ToString(); }
 
   bool operator!=(const Path& other) const { return other.m_Path != m_Path; }
   bool operator==(const Path& other) const { return other.m_Path == m_Path; }
   bool operator!=(const std::string& other) const { return other != m_Path; }
   bool operator==(const std::string& other) const { return other == m_Path; }
+
+  Iterator begin() { return m_Path.begin(); }
+  Iterator end() { return m_Path.end(); }
+  ConstIterator begin() const { return m_Path.begin(); }
+  ConstIterator end() const { return m_Path.end(); }
 
   template <typename OStream>
   friend OStream& operator<<(OStream& os, const Path& path) {

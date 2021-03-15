@@ -41,6 +41,14 @@ Path Path::Append(const std::string& path) const {
   return static_cast<Path>(m_Path / path);
 }
 
+size_t Path::Count() const {
+  size_t count{0};
+  for ([[maybe_unused]] auto&& _ : m_Path) {
+    count++;
+  }
+  return count;
+}
+
 // FileSystem ------------------------------------
 
 bool FileSystem::Exists(const Path& path) {
