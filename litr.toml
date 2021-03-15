@@ -15,6 +15,10 @@ script = "ls -"
 [commands.hello.another]
 script = "echo 'Works!'"
 
+[commands.hello.folder]
+script = "ls -lsa"
+dir = ["src", "cmake"]
+
 [commands.deep]
 script = "echo 'DEEP'"
 [commands.deep.first]

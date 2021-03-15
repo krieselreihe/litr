@@ -37,8 +37,10 @@ class Interpreter {
   void DefineVariable();
   void SetConstant();
   void CallInstruction();
-  void CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope = "");
+
+  void CallCommand(const Ref<Config::Command>& command, const std::string& scope = "");
   void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
+  static void RunScripts(const std::vector<std::string>& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
 
   [[nodiscard]] std::vector<std::string> ParseScripts(const Ref<Config::Command>& command);
   [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);

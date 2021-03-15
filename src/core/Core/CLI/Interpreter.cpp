@@ -95,34 +95,30 @@ void Interpreter::CallInstruction() {
     return;
   }
 
-  CallCommand(name, command);
+  CallCommand(command);
   m_Offset++;
 }
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::CallCommand(const std::string& name, const Ref<Config::Command>& command, const std::string& scope) {
-  std::string commandPath{scope + name};
-  CommandPathToHumanReadable(commandPath);
-
+void Interpreter::CallCommand(const Ref<Config::Command>& command, const std::string& scope) {
+  std::string commandPath{scope + command->Name};
+  const bool printResult{command->Output == Config::Command::Output::SILENT};
   const std::vector<std::string> scripts{ParseScripts(command)};
+
   if (Error::Handler::HasErrors()) return;
 
-  for (auto&& script : scripts) {
-    Shell::Result result;
-    if (command->Output == Config::Command::Output::SILENT) {
-      result = Shell::Exec(script);
-    } else {
-      result = Shell::Exec(script, Print);
-    }
+  CommandPathToHumanReadable(commandPath);
 
-    if (result.Status == ExitStatus::FAILURE) {
-      Error::Handler::Push(Error::ExecutionFailureError(
-          fmt::format("Problem executing the command defined in \"{}\".", commandPath)
-      ));
-      return;
+  if (command->Directory.empty()) {
+    RunScripts(scripts, commandPath, "", printResult);
+  } else {
+    for (auto&& dir : command->Directory) {
+      RunScripts(scripts, commandPath, dir, printResult);
     }
   }
+
+  if (Error::Handler::HasErrors()) return;
 
   CallChildCommands(command, commandPath.append(" "));
 }
@@ -133,7 +129,22 @@ void Interpreter::CallChildCommands(const Ref<Config::Command>& command, const s
   if (!command->ChildCommands.empty()) {
     for (auto&& childCommand : command->ChildCommands) {
       if (Error::Handler::HasErrors()) return;
-      CallCommand(childCommand->Name, childCommand, scope);
+      CallCommand(childCommand, scope);
+    }
+  }
+}
+
+void Interpreter::RunScripts(const std::vector<std::string>& scripts, const std::string& commandPath, const std::string& dir, bool printResult) {
+  Path path{dir};
+
+  for (auto&& script : scripts) {
+    Shell::Result result{printResult ? Shell::Exec(script, path) : Shell::Exec(script, path, Print)};
+
+    if (result.Status == ExitStatus::FAILURE) {
+      Error::Handler::Push(Error::ExecutionFailureError(
+          fmt::format("Problem executing the command defined in \"{}\".", commandPath)
+      ));
+      return;
     }
   }
 }
