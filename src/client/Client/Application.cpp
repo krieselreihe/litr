@@ -7,6 +7,8 @@ namespace Litr {
 Application::Application() {
   LITR_PROFILE_FUNCTION();
 
+  fmt::print("Hello, Litr!\n");
+
   Path cwd{FileSystem::GetCurrentWorkingDirectory()};
   Config::FileResolver configPath{cwd};
 
@@ -45,7 +47,6 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return m_ExitStatus;
   }
 
-  fmt::print("Hello, Litr!\n");
   m_Source = SourceFromArguments(argc, argv);
 
   const auto instruction{CreateRef<CLI::Instruction>()};
@@ -58,6 +59,8 @@ ExitStatus Application::Run(int argc, char* argv[]) {
   }
 
   CLI::Interpreter interpreter{instruction, m_Config};
+
+  fmt::print("\n");
   interpreter.Execute();
 
   // Print interpreter errors if any:
