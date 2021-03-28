@@ -29,7 +29,7 @@ if (TRACE)
 endif()
 
 option(DEBUG "Enable debug statements and asserts" OFF)
-if (DEBUG)
+if (DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)
 endif()
 

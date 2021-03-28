@@ -4,6 +4,8 @@
 #include <deque>
 #include <utility>
 #include <string>
+#include <variant>
+#include <unordered_map>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/Config/Loader.hpp"
@@ -13,14 +15,24 @@
 namespace Litr::CLI {
 
 struct Variable {
-  std::string Name;
-  std::string Value{};
+  enum class Type { STRING, BOOLEAN };
 
-  explicit Variable(std::string name) : Name(std::move(name)) {
+  Type Type;
+  std::string Name;
+  std::variant<bool, std::string> Value{};
+
+  explicit Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
+  }
+  explicit Variable(std::string name, bool value) : Type(Type::BOOLEAN), Name(std::move(name)), Value(value) {
+  }
+  explicit Variable(std::string name, std::string value) : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
   }
 } __attribute__((aligned(64)));
 
 class Interpreter {
+  using Variables = std::unordered_map<std::string, CLI::Variable>;
+  using Scripts = std::vector<std::string>;
+
  public:
   Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
@@ -28,7 +40,8 @@ class Interpreter {
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;
-  [[nodiscard]] std::vector<Variable> GetScopeVariables() const;
+  [[nodiscard]] Variables GetScopeVariables() const;
+  void DefineDefaultVariables(const Ref<Config::Loader>& config);
 
   void ExecuteInstruction();
 
@@ -40,22 +53,24 @@ class Interpreter {
 
   void CallCommand(const Ref<Config::Command>& command, const std::string& scope = "");
   void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
-  static void RunScripts(const std::vector<std::string>& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
+  static void RunScripts(const Scripts& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
 
-  [[nodiscard]] std::vector<std::string> ParseScripts(const Ref<Config::Command>& command);
+  [[nodiscard]] Scripts ParseScripts(const Ref<Config::Command>& command);
   [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);
+
+  [[nodiscard]] static enum Variable::Type GetVariableType(const Ref<Config::Parameter>& param);
 
   static void Print(const std::string& result);
 
  private:
   const Ref<Instruction>& m_Instruction;
-  const Ref<Config::Loader>& m_Config;
   const Config::Query m_Query;
 
   size_t m_Offset{0};
+  std::string m_CurrentVariableName{};
 
   // Initialize with empty scope
-  std::vector<std::vector<Variable>> m_Scope{std::vector<Variable>()};
+  std::vector<Variables> m_Scope{Variables()};
 };
 
 }  // namespace Litr::CLI

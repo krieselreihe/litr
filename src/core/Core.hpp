@@ -32,7 +32,9 @@
 
 // Script -----------------------------
 
-#include "Core/Script/Parser.hpp"
+#include "Core/Script/Compiler.hpp"
+#include "Core/Script/Scanner.hpp"
+#include "Core/Script/Token.hpp"
 
 // Errors -----------------------------
 

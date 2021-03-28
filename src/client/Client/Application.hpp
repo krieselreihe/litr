@@ -12,6 +12,7 @@ class Application {
   ExitStatus Run(int argc, char* argv[]);
 
  private:
+  [[nodiscard]] Path GetConfigPath();
   [[nodiscard]] static std::string SourceFromArguments(int argc, char* argv[]);
 
  private:

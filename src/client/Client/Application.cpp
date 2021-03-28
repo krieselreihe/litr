@@ -1,6 +1,7 @@
 #include "Application.hpp"
 
 #include <fmt/color.h>
+#include <fmt/format.h>
 
 namespace Litr {
 
@@ -9,35 +10,12 @@ Application::Application() {
 
   fmt::print("Hello, Litr!\n");
 
-  Path cwd{FileSystem::GetCurrentWorkingDirectory()};
-  Config::FileResolver configPath{cwd};
-
-  switch (configPath.GetStatus()) {
-    case Config::FileResolver::Status::NOT_FOUND: {
-      fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
-      m_ExitStatus = ExitStatus::FAILURE;
-      break;
-    }
-    case Config::FileResolver::Status::DUPLICATE: {
-      fmt::print(
-          fg(fmt::color::gold),
-          "You defined both, litr.toml and .litr.toml in {0}. "
-          "This is probably an error and you only want one of them.\n",
-          configPath.GetFileDirectory());
-      m_ExitStatus = ExitStatus::FAILURE;
-      break;
-    }
-    case Config::FileResolver::Status::FOUND: {
-      fmt::print("Configuration file found under: {0}\n", configPath.GetFilePath());
-      break;
-    }
-  }
-
+  Path configPath{GetConfigPath()};
   if (m_ExitStatus == ExitStatus::FAILURE) {
     return;
   }
 
-  m_Config = CreateRef<Config::Loader>(configPath.GetFilePath());
+  m_Config = CreateRef<Config::Loader>(configPath);
 }
 
 ExitStatus Application::Run(int argc, char* argv[]) {
@@ -70,6 +48,34 @@ ExitStatus Application::Run(int argc, char* argv[]) {
   }
 
   return m_ExitStatus;
+}
+
+Path Application::GetConfigPath() {
+  Path cwd{FileSystem::GetCurrentWorkingDirectory()};
+  Config::FileResolver configPath{cwd};
+
+  switch (configPath.GetStatus()) {
+    case Config::FileResolver::Status::NOT_FOUND: {
+      fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
+      m_ExitStatus = ExitStatus::FAILURE;
+      break;
+    }
+    case Config::FileResolver::Status::DUPLICATE: {
+      fmt::print(
+          fg(fmt::color::gold),
+          "You defined both, litr.toml and .litr.toml in {}. "
+          "This is probably an error and you only want one of them.\n",
+          configPath.GetFileDirectory());
+      m_ExitStatus = ExitStatus::FAILURE;
+      break;
+    }
+    case Config::FileResolver::Status::FOUND: {
+      fmt::print("Configuration file found under: {}\n", configPath.GetFilePath());
+      break;
+    }
+  }
+
+  return configPath.GetFilePath();
 }
 
 std::string Application::SourceFromArguments(int argc, char** argv) {

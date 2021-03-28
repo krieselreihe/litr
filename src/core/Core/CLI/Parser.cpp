@@ -16,7 +16,7 @@ Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
   Arguments();
   EndOfString();
 
-  LITR_DISASSEMBLE(m_Instruction, "Test instructions");
+  LITR_DISASSEMBLE(m_Instruction, "CLI::Parser");
 }
 
 void Parser::Advance() {
@@ -224,7 +224,7 @@ void Parser::ErrorAt(Token* token, const char* message) {
   } else if (token->Type == TokenType::ERROR) {
     // Nothing, yet.
   } else {
-    outMessage.append(fmt::format(" at '{}'", Scanner::GetTokenValue(token)));
+    outMessage.append(fmt::format(" at `{}`", Scanner::GetTokenValue(token)));
   }
 
   outMessage.append(fmt::format(": {}\n", message));

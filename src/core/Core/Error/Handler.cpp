@@ -16,7 +16,7 @@ void Handler::Flush() {
   Get().m_Errors.clear();
 }
 
-std::vector<BaseError> Handler::GetErrors() {
+Handler::Errors Handler::GetErrors() {
   LITR_PROFILE_FUNCTION();
 
   return Get().m_Errors;

@@ -29,3 +29,13 @@ target_link_libraries(CLI_Scanner PRIVATE TestBase Core)
 add_executable(CLI_Parser CLI/Parser.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME CLI_Parser COMMAND CLI_Parser)
 target_link_libraries(CLI_Parser PRIVATE TestBase Core)
+
+# --- Script ---
+
+add_executable(Script_Scanner Script/Scanner.unit.cpp $<TARGET_OBJECTS:Tests>)
+add_test(NAME Script_Scanner COMMAND Script_Scanner)
+target_link_libraries(Script_Scanner PRIVATE TestBase Core)
+
+add_executable(Script_Compiler Script/Compiler.unit.cpp $<TARGET_OBJECTS:Tests>)
+add_test(NAME Script_Compiler COMMAND Script_Compiler)
+target_link_libraries(Script_Compiler PRIVATE TestBase Core)

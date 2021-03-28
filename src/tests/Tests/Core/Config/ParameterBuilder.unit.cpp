@@ -129,7 +129,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::Flush();
     }
 
@@ -140,7 +140,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "type" option as string can only be "string". Provided value "unknown" is not known.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -151,7 +151,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::String);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::Flush();
     }
 
@@ -164,7 +164,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::ParameterType::Array);
+      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::ARRAY);
       Litr::Error::Handler::Flush();
     }
 
@@ -187,7 +187,7 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Ref<Litr::Config::Parameter> result{builder.GetResult()};
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(result->Type == Litr::Config::Parameter::ParameterType::Array);
+      CHECK(result->Type == Litr::Config::Parameter::Type::ARRAY);
       CHECK(result->TypeArguments[0] == "test");
       CHECK(result->TypeArguments[1] == "debug");
       Litr::Error::Handler::Flush();

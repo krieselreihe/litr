@@ -12,7 +12,7 @@ Query::Query(const Ref<Loader>& config) : m_Config(config) {
 Ref<Command> Query::GetCommand(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  std::deque names{SplitCommandQuery(name)};
+  Parts names{SplitCommandQuery(name)};
   return GetCommandByPath(names, m_Config->GetCommands());
 }
 
@@ -28,17 +28,17 @@ Ref<Parameter> Query::GetParameter(const std::string& name) const {
   return nullptr;
 }
 
-std::deque<std::string> Query::SplitCommandQuery(const std::string& query) {
+Query::Parts Query::SplitCommandQuery(const std::string& query) {
   LITR_PROFILE_FUNCTION();
 
-  std::deque<std::string> parts{};
+  Parts parts{};
   Utils::SplitInto(query, '.', parts);
   return parts;
 }
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Query::GetCommandByPath(std::deque<std::string>& names, const std::vector<Ref<Command>>& commands) {
+Ref<Command> Query::GetCommandByPath(Parts& names, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
   const Ref<Command>& command{GetCommandByName(names.front(), commands)};
@@ -55,8 +55,7 @@ Ref<Command> Query::GetCommandByPath(std::deque<std::string>& names, const std::
 
   if (command->ChildCommands.empty()) {
     if (!names.empty()) {
-      // @todo: This is an error, but not a hard one as the user could access sub commands that
-      // do not exist.
+      // Do nothing. This will lead further down the line to a "sub command not found" error.
     }
 
     return nullptr;
@@ -67,7 +66,7 @@ Ref<Command> Query::GetCommandByPath(std::deque<std::string>& names, const std::
   return GetCommandByPath(names, command->ChildCommands);
 }
 
-Ref<Command> Query::GetCommandByName(const std::string& name, const std::vector<Ref<Command>>& commands) {
+Ref<Command> Query::GetCommandByName(const std::string& name, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const Ref<Command>& command : commands) {

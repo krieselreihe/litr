@@ -11,7 +11,7 @@ void Scanner::SkipWhitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char c = Peek();
+    char c{Peek()};
     switch (c) {
       case ' ':
       case '\r':
@@ -77,7 +77,7 @@ Token Scanner::ScanToken() {
     return MakeToken(TokenType::EOS);
   }
 
-  char c = Advance();
+  char c{Advance()};
 
   if (IsDigit(c)) return Number();
   if (IsAlpha(c)) return Command();

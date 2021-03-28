@@ -83,11 +83,13 @@ void ParameterBuilder::AddType() {
 
     if (type.is_string()) {
       if (type.as_string() == "string") {
-        m_Parameter->Type = Parameter::ParameterType::String;
+        m_Parameter->Type = Parameter::Type::STRING;
+      } else if (type.as_string() == "boolean") {
+        m_Parameter->Type = Parameter::Type::BOOLEAN;
       } else {
         Error::Handler::Push(Error::UnknownParamValueError(
-            fmt::format(R"(The "{}" option as string can only be "string". Provided value "{}" is not known.)", name,
-                        static_cast<std::string>(type.as_string())),
+            fmt::format(R"(The "{}" option as string can only be "string" or "boolean". Provided value "{}" is not known.)",
+                        name, static_cast<std::string>(type.as_string())),
             m_Table.at(name)
         ));
       }
@@ -95,7 +97,7 @@ void ParameterBuilder::AddType() {
     }
 
     if (type.is_array()) {
-      m_Parameter->Type = Parameter::ParameterType::Array;
+      m_Parameter->Type = Parameter::Type::ARRAY;
       for (auto&& option : type.as_array()) {
         if (option.is_string()) {
           m_Parameter->TypeArguments.emplace_back(option.as_string());
@@ -128,7 +130,7 @@ void ParameterBuilder::AddDefault() {
       const std::string defaultValue{def.as_string()};
 
       // Test if default value present in available options
-      if (m_Parameter->Type == Parameter::ParameterType::Array) {
+      if (m_Parameter->Type == Parameter::Type::ARRAY) {
         const std::vector<std::string>& args{m_Parameter->TypeArguments};
         if (std::find(args.begin(), args.end(), defaultValue) == args.end()) {
           Error::Handler::Push(Error::MalformedParamError(
@@ -157,7 +159,10 @@ void ParameterBuilder::AddDefault() {
 bool ParameterBuilder::IsReservedName(const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
-  const std::array<std::string, 2> reserved{"help", "h"};
+  const std::array<std::string, 4> reserved{
+      "help", "h",
+      "or", "and"
+  };
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 

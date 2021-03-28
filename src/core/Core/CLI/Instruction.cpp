@@ -29,12 +29,6 @@ size_t Instruction::Count() const {
   return m_ByteCode.size();
 }
 
-size_t Instruction::Size() const {
-  LITR_PROFILE_FUNCTION();
-
-  return sizeof(Instruction::Code) * m_ByteCode.size();
-}
-
 std::byte Instruction::WriteConstant(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 

@@ -17,23 +17,25 @@ brew install litr
 Define some commands, to make it feel real the example wraps this project with C++ and CMake:
 
 ```toml
-# litr.toml
 [commands]
-update = [
-  "git pull",
-  "git submodule update --init"
+update = "git pull && git submodule update --init"
+build = [
+  "cmake -GNinja -DCMAKE_BUILD_TYPE=%{target} --build build/%{target}",
+  "ninja -C build/%{target}"
 ]
-build = "cmake -GNinja -DCMAKE_BUILD_TYPE=${target} --build build/${target}"
-run = "./build/${target}/litr/client/Client"
+test = "cd build/%{target}/src/tests && ctest"
 
-[params]
-target = "Defines the build target"
+[params.target]
+shortcut = "t"
+description = "Define the application build target."
+type = ["debug", "release"]
+default = "debug"
 ```
 
 Run them all:
 
 ```shell script
-litr --target=debug update,build,run
+litr --target=debug update,build,test
 ```
 
 To find out more go to the [wikis setup section](https://github.com/krieselreihe/litr/wiki/Setup).

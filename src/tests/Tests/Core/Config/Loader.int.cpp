@@ -237,7 +237,7 @@ TEST_SUITE("Config::Loader") {
       CHECK(param->Description == "Description");
       CHECK(param->Shortcut == "t");
       CHECK(param->Default == "debug");
-      CHECK(param->Type == Litr::Config::Parameter::ParameterType::Array);
+      CHECK(param->Type == Litr::Config::Parameter::Type::ARRAY);
       CHECK(param->TypeArguments.size() == 2);
       CHECK(param->TypeArguments[0] == "debug");
       CHECK(param->TypeArguments[1] == "release");

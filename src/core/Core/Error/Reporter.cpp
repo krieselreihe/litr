@@ -1,6 +1,7 @@
 #include "Reporter.hpp"
 
 #include <fmt/color.h>
+// Defined to build on g++
 #include <fmt/format.h>
 
 #include "Core/Debug/Instrumentor.hpp"

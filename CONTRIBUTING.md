@@ -83,7 +83,7 @@ git pull && git submodule update --init
 Build the configuration files with cmake:
 
 ```shell script
-cmake -GNinja -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug --build build/debug
+cmake -GNinja -DCMAKE_BUILD_TYPE=Debug --build build/debug
 ```
 
 Build the application:
@@ -94,9 +94,10 @@ cmake --build build/debug
 
 Run cmake with the following options if needed:
 
-* Disassemble any parser statements for debugging using `-DDISASSEMBLE`.
-* Disable any logging via `-DDEACTIVATE_LOGGING`.
-* Enable detailed execution flow tracing `-DTRACE`
+* Disassemble any parser statements for debugging using `-DDISASSEMBLE=ON`.
+* Disable any logging via `-DDEACTIVATE_LOGGING=ON`.
+* Enable detailed execution flow tracing `-DTRACE=ON`
+* Set debug mode, even if build type differs (for debugging purposes) `-DDEBUG=ON`
 
 ### Release
 
@@ -119,14 +120,14 @@ To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `C
 Example for clang on MacOS, creating a debug build:
 
 ```shell
-cmake -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ --build build/debug
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ --build build/debug
 cmake --build build/debug
 ```
 
 Example for gcc on MacOS, creating a debug build:
 
 ```shell
-cmake -DDEBUG=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ --build build/debug
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ --build build/debug
 cmake --build build/debug
 ```
 
@@ -176,7 +177,7 @@ Running the profiler executable will generate a `litr-profile.json` file that ca
 
 ## Files and Directories
 
-Here an overview of some essential files and folders when working with the code.
+Here an overview of **a few** important files and folders when working with the code.
 
 ### Client
 
@@ -210,7 +211,7 @@ Here an overview of some essential files and folders when working with the code.
 
 #### Script
 
-- `src/core/Core/Script/Parser.cpp`: Parse variables and functions in command scripts
+- `src/core/Core/Script/Compiler.cpp`: Compile CLI instructions to a valid executable script
 
 ### Tests
 

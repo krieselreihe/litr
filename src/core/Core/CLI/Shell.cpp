@@ -57,6 +57,8 @@ ExitStatus Shell::GetStatusCode(int streamStatus) {
 }
 
 std::string Shell::CreateCommandString(const std::string& command, const Path& path) {
+  LITR_PROFILE_FUNCTION();
+
   std::string mainCommand{command};
   mainCommand.append(" 2>&1");
 
@@ -80,6 +82,8 @@ std::string Shell::CreateCommandString(const std::string& command, const Path& p
 }
 
 std::string Shell::CreateCdCommand(const Path& path) {
+  LITR_PROFILE_FUNCTION();
+
   std::string cmd{"cd "};
   cmd.append(path.ToString());
   return cmd;

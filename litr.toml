@@ -1,51 +1,21 @@
 [commands]
 update = "git pull && git submodule update --init"
 build = [
-  # Not sure about this `pascal_case` function here, yet.
-  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=%{pascal_case(target)} --build build/%{target}",
+  """cmake -GNinja %{trace '-DDISASSEMBLE=ON -DTRACE=ON'} \
+  -DCMAKE_BUILD_TYPE=%{target} \
+  --build build/%{target}""",
   "ninja -C build/%{target}"
 ]
-
-[commands.hello]
-script = "ls -lsa"
-[commands.hello.test]
-script = "echo 'HELLO WORLD'"
-[commands.hello.error]
-script = "ls -"
-[commands.hello.another]
-script = "echo 'Works!'"
-
-[commands.hello.folder]
-script = "ls -lsa"
-dir = ["src", "cmake"]
-
-[commands.deep]
-script = "echo 'DEEP'"
-[commands.deep.first]
-script = "echo 'DEEP FIRST'"
-[commands.deep.second]
-script = "echo 'DEEP SECOND'"
-[commands.deep.second.deep]
-script = "echo 'DEEP SECOND DEEP'"
-
-[commands.run]
-script = "./build/%{target}/litr/client/Client"
-
-[commands.run.first]
-script = "run first"
-description = "This is the first to run"
-
-[commands.run.seconds]
-script = "run second"
-
-[commands.run.third]
-script = "run third"
-
-[commands.run.fourth]
-script = "run fourth"
+run = "./build/%{target}/src/client/Client"
+test = "cd build/%{target}/src/tests && ctest && cd ../../../.."
 
 [params.target]
 shortcut = "t"
-description = "Define the build target."
-type = ["debug", "release"]
+description = "Define the application build target."
+type = ["debug", "release", "profile", "trace"]
 default = "debug"
+
+[params.trace]
+shortcut = "t"
+description = "Activate tracing support."
+type = "boolean"

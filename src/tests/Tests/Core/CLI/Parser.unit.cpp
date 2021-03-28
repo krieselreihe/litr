@@ -76,6 +76,21 @@ TEST_SUITE("Parser") {
     Litr::Error::Handler::Flush();
   }
 
+  TEST_CASE("Parameter with empty string") {
+    const auto instruction{Litr::CreateRef<Litr::CLI::Instruction>()};
+    const std::string source{R"(-t="")"};
+
+    Litr::CLI::Parser parser{instruction, source};
+    const std::array<InstructionDefinition, 2> definition{{
+        {Litr::CLI::Instruction::Code::DEFINE, "t"},
+        {Litr::CLI::Instruction::Code::CONSTANT, ""}
+    }};
+
+    CHECK(parser.HasErrors() == false);
+    CHECK_DEFINITION(instruction, definition);
+    Litr::Error::Handler::Flush();
+  }
+
   TEST_CASE("Single command") {
     const auto instruction{Litr::CreateRef<Litr::CLI::Instruction>()};
     const std::string source{"build"};
@@ -171,7 +186,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -185,7 +200,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -199,7 +214,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -213,7 +228,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -227,7 +242,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -241,7 +256,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -255,7 +270,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at ',': Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -322,7 +337,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at '\"debug\"': This is not allowed here.\n");
+    CHECK(errors[0].Message == "Cannot parse at `\"debug\"`: This is not allowed here.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -336,7 +351,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at '23': This is not allowed here.\n");
+    CHECK(errors[0].Message == "Cannot parse at `23`: This is not allowed here.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -364,7 +379,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at '=': You are missing a parameter in front of the assignment.\n");
+    CHECK(errors[0].Message == "Cannot parse at `=`: You are missing a parameter in front of the assignment.\n");
     Litr::Error::Handler::Flush();
   }
 
@@ -378,7 +393,7 @@ TEST_SUITE("Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at '=': Value assignment missing.\n");
+    CHECK(errors[0].Message == "Cannot parse at `=`: Value assignment missing.\n");
     Litr::Error::Handler::Flush();
   }
 }

@@ -8,13 +8,15 @@ namespace Litr::Error {
 
 class Handler {
  public:
+  using Errors = std::vector<BaseError>;
+
   Handler(const Handler&) = delete;
   Handler& operator=(const Handler&) = delete;
 
   static void Push(const BaseError& err);
   static void Flush();
 
-  [[nodiscard]] static std::vector<BaseError> GetErrors();
+  [[nodiscard]] static Errors GetErrors();
   [[nodiscard]] static bool HasErrors();
 
  private:
@@ -26,7 +28,7 @@ class Handler {
   }
 
  private:
-  std::vector<BaseError> m_Errors{};
+  Errors m_Errors{};
 };
 
 }  // namespace Litr::Error

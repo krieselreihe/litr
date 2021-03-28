@@ -8,7 +8,7 @@
 namespace Litr::Config {
 
 struct Parameter {
-  enum class ParameterType { String = 0, Array = 1 };
+  enum class Type { STRING = 0, BOOLEAN = 1, ARRAY = 2 };
 
   std::vector<std::string> TypeArguments{};
 
@@ -17,7 +17,7 @@ struct Parameter {
   std::string Shortcut{};
   std::string Default{};
 
-  ParameterType Type{ParameterType::String};
+  Type Type{Type::STRING};
 
   explicit Parameter(std::string name) : Name(std::move(name)) {
   }

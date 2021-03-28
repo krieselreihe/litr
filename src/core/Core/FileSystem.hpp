@@ -57,7 +57,6 @@ class FileSystem {
 
 }  // namespace Litr
 
-#ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
 struct fmt::formatter<Litr::Path> {
@@ -71,4 +70,3 @@ struct fmt::formatter<Litr::Path> {
     return format_to(ctx.out(), "{}", p.ToString());
   }
 };
-#endif

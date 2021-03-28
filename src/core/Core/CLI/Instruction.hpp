@@ -25,9 +25,7 @@ class Instruction {
   void Write(Code code);
   void Write(std::byte byte);
   [[nodiscard]] std::byte Read(size_t offset) const;
-
   [[nodiscard]] size_t Count() const;
-  [[nodiscard]] size_t Size() const;
 
   std::byte WriteConstant(const Value& value);
   [[nodiscard]] Value ReadConstant(std::byte index) const;

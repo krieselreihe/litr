@@ -42,7 +42,7 @@ void CommandBuilder::AddScript(const toml::value& scripts) {
           "A command script can be either a string or array of strings.",
           m_File.at(m_Command->Name)
       ));
-      // Stop after first error in an array of scripts, to avoid being to verbose.
+      // Stop after first error in an array of scripts, to avoid being too verbose.
       break;
     }
 
@@ -158,6 +158,8 @@ void CommandBuilder::AddChildCommand(const Ref<Command>& command) {
 }
 
 void CommandBuilder::AddLocation(const toml::value& context) {
+  LITR_PROFILE_FUNCTION();
+
   m_Command->Locations.emplace_back(
       context.location().line(),
       context.location().column(),

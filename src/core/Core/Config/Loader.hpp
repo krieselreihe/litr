@@ -14,11 +14,14 @@ namespace Litr::Config {
 
 class Loader {
  public:
+  using Commands = std::vector<Ref<Command>>;
+  using Parameters = std::vector<Ref<Parameter>>;
+
   explicit Loader(const Path& filePath);
   virtual ~Loader() = default;
 
-  [[nodiscard]] inline std::vector<Ref<Command>> GetCommands() const { return m_Commands; };
-  [[nodiscard]] inline std::vector<Ref<Parameter>> GetParameters() const { return m_Parameters; };
+  [[nodiscard]] inline Commands GetCommands() const { return m_Commands; };
+  [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; };
 
  private:
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
@@ -26,8 +29,8 @@ class Loader {
   void CollectParams(const toml::table& params);
 
  private:
-  std::vector<Ref<Command>> m_Commands{};
-  std::vector<Ref<Parameter>> m_Parameters{};
+  Commands m_Commands{};
+  Parameters m_Parameters{};
 };
 
 }  // namespace Litr::Config

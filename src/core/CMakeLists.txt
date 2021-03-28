@@ -14,12 +14,14 @@ add_library(${NAME} STATIC
   Core/Config/Command.hpp Core/Config/Parameter.hpp
   Core/Config/CommandBuilder.cpp Core/Config/CommandBuilder.hpp
   Core/Config/ParameterBuilder.cpp Core/Config/ParameterBuilder.hpp
+  Core/Config/Query.cpp Core/Config/Query.hpp Core/Config/Location.hpp
   Core/CLI/Shell.cpp Core/CLI/Shell.hpp Core/CLI/Parser.cpp Core/CLI/Parser.hpp
   Core/CLI/Scanner.cpp Core/CLI/Scanner.hpp Core/CLI/Token.hpp
   Core/CLI/Instruction.cpp Core/CLI/Instruction.hpp
   Core/CLI/Interpreter.cpp Core/CLI/Interpreter.hpp
-  Core/Config/Query.cpp Core/Config/Query.hpp
-  Core/Script/Parser.cpp Core/Script/Parser.hpp Core/Config/Location.hpp)
+  Core/Script/Compiler.cpp Core/Script/Compiler.hpp
+  Core/Script/Scanner.cpp Core/Script/Scanner.hpp
+  Core/Script/Token.hpp)
 
 # Define set of OS specific files to include
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
