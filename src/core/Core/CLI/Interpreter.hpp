@@ -19,7 +19,9 @@ struct Variable {
 
   Type Type;
   std::string Name;
-  std::variant<bool, std::string> Value{};
+  // Default value should be an empty string as booleans
+  // are always handled explicit.
+  std::variant<std::string, bool> Value{};
 
   explicit Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
   }
