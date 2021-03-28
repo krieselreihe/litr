@@ -9,7 +9,7 @@
 namespace Litr::CLI {
 
 Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
-    : m_Scanner(source.c_str()), m_Instruction(instruction) {
+    : m_Source(source), m_Scanner(source.c_str()), m_Instruction(instruction) {
   LITR_PROFILE_FUNCTION();
 
   Advance();
@@ -232,9 +232,8 @@ void Parser::ErrorAt(Token* token, const char* message) {
   Error::Handler::Push(Error::ParserError(
       outMessage,
       1,
-      0, // token->Column,
-      // @todo: Shows currently only shortened line string.
-      std::string(token->Start)
+      token->Column,
+      Utils::Trim(m_Source, ' ')
   ));
 
   m_HasError = true;

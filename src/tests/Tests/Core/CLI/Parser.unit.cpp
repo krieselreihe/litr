@@ -396,4 +396,18 @@ TEST_SUITE("Parser") {
     CHECK(errors[0].Message == "Cannot parse at `=`: Value assignment missing.\n");
     Litr::Error::Handler::Flush();
   }
+
+  TEST_CASE("Duplicated parameter initializer") {
+    const auto instruction{Litr::CreateRef<Litr::CLI::Instruction>()};
+    const std::string source{"---t"};
+
+    Litr::CLI::Parser parser{instruction, source};
+
+    CHECK(parser.HasErrors() == true);
+
+    const auto errors{Litr::Error::Handler::GetErrors()};
+    CHECK(errors.size() == 1);
+    CHECK(errors[0].Message == "Cannot parse: A parameter can only start with the characters A-Za-z.\n");
+    Litr::Error::Handler::Flush();
+  }
 }

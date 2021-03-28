@@ -46,6 +46,7 @@ class Parser {
 
   [[nodiscard]] std::string GetScopePath() const;
 
+  std::string m_Source;
   Scanner m_Scanner;
   const Ref<Instruction>& m_Instruction;
 
