@@ -236,8 +236,8 @@ TEST_SUITE("Scanner") {
     Litr::CLI::Scanner scanner{"--1 --_bob"};
 
     std::array<TokenDefinition, 2> definition{{
-        {Litr::CLI::TokenType::ERROR, "A parameter cannot start with a number or _ (allowed characters are A-Za-z)."},
-        {Litr::CLI::TokenType::ERROR, "A parameter cannot start with a number or _ (allowed characters are A-Za-z)."}
+        {Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."},
+        {Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -262,6 +262,17 @@ TEST_SUITE("Scanner") {
 
     std::array<TokenDefinition, 1> definition{{
         {Litr::CLI::TokenType::ERROR, "A short parameter can only contain one character (A-Za-z)."}
+    }};
+
+    CHECK_DEFINITION(scanner, definition);
+    CHECK_EOS_TOKEN(scanner);
+  }
+
+  TEST_CASE("Invalidates duplicated parameter initializer") {
+    Litr::CLI::Scanner scanner{"---long"};
+
+    std::array<TokenDefinition, 1> definition{{
+        {Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."}
     }};
 
     CHECK_DEFINITION(scanner, definition);

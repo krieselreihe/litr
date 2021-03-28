@@ -184,7 +184,7 @@ Token Scanner::LongParameter() {
 
   bool hasError{false};
 
-  if (IsDigit(Peek()) || Peek() == '_') {
+  if (IsDigit(Peek()) || Peek() == '_' || !IsAlpha(Peek())) {
     Advance();
     hasError = true;
   }
@@ -194,7 +194,7 @@ Token Scanner::LongParameter() {
   }
 
   if (hasError) {
-    return ErrorToken("A parameter cannot start with a number or _ (allowed characters are A-Za-z).");
+    return ErrorToken("A parameter can only start with the characters A-Za-z.");
   }
 
   return MakeToken(TokenType::LONG_PARAMETER);
