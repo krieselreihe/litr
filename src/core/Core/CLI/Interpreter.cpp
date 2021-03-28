@@ -125,7 +125,7 @@ void Interpreter::DefineVariable() {
     return;
   }
 
-  Variable variable{GetVariableType(param), name};
+  Variable variable{GetVariableType(param), param->Name};
 
   switch (param->Type) {
     case Config::Parameter::Type::BOOLEAN: {
