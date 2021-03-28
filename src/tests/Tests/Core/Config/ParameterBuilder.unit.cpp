@@ -155,8 +155,6 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Error::Handler::Flush();
     }
 
-    // @todo: Not sure if this should actually be an error.
-    // See: https://github.com/krieselreihe/litr/issues/14
     SUBCASE("Sets the type to Array on empty arrays") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = [])");
 
