@@ -156,7 +156,7 @@ class CommandNotFoundError : public BaseError {
 class ExecutionFailureError : public BaseError {
  public:
   explicit ExecutionFailureError(const std::string& message)
-      : BaseError(ErrorType::COMMAND_NOT_FOUND, message) {
+      : BaseError(ErrorType::EXECUTION_FAILURE, message) {
   }
 
  protected:

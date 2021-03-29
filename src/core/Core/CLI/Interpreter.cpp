@@ -4,7 +4,6 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/CLI/Shell.hpp"
-#include "Core/Error/Handler.hpp"
 #include "Core/Script/Compiler.hpp"
 
 namespace Litr::CLI {
@@ -23,10 +22,18 @@ Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<Config::
 void Interpreter::Execute() {
   LITR_PROFILE_FUNCTION();
 
+  m_Offset = 0;
+
+  if (HookExecuted()) return;
+
   while (m_Offset < m_Instruction->Count()) {
-    if (Error::Handler::HasErrors()) return;
+    if (m_StopExecution) return;
     ExecuteInstruction();
   }
+}
+
+void Interpreter::AddHook(Instruction::Code code, const Instruction::Value& value, const Interpreter::HookCallback& callback) {
+  m_Hooks.emplace_back(code, value, callback);
 }
 
 Instruction::Value Interpreter::ReadCurrentValue() const {
@@ -119,7 +126,7 @@ void Interpreter::DefineVariable() {
   const Ref<Config::Parameter>& param{m_Query.GetParameter(name)};
 
   if (param == nullptr) {
-    Error::Handler::Push(Error::CommandNotFoundError(
+    HandleError(Error::CommandNotFoundError(
         fmt::format("Parameter with the name \"{}\" is not defined inside the configuration file.", name)
     ));
     return;
@@ -162,7 +169,7 @@ void Interpreter::SetConstant() {
     case Config::Parameter::Type::ARRAY: {
       const auto& args{param->TypeArguments};
       if (std::find(args.begin(), args.end(), value) == args.end()) {
-        Error::Handler::Push(Error::CommandNotFoundError(
+        HandleError(Error::CommandNotFoundError(
             fmt::format(R"(Parameter value "{}" is no valid option for "{}".)", value, param->Name)
         ));
         return;
@@ -176,7 +183,7 @@ void Interpreter::SetConstant() {
       } else if (value == "true") {
         variable.Value = true;
       } else {
-        Error::Handler::Push(Error::CommandNotFoundError(
+        HandleError(Error::CommandNotFoundError(
             fmt::format(R"(Parameter value "{}" is no valid for boolean option "{}". Please use "false", "true" or no value for true as well.)", value, param->Name)
         ));
       }
@@ -194,7 +201,7 @@ void Interpreter::CallInstruction() {
   const Ref<Config::Command> command{m_Query.GetCommand(name)};
 
   if (command == nullptr) {
-    Error::Handler::Push(Error::CommandNotFoundError(
+    HandleError(Error::CommandNotFoundError(
         fmt::format("Command \"{}\" could not be found.", name)
     ));
     return;
@@ -213,7 +220,7 @@ void Interpreter::CallCommand(const Ref<Config::Command>& command, const std::st
   const bool printResult{command->Output == Config::Command::Output::SILENT};
   const Scripts scripts{ParseScripts(command)};
 
-  if (Error::Handler::HasErrors()) return;
+  if (m_StopExecution) return;
 
   CommandPathToHumanReadable(commandPath);
 
@@ -225,7 +232,7 @@ void Interpreter::CallCommand(const Ref<Config::Command>& command, const std::st
     }
   }
 
-  if (Error::Handler::HasErrors()) return;
+  if (m_StopExecution) return;
 
   CallChildCommands(command, commandPath.append(" "));
 }
@@ -237,7 +244,7 @@ void Interpreter::CallChildCommands(const Ref<Config::Command>& command, const s
 
   if (!command->ChildCommands.empty()) {
     for (auto&& childCommand : command->ChildCommands) {
-      if (Error::Handler::HasErrors()) return;
+      if (m_StopExecution) return;
       CallCommand(childCommand, scope);
     }
   }
@@ -252,7 +259,7 @@ void Interpreter::RunScripts(const Scripts& scripts, const std::string& commandP
     Shell::Result result{printResult ? Shell::Exec(script, path) : Shell::Exec(script, path, Print)};
 
     if (result.Status == ExitStatus::FAILURE) {
-      Error::Handler::Push(Error::ExecutionFailureError(
+      HandleError(Error::ExecutionFailureError(
           fmt::format("Problem executing the command defined in \"{}\".", commandPath)
       ));
       return;
@@ -268,7 +275,7 @@ Interpreter::Scripts Interpreter::ParseScripts(const Ref<Config::Command>& comma
 
   for (auto&& script : command->Script) {
     const std::string parsedScript{ParseScript(script, command->Locations[location])};
-    if (Error::Handler::HasErrors()) break;
+    if (m_StopExecution) break;
     scripts.push_back(parsedScript);
     location++;
   }
@@ -298,10 +305,42 @@ enum Variable::Type Interpreter::GetVariableType(const Ref<Config::Parameter>& p
   }
 }
 
-void Interpreter::Print(const std::string& result) {
+bool Interpreter::HookExecuted() const {
   LITR_PROFILE_FUNCTION();
 
-  fmt::print("{}", result);
+  size_t offset{0};
+
+  while (offset < m_Instruction->Count()) {
+    const auto code{static_cast<Instruction::Code>(m_Instruction->Read(offset++))};
+
+    for (auto&& hook : m_Hooks) {
+      if (code != hook.Code) continue;
+      auto value{m_Instruction->ReadConstant(m_Instruction->Read(offset))};
+      if (value == hook.Value) {
+        hook.Callback(m_Instruction);
+        return true;
+      }
+    }
+
+    if (code != Instruction::Code::CLEAR) {
+      offset++;
+    }
+  }
+
+  return false;
+}
+
+void Interpreter::HandleError(const Error::BaseError& error) {
+  LITR_PROFILE_FUNCTION();
+
+  m_StopExecution = true;
+  Error::Handler::Push(error);
+}
+
+void Interpreter::Print(const std::string& message) {
+  LITR_PROFILE_FUNCTION();
+
+  fmt::print("{}", message);
 }
 
 }  // namespace Litr::CLI

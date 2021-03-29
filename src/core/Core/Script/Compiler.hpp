@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "Core/CLI/Interpreter.hpp"
+#include "Core/CLI/Variable.hpp"
 #include "Core/Config/Location.hpp"
 #include "Core/Script/Token.hpp"
 #include "Core/Script/Scanner.hpp"

@@ -1,44 +1,39 @@
 #pragma once
 
-#include <functional>
-#include <deque>
-#include <utility>
 #include <string>
-#include <variant>
+#include <functional>
 #include <unordered_map>
+#include <utility>
 
+#include "Core/CLI/Variable.hpp"
 #include "Core/CLI/Instruction.hpp"
 #include "Core/Config/Loader.hpp"
 #include "Core/Config/Query.hpp"
 #include "Core/Config/Location.hpp"
+#include "Core/Error/Handler.hpp"
 
 namespace Litr::CLI {
-
-struct Variable {
-  enum class Type { STRING, BOOLEAN };
-
-  Type Type;
-  std::string Name;
-  // Default value should be an empty string as booleans
-  // are always handled explicit.
-  std::variant<std::string, bool> Value{};
-
-  explicit Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
-  }
-  explicit Variable(std::string name, bool value) : Type(Type::BOOLEAN), Name(std::move(name)), Value(value) {
-  }
-  explicit Variable(std::string name, std::string value) : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
-  }
-} __attribute__((aligned(64)));
 
 class Interpreter {
   using Variables = std::unordered_map<std::string, CLI::Variable>;
   using Scripts = std::vector<std::string>;
+  using HookCallback = std::function<void(const Ref<Instruction>& instruction)>;
+
+  struct Hook {
+    Instruction::Code Code;
+    Instruction::Value Value;
+    HookCallback Callback;
+
+    Hook(Instruction::Code code, Instruction::Value value, HookCallback callback)
+    : Code(code), Value(std::move(value)), Callback(std::move(callback)) {
+    }
+  } __attribute__((aligned(128))) __attribute__((packed));
 
  public:
   Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
   void Execute();
+  void AddHook(Instruction::Code code, const Instruction::Value& value, const HookCallback& callback);
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;
@@ -55,14 +50,16 @@ class Interpreter {
 
   void CallCommand(const Ref<Config::Command>& command, const std::string& scope = "");
   void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
-  static void RunScripts(const Scripts& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
+  void RunScripts(const Scripts& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
 
   [[nodiscard]] Scripts ParseScripts(const Ref<Config::Command>& command);
   [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);
 
   [[nodiscard]] static enum Variable::Type GetVariableType(const Ref<Config::Parameter>& param);
+  [[nodiscard]] bool HookExecuted() const;
+  void HandleError(const Error::BaseError& error);
 
-  static void Print(const std::string& result);
+  static void Print(const std::string& message);
 
  private:
   const Ref<Instruction>& m_Instruction;
@@ -70,6 +67,9 @@ class Interpreter {
 
   size_t m_Offset{0};
   std::string m_CurrentVariableName{};
+  bool m_StopExecution{false};
+
+  std::vector<Hook> m_Hooks{};
 
   // Initialize with empty scope
   std::vector<Variables> m_Scope{Variables()};

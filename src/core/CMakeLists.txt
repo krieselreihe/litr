@@ -21,7 +21,7 @@ add_library(${NAME} STATIC
   Core/CLI/Interpreter.cpp Core/CLI/Interpreter.hpp
   Core/Script/Compiler.cpp Core/Script/Compiler.hpp
   Core/Script/Scanner.cpp Core/Script/Scanner.hpp
-  Core/Script/Token.hpp)
+  Core/Script/Token.hpp Core/CLI/Variable.hpp)
 
 # Define set of OS specific files to include
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
