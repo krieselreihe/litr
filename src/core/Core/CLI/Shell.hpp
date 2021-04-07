@@ -13,7 +13,7 @@ class Shell {
   struct Result {
     ExitStatus Status{ExitStatus::SUCCESS};
     std::string Message{};
-  } __attribute__((aligned(32)));
+  };
 
   using ExecCallback = std::function<void(const std::string&)>;
 

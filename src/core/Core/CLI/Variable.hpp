@@ -4,6 +4,8 @@
 #include <variant>
 #include <utility>
 
+#include "Core/Config/Parameter.hpp"
+
 namespace Litr::CLI {
 
 struct Variable {
@@ -22,6 +24,21 @@ struct Variable {
   explicit Variable(std::string name, std::string value)
       : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
   }
-} __attribute__((aligned(64)));
+  explicit Variable(const Config::Parameter& parameter) {
+    Name = parameter.Name;
+
+    switch (parameter.Type) {
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY:
+        Type = Type::STRING;
+        Value = "";
+        break;
+      case Config::Parameter::Type::BOOLEAN:
+        Type = Type::BOOLEAN;
+        Value = false;
+        break;
+    }
+  }
+};
 
 }  // namespace Litr::CLI

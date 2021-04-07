@@ -1,0 +1,14 @@
+file(READ "${PROJECT_SOURCE_DIR}/src/core/Version.hpp" VersionFile)
+
+string(REGEX MATCH "LITR_VERSION_MAJOR ([0-9]+)" _ ${VersionFile})
+set(LITR_VERSION_MAYOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "LITR_VERSION_MINOR ([0-9]+)" _ ${VersionFile})
+set(LITR_VERSION_MINOR ${CMAKE_MATCH_1})
+
+string(REGEX MATCH "LITR_VERSION_PATCH ([0-9]+)" _ ${VersionFile})
+set(LITR_VERSION_PATCH ${CMAKE_MATCH_1})
+
+set(LITR_VERSION ${LITR_VERSION_MAYOR}.${LITR_VERSION_MINOR}.${LITR_VERSION_PATCH})
+
+message(STATUS "Litr version: ${LITR_VERSION}")

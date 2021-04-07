@@ -22,6 +22,7 @@ class Loader {
 
   [[nodiscard]] inline Commands GetCommands() const { return m_Commands; };
   [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; };
+  [[nodiscard]] inline Path GetFilePath() const { return m_FilePath; };
 
  private:
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
@@ -29,6 +30,8 @@ class Loader {
   void CollectParams(const toml::table& params);
 
  private:
+  const Path m_FilePath;
+
   Commands m_Commands{};
   Parameters m_Parameters{};
 };

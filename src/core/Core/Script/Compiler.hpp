@@ -16,6 +16,7 @@ class Compiler {
 
   explicit Compiler(const std::string& source, Config::Location location, Variables variables);
   [[nodiscard]] std::string GetScript() const;
+  [[nodiscard]] std::vector<std::string> GetUsedVariables() const;
 
  private:
   void Advance();
@@ -50,9 +51,9 @@ class Compiler {
 
   Token m_Current{};
   Token m_Previous{};
-  bool m_PanicMode{false};
 
   std::string m_Script{};
+  std::vector<std::string> m_UsedVariables{};
 };
 
 }  // namespace Litr::Script

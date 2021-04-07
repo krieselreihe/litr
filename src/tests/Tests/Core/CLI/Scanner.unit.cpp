@@ -26,7 +26,7 @@
 struct TokenDefinition {
   Litr::CLI::TokenType Type;
   std::string Value;
-} __attribute__((aligned(32)));
+};
 
 TEST_SUITE("Scanner") {
   // Successful cases

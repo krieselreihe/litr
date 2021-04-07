@@ -4,13 +4,17 @@ namespace Litr::Script {
 
 enum class TokenType {
   // Single-character tokens.
-  LEFT_PAREN, RIGHT_PAREN, COMMA,
+  LEFT_PAREN,
+  RIGHT_PAREN,
+  COMMA,
 
   // Literals.
-  UNTOUCHED, IDENTIFIER, STRING,
+  UNTOUCHED,
+  IDENTIFIER,
+  STRING,
 
   // Keywords.
-  /* AND, */OR,
+  /* AND, */ OR,
 
   START_SEQ,
   END_SEQ,
@@ -24,6 +28,6 @@ struct Token {
   size_t Length{};
   uint32_t Line{};
   uint32_t Column{};
-} __attribute__((aligned(32))) __attribute__((packed));
+};
 
 }  // namespace Litr::Script

@@ -2,6 +2,7 @@
 
 // Base -------------------------------
 
+#include "Version.hpp"
 #include "Core/Assert.hpp"
 #include "Core/Base.hpp"
 #include "Core/Log.hpp"

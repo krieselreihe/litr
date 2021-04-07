@@ -12,13 +12,13 @@
 
 namespace Litr::Config {
 
-Loader::Loader(const Path& filePath) {
+Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
 
   try {
-    config = toml::parse<toml::discard_comments, tsl::ordered_map>(filePath.ToString());
+    config = toml::parse<toml::discard_comments, tsl::ordered_map>(m_FilePath.ToString());
   } catch (const toml::syntax_error& err) {
     Error::Handler::Push(Error::MalformedFileError(
         "There is a syntax error inside the configuration file.",

@@ -14,6 +14,6 @@ struct Location {
   Location(uint32_t line, uint32_t column, std::string lineStr)
       : Line(line), Column(column), LineStr(std::move(lineStr)) {
   }
-} __attribute__((aligned(32)));
+};
 
 }  // namespace Litr::Config

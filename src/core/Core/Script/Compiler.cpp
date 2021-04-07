@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 
 #include <utility>
+#include <algorithm>
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
@@ -21,6 +22,10 @@ Compiler::Compiler(const std::string& source, Config::Location location, Variabl
 
 std::string Compiler::GetScript() const {
   return m_Script;
+}
+
+std::vector<std::string> Compiler::GetUsedVariables() const {
+  return m_UsedVariables;
 }
 
 void Compiler::Advance() {
@@ -129,6 +134,10 @@ void Compiler::Identifier() {
   if (variable == m_Variables.end()) {
     Error("Undefined parameter.");
     return;
+  }
+
+  if (std::find(m_UsedVariables.begin(), m_UsedVariables.end(), variable->second.Name) == m_UsedVariables.end()) {
+    m_UsedVariables.push_back(variable->second.Name);
   }
 
   switch (variable->second.Type) {
@@ -241,9 +250,6 @@ void Compiler::ErrorAtCurrent(const std::string& message) {
 
 void Compiler::ErrorAt(Token *token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
-
-  if (m_PanicMode) return;
-  m_PanicMode = true;
 
   std::string outMessage{"Cannot parse"};
 

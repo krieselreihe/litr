@@ -10,7 +10,7 @@ run = "./build/%{target}/src/client/Client"
 test = "cd build/%{target}/src/tests && ctest && cd ../../../.."
 
 [params.target]
-shortcut = "t"
+shortcut = "a"
 description = "Define the application build target."
 type = ["debug", "release", "profile", "trace"]
 default = "debug"

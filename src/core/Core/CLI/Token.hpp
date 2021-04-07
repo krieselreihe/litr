@@ -19,6 +19,6 @@ struct Token {
   const char* Start;
   size_t Length;
   uint32_t Column;
-} __attribute__((aligned(32))) __attribute__((packed));
+};
 
 }  // namespace Litr::CLI

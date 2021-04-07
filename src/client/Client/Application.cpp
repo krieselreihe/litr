@@ -3,12 +3,15 @@
 #include <fmt/color.h>
 #include <fmt/format.h>
 
+#include "Hooks/Help.hpp"
+#include "Hooks/Version.hpp"
+
 namespace Litr {
 
 Application::Application() {
   LITR_PROFILE_FUNCTION();
 
-  fmt::print("Hello, Litr!\n");
+  LITR_TRACE("Hello, Litr!\n");
 
   Path configPath{GetConfigPath()};
   if (m_ExitStatus == ExitStatus::FAILURE) {
@@ -36,10 +39,20 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return ExitStatus::FAILURE;
   }
 
-  CLI::Interpreter interpreter{instruction, m_Config};
+  const auto interpreter{CreateRef<CLI::Interpreter>(instruction, m_Config)};
 
-  fmt::print("\n");
-  interpreter.Execute();
+  const Help help{m_Config};
+  const std::vector<std::string> versionParams{"version", "v"};
+  const std::vector<std::string> helpParams{"help", "h"};
+
+  interpreter->AddHook(CLI::Instruction::Code::DEFINE, versionParams, Version::Print);
+  interpreter->AddHook(
+      CLI::Instruction::Code::DEFINE, helpParams,
+      [&help](const Ref<CLI::Instruction>& instruction) {
+        help.Print(instruction);
+      });
+
+  interpreter->Execute();
 
   // Print interpreter errors if any:
   if (Error::Handler::HasErrors()) {
@@ -51,6 +64,8 @@ ExitStatus Application::Run(int argc, char* argv[]) {
 }
 
 Path Application::GetConfigPath() {
+  LITR_PROFILE_FUNCTION();
+
   Path cwd{FileSystem::GetCurrentWorkingDirectory()};
   Config::FileResolver configPath{cwd};
 
@@ -70,7 +85,7 @@ Path Application::GetConfigPath() {
       break;
     }
     case Config::FileResolver::Status::FOUND: {
-      fmt::print("Configuration file found under: {}\n", configPath.GetFilePath());
+      LITR_TRACE("Configuration file found under: {}\n", configPath.GetFilePath());
       break;
     }
   }
@@ -79,6 +94,8 @@ Path Application::GetConfigPath() {
 }
 
 std::string Application::SourceFromArguments(int argc, char** argv) {
+  LITR_PROFILE_FUNCTION();
+
   std::string source{};
 
   // Start with 1 to skip the program name.

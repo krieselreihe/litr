@@ -43,7 +43,7 @@
 struct InstructionDefinition {
   Litr::CLI::Instruction::Code Code;
   Litr::CLI::Instruction::Value Value;
-} __attribute__((aligned(32)));
+};
 
 TEST_SUITE("Parser") {
   TEST_CASE("Single long parameter") {

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <string>
 #include <functional>
+#include <string>
 #include <unordered_map>
 #include <utility>
 
-#include "Core/CLI/Variable.hpp"
 #include "Core/CLI/Instruction.hpp"
+#include "Core/CLI/Variable.hpp"
 #include "Core/Config/Loader.hpp"
-#include "Core/Config/Query.hpp"
 #include "Core/Config/Location.hpp"
+#include "Core/Config/Query.hpp"
 #include "Core/Error/Handler.hpp"
 
 namespace Litr::CLI {
@@ -25,15 +25,15 @@ class Interpreter {
     HookCallback Callback;
 
     Hook(Instruction::Code code, Instruction::Value value, HookCallback callback)
-    : Code(code), Value(std::move(value)), Callback(std::move(callback)) {
-    }
-  } __attribute__((aligned(128))) __attribute__((packed));
+        : Code(code), Value(std::move(value)), Callback(std::move(callback)) {}
+  };
 
  public:
   Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
   void Execute();
   void AddHook(Instruction::Code code, const Instruction::Value& value, const HookCallback& callback);
+  void AddHook(Instruction::Code code, const std::vector<Instruction::Value>& values, const HookCallback& callback);
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;

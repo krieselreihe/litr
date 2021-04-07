@@ -33,7 +33,17 @@ void Interpreter::Execute() {
 }
 
 void Interpreter::AddHook(Instruction::Code code, const Instruction::Value& value, const Interpreter::HookCallback& callback) {
+  LITR_PROFILE_FUNCTION();
+
   m_Hooks.emplace_back(code, value, callback);
+}
+
+void Interpreter::AddHook(Instruction::Code code, const std::vector<Instruction::Value>& values, const Interpreter::HookCallback& callback) {
+  LITR_PROFILE_FUNCTION();
+
+  for (auto&& value : values) {
+    AddHook(code, value, callback);
+  }
 }
 
 Instruction::Value Interpreter::ReadCurrentValue() const {

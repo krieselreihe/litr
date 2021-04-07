@@ -1,8 +1,10 @@
 #include "Query.hpp"
 
-#include "Core/Utils.hpp"
+#include <algorithm>
 
+#include "Core/Utils.hpp"
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Script/Compiler.hpp"
 
 namespace Litr::Config {
 
@@ -13,19 +15,52 @@ Ref<Command> Query::GetCommand(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
   Parts names{SplitCommandQuery(name)};
-  return GetCommandByPath(names, m_Config->GetCommands());
+  return GetCommandByPath(names, GetCommands());
 }
 
 Ref<Parameter> Query::GetParameter(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  for (auto&& param : m_Config->GetParameters()) {
+  for (auto&& param : GetParameters()) {
     if (param->Name == name || param->Shortcut == name) {
       return param;
     }
   }
 
   return nullptr;
+}
+
+Query::Commands Query::GetCommands() const {
+  LITR_PROFILE_FUNCTION();
+
+  return m_Config->GetCommands();
+}
+
+Query::Parameters Query::GetParameters() const {
+  LITR_PROFILE_FUNCTION();
+
+  return m_Config->GetParameters();
+}
+
+std::vector<std::string> Query::GetUsedCommandParameters(const std::string& name) const {
+  auto command{GetCommand(name)};
+  std::vector<std::string> parameterNames{};
+
+  size_t index{0};
+  for (auto&& script : command->Script) {
+    Variables variables{GetParametersAsVariables()};
+    Script::Compiler compiler{script, command->Locations[index++], variables};
+    std::vector<std::string> names{compiler.GetUsedVariables()};
+
+    if (!names.empty()) {
+      parameterNames.insert(parameterNames.end(), names.begin(), names.end());
+    }
+  }
+
+  // Remove duplicates
+  parameterNames.erase(std::unique(parameterNames.begin(), parameterNames.end()), parameterNames.end());
+
+  return parameterNames;
 }
 
 Query::Parts Query::SplitCommandQuery(const std::string& query) {
@@ -76,6 +111,17 @@ Ref<Command> Query::GetCommandByName(const std::string& name, const Loader::Comm
   }
 
   return nullptr;
+}
+
+Query::Variables Query::GetParametersAsVariables() const {
+  const auto params{GetParameters()};
+  Variables variables{};
+
+  for (auto&& param : params) {
+    variables.insert_or_assign(param->Name, CLI::Variable(*param));
+  }
+
+  return variables;
 }
 
 }  // namespace Litr::Config

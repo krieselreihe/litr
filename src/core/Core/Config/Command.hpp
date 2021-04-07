@@ -27,7 +27,7 @@ struct Command {
 
   explicit Command(std::string name) : Name(std::move(name)) {
   }
-} __attribute__((aligned(128)));
+};
 
 }  // namespace Litr::Config
 
