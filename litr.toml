@@ -10,12 +10,12 @@ run = "./build/%{target}/src/client/Client"
 test = "cd build/%{target}/src/tests && ctest && cd ../../../.."
 
 [params.target]
-shortcut = "a"
+shortcut = "t"
 description = "Define the application build target."
 type = ["debug", "release", "profile", "trace"]
 default = "debug"
 
 [params.trace]
-shortcut = "t"
+shortcut = "r"
 description = "Activate tracing support."
 type = "boolean"
