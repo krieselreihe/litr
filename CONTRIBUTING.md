@@ -104,7 +104,7 @@ Run cmake with the following options if needed:
 Build the configuration files with cmake:
 
 ```shell script
-cmake -GNinja -DCMAKE_BUILD_TYPE=Release --build build/release
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release -B build/release
 ```
 
 Build the application:
@@ -120,14 +120,14 @@ To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `C
 Example for clang on MacOS, creating a debug build:
 
 ```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ --build build/debug
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -B build/debug
 cmake --build build/debug
 ```
 
 Example for gcc on MacOS, creating a debug build:
 
 ```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ --build build/debug
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -B build/debug
 cmake --build build/debug
 ```
 
