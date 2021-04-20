@@ -1,7 +1,7 @@
 [submodule "vendor/doctest"]
 	path = vendor/doctest
 	url = https://github.com/onqtam/doctest.git
-	branch = 2.4.5
+	branch = 2.4.6
 [submodule "vendor/fmt"]
 	path = vendor/fmt
 	url = https://github.com/fmtlib/fmt.git
@@ -13,7 +13,7 @@
 [submodule "vendor/toml11"]
 	path = vendor/toml11
 	url = https://github.com/ToruNiina/toml11.git
-	branch = v3.6.0
+	branch = v3.6.1
 [submodule "vendor/ordered-map"]
 	path = vendor/ordered-map
 	url = https://github.com/krieselreihe/ordered-map.git
