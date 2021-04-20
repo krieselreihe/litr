@@ -44,7 +44,7 @@ Tools used from the toolset:
 * clang-tidy
 * clang-format
 
-To link these tools run:
+To link these tools run (may need to be run as root, you can also pick a different location in your `PATH`):
 
 ```shell script
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
