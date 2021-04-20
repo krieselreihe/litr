@@ -52,6 +52,7 @@ class Compiler {
   Token m_Current{};
   Token m_Previous{};
 
+  bool m_PanicMode{false};
   std::string m_Script{};
   std::vector<std::string> m_UsedVariables{};
 };

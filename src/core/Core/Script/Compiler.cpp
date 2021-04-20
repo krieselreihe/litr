@@ -251,6 +251,9 @@ void Compiler::ErrorAtCurrent(const std::string& message) {
 void Compiler::ErrorAt(Token *token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
+  if (m_PanicMode) return;
+  m_PanicMode = true;
+
   std::string outMessage{"Cannot parse"};
 
   if (token->Type == TokenType::EOS) {
