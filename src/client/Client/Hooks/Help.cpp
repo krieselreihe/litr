@@ -175,9 +175,10 @@ std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
 }
 
 std::string Help::GetCommandArguments(const std::string& name) const {
-  // @todo: Needs to be sorted by required/optional parameters.
-  const Config::Query::Parameters params{m_Query.GetCommandParameters(name)};
+  Config::Query::Parameters params{m_Query.GetCommandParameters(name)};
   std::string arguments{};
+
+  std::sort(params.begin(), params.end(), SortParameterByRequired);
 
   for (auto&& param : params) {
     switch (param->Type) {
@@ -253,6 +254,23 @@ size_t Help::GetParameterPadding() const {
   }
 
   return padding;
+}
+
+bool Help::SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<Config::Parameter>& p2) {
+  auto RankParameterRequired{[](const Ref<Config::Parameter>& param) -> int {
+    switch (param->Type) {
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY: {
+        bool isRequired{param->Default.empty()};
+        return isRequired ? 1 : 2;
+      }
+      case Config::Parameter::Type::BOOLEAN: {
+        return 2;
+      }
+    }
+  }};
+
+  return RankParameterRequired(p1) < RankParameterRequired(p2);
 }
 
 }  // namespace Litr

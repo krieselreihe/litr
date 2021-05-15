@@ -25,6 +25,8 @@ class Help {
   [[nodiscard]] size_t GetCommandPadding() const;
   [[nodiscard]] size_t GetParameterPadding() const;
 
+  [[nodiscard]] static bool SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<Config::Parameter>& p2);
+
  private:
   const Config::Query m_Query;
   const Path m_FilePath;
