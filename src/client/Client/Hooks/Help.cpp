@@ -11,8 +11,10 @@ Help::Help(const Ref<Config::Loader>& config) : m_Query(config), m_FilePath(conf
   SetGlobalPadding();
 }
 
-void Help::Print([[maybe_unused]] const Ref<CLI::Instruction>& instruction) const {
+void Help::Print(const Ref<CLI::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
+
+  m_CommandName = GetCommandName(instruction);
 
   PrintWelcomeMessage();
   PrintUsage();
@@ -30,11 +32,13 @@ void Help::PrintWelcomeMessage() const {
 }
 
 void Help::PrintUsage() const {
-  fmt::print("Usage: litr command [options]\n\n");
+  fmt::print("Usage: litr {} [options]\n\n", m_CommandName.empty() ? "command" : m_CommandName);
 }
 
 void Help::PrintCommands() const {
   LITR_PROFILE_FUNCTION();
+
+  if (!m_CommandName.empty()) return;
 
   const Config::Query::Commands commands{m_Query.GetCommands()};
 
@@ -50,14 +54,17 @@ void Help::PrintCommands() const {
       PrintWithDescription(name, command->Description, arguments.length());
     }
   }
+
+  fmt::print("\n");
 }
 
 void Help::PrintOptions() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Parameters params{m_Query.GetParameters()};
+  const Config::Query::Parameters params{
+      m_CommandName.empty() ? m_Query.GetParameters() : m_Query.GetCommandParameters(m_CommandName)};
 
-  fmt::print("\nOptions:\n");
+  fmt::print("Options:\n");
   fmt::print("  {:<{}} {}\n", "-h --help", m_Padding, "Show this screen.");
 
   for (auto&& param : params) {
@@ -122,13 +129,50 @@ void Help::PrintWithDescription(const std::string& name, const std::string& desc
   }
 }
 
+std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
+  size_t offset{0};
+  std::vector<std::string> scope{};
+
+  while (offset < instruction->Count()) {
+    const auto code{static_cast<CLI::Instruction::Code>(instruction->Read(offset++))};
+    switch (code) {
+      case CLI::Instruction::Code::BEGIN_SCOPE: {
+        auto value{instruction->ReadConstant(instruction->Read(offset))};
+        scope.push_back(value);
+        offset++;
+        break;
+      }
+      case CLI::Instruction::Code::CLEAR: {
+        scope.pop_back();
+        break;
+      }
+      case CLI::Instruction::Code::DEFINE: {
+        auto value{instruction->ReadConstant(instruction->Read(offset))};
+        if (value == "h" || value == "help") {
+          std::string commandName{};
+          for (auto&& part : scope) commandName.append(".").append(part);
+          return Utils::TrimLeft(commandName, '.');
+        }
+        offset++;
+        break;
+      }
+      case CLI::Instruction::Code::CONSTANT:
+      case CLI::Instruction::Code::EXECUTE: {
+        offset++;
+        break;
+      }
+    }
+  }
+
+  return "";
+}
+
 std::string Help::GetCommandArguments(const std::string& name) const {
   // @todo: Needs to be sorted by required/optional parameters.
-  const std::vector<std::string> paramNames{m_Query.GetUsedCommandParameters(name)};
+  const Config::Query::Parameters params{m_Query.GetCommandParameters(name)};
   std::string arguments{};
 
-  for (auto&& paramName : paramNames) {
-    auto param{m_Query.GetParameter(paramName)};
+  for (auto&& param : params) {
     switch (param->Type) {
       case Config::Parameter::Type::STRING:
       case Config::Parameter::Type::ARRAY: {

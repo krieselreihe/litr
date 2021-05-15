@@ -42,4 +42,21 @@ TEST_SUITE("Config::Query") {
       CHECK(query.GetParameter("t")->Name == "target");
     }
   }
+
+  TEST_CASE("GetCommandParameters()") {
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
+    const Litr::Config::Query query{config};
+
+    SUBCASE("Get parameters used by command") {
+      auto params{query.GetCommandParameters("build")};
+      CHECK(params.size() == 1);
+      CHECK(params[0]->Name == "target");
+    }
+
+    SUBCASE("Get no parameters if none are used by command") {
+      auto params{query.GetCommandParameters("update")};
+      CHECK(params.size() == 0);
+    }
+  }
 }

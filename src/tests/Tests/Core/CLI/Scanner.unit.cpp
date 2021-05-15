@@ -28,7 +28,7 @@ struct TokenDefinition {
   std::string Value;
 };
 
-TEST_SUITE("Scanner") {
+TEST_SUITE("CLI::Scanner") {
   // Successful cases
   TEST_CASE("Single long parameter") {
     Litr::CLI::Scanner scanner{"--help"};

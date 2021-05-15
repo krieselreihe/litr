@@ -45,7 +45,7 @@ struct InstructionDefinition {
   Litr::CLI::Instruction::Value Value;
 };
 
-TEST_SUITE("Parser") {
+TEST_SUITE("CLI::Parser") {
   TEST_CASE("Single long parameter") {
     const auto instruction{Litr::CreateRef<Litr::CLI::Instruction>()};
     const std::string source{R"(--target="Some release")"};

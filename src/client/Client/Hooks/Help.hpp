@@ -18,6 +18,7 @@ class Help {
   void PrintDefaultOption(const Ref<Config::Parameter>& param) const;
   void PrintWithDescription(const std::string& name, const std::string& description, size_t extraPadding = 0) const;
 
+  [[nodiscard]] static std::string GetCommandName(const Ref<CLI::Instruction>& instruction);
   [[nodiscard]] std::string GetCommandArguments(const std::string& name) const;
 
   void SetGlobalPadding();
@@ -30,6 +31,7 @@ class Help {
 
   size_t m_Padding{0};
   size_t m_CommandPadding{0};
+  mutable std::string m_CommandName{};
 
   const std::string m_ArgumentPlaceholder{"=<option>"};
 };

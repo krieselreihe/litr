@@ -6,7 +6,7 @@
 #include "Core/Config/Location.hpp"
 #include "Core/Error/Handler.hpp"
 
-TEST_SUITE("Compiler") {
+TEST_SUITE("Script::Compiler") {
   using Variables = Litr::Script::Compiler::Variables;
   using Location = Litr::Config::Location;
   using Compiler = Litr::Script::Compiler;

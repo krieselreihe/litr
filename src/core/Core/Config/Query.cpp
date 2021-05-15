@@ -42,25 +42,29 @@ Query::Parameters Query::GetParameters() const {
   return m_Config->GetParameters();
 }
 
-std::vector<std::string> Query::GetUsedCommandParameters(const std::string& name) const {
-  auto command{GetCommand(name)};
-  std::vector<std::string> parameterNames{};
+Query::Parameters Query::GetCommandParameters(const std::string& commandName) const {
+  auto command{GetCommand(commandName)};
+  Query::Parameters parameters{};
+  std::vector<std::string> names{};
 
   size_t index{0};
   for (auto&& script : command->Script) {
     Variables variables{GetParametersAsVariables()};
     Script::Compiler compiler{script, command->Locations[index++], variables};
-    std::vector<std::string> names{compiler.GetUsedVariables()};
-
-    if (!names.empty()) {
-      parameterNames.insert(parameterNames.end(), names.begin(), names.end());
-    }
+    std::vector<std::string> usedNames{compiler.GetUsedVariables()};
+    names.insert(names.end(), usedNames.begin(), usedNames.end());
   }
 
   // Remove duplicates
-  parameterNames.erase(std::unique(parameterNames.begin(), parameterNames.end()), parameterNames.end());
+  names.erase(std::unique(names.begin(), names.end()), names.end());
 
-  return parameterNames;
+  if (!names.empty()) {
+    for (auto&& name : names) {
+      parameters.push_back(GetParameter(name));
+    }
+  }
+
+  return parameters;
 }
 
 Query::Parts Query::SplitCommandQuery(const std::string& query) {

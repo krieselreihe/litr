@@ -2,8 +2,8 @@
 update = "git pull && git submodule update --init"
 build = [
   # Here is some comment
-  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=${pascal_case(target)} --build build/${target}",
-  "ninja -C build/${target}"
+  "cmake -GNinja -DDEBUG=1 -DCMAKE_BUILD_TYPE=%{target} --build build/%{target}",
+  "ninja -C build/%{target}"
 ]
 
 [commands.run]

@@ -28,7 +28,7 @@ struct TokenDefinition {
   std::string Value;
 };
 
-TEST_SUITE("Scanner") {
+TEST_SUITE("Script::Scanner") {
   // Successful cases
   TEST_CASE("Nothing to parse") {
     Litr::Script::Scanner scanner{"echo 'Hello World!'"};

@@ -26,8 +26,7 @@ class Query {
 
   [[nodiscard]] Commands GetCommands() const;
   [[nodiscard]] Parameters GetParameters() const;
-
-  [[nodiscard]] std::vector<std::string> GetUsedCommandParameters(const std::string& name) const;
+  [[nodiscard]] Parameters GetCommandParameters(const std::string& name) const;
 
  private:
   [[nodiscard]] static Parts SplitCommandQuery(const std::string& query);
