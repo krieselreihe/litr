@@ -32,7 +32,14 @@ void Help::PrintWelcomeMessage() const {
 }
 
 void Help::PrintUsage() const {
-  fmt::print("Usage: litr {} [options]\n\n", m_CommandName.empty() ? "command" : m_CommandName);
+  if (!m_CommandName.empty()) {
+    std::string commandName{m_CommandName};
+    std::replace(commandName.begin(), commandName.end(), '.', ' ');
+    fmt::print("Usage: litr {} [options]\n\n", commandName);
+    return;
+  }
+
+  fmt::print("Usage: litr command [options]\n\n");
 }
 
 void Help::PrintCommands() const {
