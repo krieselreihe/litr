@@ -108,7 +108,7 @@ Ref<Command> Query::GetCommandByPath(Parts& names, const Loader::Commands& comma
 
   if (command->ChildCommands.empty()) {
     if (!names.empty()) {
-      // Do nothing. This will lead further down the line to a "sub command not found"
+      // Do nothing. This will lead further down the line to a "child command not found"
       // error, as it should be.
     }
 

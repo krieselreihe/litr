@@ -45,7 +45,7 @@ struct fmt::formatter<Litr::Config::Command> {
     std::string childView{};
     if (!c.ChildCommands.empty()) {
       for (auto&& child : c.ChildCommands) {
-        childView.append(fmt::format("\n    - Sub{}", *child));
+        childView.append(fmt::format("\n    - Child{}", *child));
       }
     }
 
