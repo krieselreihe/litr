@@ -7,9 +7,7 @@
 
 namespace Litr {
 
-Help::Help(const Ref<Config::Loader>& config) : m_Query(config), m_FilePath(config->GetFilePath()) {
-  SetGlobalPadding();
-}
+Help::Help(const Ref<Config::Loader>& config) : m_Query(config), m_FilePath(config->GetFilePath()) {}
 
 void Help::Print(const Ref<CLI::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
@@ -32,6 +30,8 @@ void Help::PrintWelcomeMessage() const {
 }
 
 void Help::PrintUsage() const {
+  LITR_PROFILE_FUNCTION();
+
   if (!m_CommandName.empty()) {
     std::string commandName{m_CommandName};
     std::replace(commandName.begin(), commandName.end(), '.', ' ');
@@ -45,21 +45,31 @@ void Help::PrintUsage() const {
 void Help::PrintCommands() const {
   LITR_PROFILE_FUNCTION();
 
-  if (!m_CommandName.empty()) return;
+  const Config::Query::Commands commands{
+      m_CommandName.empty() ? m_Query.GetCommands() : m_Query.GetCommands(m_CommandName)};
 
-  const Config::Query::Commands commands{m_Query.GetCommands()};
+  if (commands.empty()) return;
 
   fmt::print("Commands:\n");
+  const size_t padding{GetCommandPadding()};
 
   for (auto&& command : commands) {
-    const std::string arguments{GetCommandArguments(command->Name)};
-    const std::string name{fmt::format("{:<{}} {}", command->Name, m_CommandPadding, arguments)};
+    std::string commandPath{command->Name};
+
+    if (!m_CommandName.empty()) {
+      commandPath = fmt::format("{}.{}", m_CommandName, command->Name);
+    }
+
+    const std::string arguments{GetCommandArguments(commandPath)};
+    const std::string name{fmt::format("{:<{}} {}", command->Name, padding, arguments)};
 
     if (command->Description.empty()) {
       fmt::print("  {}\n", name);
     } else {
       PrintWithDescription(name, command->Description, arguments.length());
     }
+
+    // @todo: Sub commands here ?
   }
 
   fmt::print("\n");
@@ -69,14 +79,15 @@ void Help::PrintOptions() const {
   LITR_PROFILE_FUNCTION();
 
   const Config::Query::Parameters params{
-      m_CommandName.empty() ? m_Query.GetParameters() : m_Query.GetCommandParameters(m_CommandName)};
+      m_CommandName.empty() ? m_Query.GetParameters() : m_Query.GetParameters(m_CommandName)};
+  const size_t padding{GetParameterPadding()};
 
   fmt::print("Options:\n");
-  fmt::print("  {:<{}} {}\n", "-h --help", m_Padding, "Show this screen.");
+  fmt::print("  {:<{}} {}\n", "-h --help", padding, "Show this screen.");
 
   for (auto&& param : params) {
     std::string name{};
-    std::string argument{param->TypeArguments.empty() ? "" : m_ArgumentPlaceholder};
+    const std::string argument{param->TypeArguments.empty() ? "" : m_ArgumentPlaceholder};
 
     // Parameter names
     if (!param->Shortcut.empty()) {
@@ -86,14 +97,17 @@ void Help::PrintOptions() const {
     }
 
     PrintWithDescription(name, param->Description);
-    PrintOptions(param);
-    PrintDefaultOption(param);
+    PrintParameterOptions(param);
+    PrintDefaultParameterOption(param);
   }
 }
 
-void Help::PrintOptions(const Ref<Config::Parameter>& param) const {
+void Help::PrintParameterOptions(const Ref<Config::Parameter>& param) const {
+  LITR_PROFILE_FUNCTION();
+
   if (!param->TypeArguments.empty()) {
     std::string args{"Available options:"};
+    const size_t padding{GetParameterPadding()};
 
     for (auto&& arg : param->TypeArguments) {
       args.append(fmt::format(" \"{}\",", arg));
@@ -101,15 +115,18 @@ void Help::PrintOptions(const Ref<Config::Parameter>& param) const {
 
     fmt::print(
         fg(fmt::color::dark_gray),
-        "  {:<{}} {}\n", " ", m_Padding, Utils::TrimRight(args, ','));
+        "  {:<{}} {}\n", " ", padding, Utils::TrimRight(args, ','));
   }
 }
 
-void Help::PrintDefaultOption(const Ref<Config::Parameter>& param) const {
+void Help::PrintDefaultParameterOption(const Ref<Config::Parameter>& param) const {
+  LITR_PROFILE_FUNCTION();
+
   if (!param->Default.empty()) {
+    const size_t padding{GetParameterPadding()};
     fmt::print(
         fg(fmt::color::dark_gray),
-        "  {:<{}} {} \"{}\"\n", " ", m_Padding, "Default option is:", param->Default);
+        "  {:<{}} {} \"{}\"\n", " ", padding, "Default option is:", param->Default);
   }
 }
 
@@ -119,24 +136,27 @@ void Help::PrintWithDescription(const std::string& name, const std::string& desc
   std::vector<std::string> lines{};
   Utils::SplitInto(description, '\n', lines);
 
-  size_t maxPadding{22};
-  bool useMaxPadding{m_Padding + extraPadding > maxPadding};
+  const size_t maxPadding{22};
+  const size_t padding{GetParameterPadding()};
+  bool useMaxPadding{padding + extraPadding > maxPadding};
 
   for (size_t i{0}; i < lines.size(); ++i) {
     if (useMaxPadding) {
       if (i == 0) fmt::print("  {}\n", name);
-      fmt::print("  {:<{}} {}\n", " ", m_Padding, lines[i]);
+      fmt::print("  {:<{}} {}\n", " ", padding, lines[i]);
     } else {
       if (i == 0) {
-        fmt::print("  {:<{}} {}\n", name, m_Padding, lines[i]);
+        fmt::print("  {:<{}} {}\n", name, padding, lines[i]);
       } else {
-        fmt::print("  {:<{}} {}\n", " ", m_Padding, lines[i]);
+        fmt::print("  {:<{}} {}\n", " ", padding, lines[i]);
       }
     }
   }
 }
 
 std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
+  LITR_PROFILE_FUNCTION();
+
   size_t offset{0};
   std::vector<std::string> scope{};
 
@@ -144,7 +164,7 @@ std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
     const auto code{static_cast<CLI::Instruction::Code>(instruction->Read(offset++))};
     switch (code) {
       case CLI::Instruction::Code::BEGIN_SCOPE: {
-        auto value{instruction->ReadConstant(instruction->Read(offset))};
+        const std::string value{instruction->ReadConstant(instruction->Read(offset))};
         scope.push_back(value);
         offset++;
         break;
@@ -154,7 +174,7 @@ std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
         break;
       }
       case CLI::Instruction::Code::DEFINE: {
-        auto value{instruction->ReadConstant(instruction->Read(offset))};
+        const std::string value{instruction->ReadConstant(instruction->Read(offset))};
         if (value == "h" || value == "help") {
           std::string commandName{};
           for (auto&& part : scope) commandName.append(".").append(part);
@@ -175,7 +195,9 @@ std::string Help::GetCommandName(const Ref<CLI::Instruction>& instruction) {
 }
 
 std::string Help::GetCommandArguments(const std::string& name) const {
-  Config::Query::Parameters params{m_Query.GetCommandParameters(name)};
+  LITR_PROFILE_FUNCTION();
+
+  Config::Query::Parameters params{m_Query.GetParameters(name)};
   std::string arguments{};
 
   std::sort(params.begin(), params.end(), SortParameterByRequired);
@@ -184,7 +206,7 @@ std::string Help::GetCommandArguments(const std::string& name) const {
     switch (param->Type) {
       case Config::Parameter::Type::STRING:
       case Config::Parameter::Type::ARRAY: {
-        bool isOptional{!param->Default.empty()};
+        const bool isOptional{!param->Default.empty()};
         const std::string pattern{isOptional ? " [--{}{}]" : " --{}{}"};
         arguments.append(fmt::format(
             isOptional ? fg(fmt::color::dark_gray) : fg(fmt::color::white),
@@ -201,34 +223,15 @@ std::string Help::GetCommandArguments(const std::string& name) const {
   return arguments;
 }
 
-void Help::SetGlobalPadding() {
-  LITR_PROFILE_FUNCTION();
-
-  const size_t paddingRight{2};
-  const size_t paddingLeft{4};  // Includes space for short parameter
-
-  const size_t commandPadding{GetCommandPadding()};
-  const size_t paramPadding{GetParameterPadding()};
-
-  size_t padding{commandPadding};
-
-  m_CommandPadding = padding;
-
-  if (paramPadding > padding) {
-    padding = paramPadding;
-  }
-
-  m_Padding = paddingLeft + padding + paddingRight;
-}
-
 size_t Help::GetCommandPadding() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Commands commands{m_Query.GetCommands()};
+  const Config::Query::Commands commands{
+      m_CommandName.empty() ? m_Query.GetCommands() : m_Query.GetCommands(m_CommandName)};
   size_t padding{0};
 
   for (auto&& command : commands) {
-    size_t commandLength{command->Name.length()};
+    const size_t commandLength{command->Name.length()};
 
     if (padding < commandLength) {
       padding = commandLength;
@@ -241,11 +244,16 @@ size_t Help::GetCommandPadding() const {
 size_t Help::GetParameterPadding() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Parameters params{m_Query.GetParameters()};
+  const Config::Query::Parameters params{
+      m_CommandName.empty() ? m_Query.GetParameters() : m_Query.GetParameters(m_CommandName)};
   size_t padding{0};
 
+  constexpr size_t minPadding{4};  // Min padding based on text "help"
+  constexpr size_t paddingLeft{4};  // Includes space for short parameter
+  constexpr size_t paddingRight{2};
+
   for (auto&& param : params) {
-    std::string argument{param->TypeArguments.empty() ? "" : m_ArgumentPlaceholder};
+    const std::string argument{param->TypeArguments.empty() ? "" : m_ArgumentPlaceholder};
     size_t paramLength{(param->Name.length() + argument.length())};
 
     if (padding < paramLength) {
@@ -253,15 +261,19 @@ size_t Help::GetParameterPadding() const {
     }
   }
 
-  return padding;
+  if (padding < minPadding) padding = minPadding;
+
+  return paddingLeft + padding + paddingRight;
 }
 
 bool Help::SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<Config::Parameter>& p2) {
+  LITR_PROFILE_FUNCTION();
+
   auto RankParameterRequired{[](const Ref<Config::Parameter>& param) -> int {
     switch (param->Type) {
       case Config::Parameter::Type::STRING:
       case Config::Parameter::Type::ARRAY: {
-        bool isRequired{param->Default.empty()};
+        const bool isRequired{param->Default.empty()};
         return isRequired ? 1 : 2;
       }
       case Config::Parameter::Type::BOOLEAN: {

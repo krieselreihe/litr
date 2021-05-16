@@ -1,5 +1,7 @@
 #include "Utils.hpp"
 
+#include <algorithm>
+
 #include "Core/Debug/Instrumentor.hpp"
 
 namespace Litr::Utils {
@@ -48,6 +50,10 @@ void SplitInto(const std::string& source, const char& delimiter, std::deque<std:
   while (std::getline(ss, part, delimiter)) {
     out.push_back(part);
   }
+}
+
+void Deduplicate(std::vector<std::string>& items) {
+  items.erase(std::unique(items.begin(), items.end()), items.end());
 }
 
 }  // namespace Litr::Utils

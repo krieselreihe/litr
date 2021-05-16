@@ -25,8 +25,9 @@ class Query {
   [[nodiscard]] Ref<Parameter> GetParameter(const std::string& name) const;
 
   [[nodiscard]] Commands GetCommands() const;
+  [[nodiscard]] Commands GetCommands(const std::string& name) const;
   [[nodiscard]] Parameters GetParameters() const;
-  [[nodiscard]] Parameters GetCommandParameters(const std::string& name) const;
+  [[nodiscard]] Parameters GetParameters(const std::string& name) const;
 
  private:
   [[nodiscard]] static Parts SplitCommandQuery(const std::string& query);
@@ -34,6 +35,7 @@ class Query {
   [[nodiscard]] static Ref<Command> GetCommandByName(const std::string& name, const Loader::Commands& commands);
 
   [[nodiscard]] Variables GetParametersAsVariables() const;
+  [[nodiscard]] std::vector<std::string> GetUsedParameterNames(const Ref<Command>& command) const;
 
  private:
   const Ref<Loader>& m_Config;
