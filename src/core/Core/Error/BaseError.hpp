@@ -22,6 +22,7 @@ class BaseError {
     MALFORMED_SCRIPT,          // Configuration command script malformed
     UNKNOWN_COMMAND_PROPERTY,  // Unknown option used for command in configuration
     UNKNOWN_PARAM_VALUE,       // Unknown option used for parameter in configuration
+    VALUE_ALREADY_IN_USE,      // A value is already used, e.g. a Shortcut name
     PARSER,                    // Error while parsing CLI input arguments
     COMMAND_NOT_FOUND,         // On execution, command not found
     EXECUTION_FAILURE          // Issue executing a command
@@ -131,6 +132,16 @@ class UnknownParamValueError : public BaseError {
 
  protected:
   std::string Description{"Parameter value is not known!"};
+};
+
+class ValueAlreadyInUseError : public BaseError {
+ public:
+  ValueAlreadyInUseError(const std::string& message, const toml::value& context)
+      : BaseError(ErrorType::VALUE_ALREADY_IN_USE, message, context) {
+  }
+
+ protected:
+  std::string Description{"Value is is already in use!"};
 };
 
 class ParserError : public BaseError {

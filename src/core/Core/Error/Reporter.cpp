@@ -37,6 +37,7 @@ void Reporter::PrintError(const BaseError& error) {
     case BaseError::ErrorType::MALFORMED_PARAM:
     case BaseError::ErrorType::MALFORMED_SCRIPT:
     case BaseError::ErrorType::RESERVED_PARAM:
+    case BaseError::ErrorType::VALUE_ALREADY_IN_USE:
     case BaseError::ErrorType::UNKNOWN_COMMAND_PROPERTY:
     case BaseError::ErrorType::UNKNOWN_PARAM_VALUE:
     case BaseError::ErrorType::PARSER: {

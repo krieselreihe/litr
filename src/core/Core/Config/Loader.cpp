@@ -184,7 +184,7 @@ void Loader::CollectParams(const toml::table& params) {
     }
 
     builder.AddDescription();
-    builder.AddShortcut();
+    builder.AddShortcut(m_Parameters);
     builder.AddType();
     builder.AddDefault();
 

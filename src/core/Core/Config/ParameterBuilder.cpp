@@ -43,7 +43,7 @@ void ParameterBuilder::AddDescription(const std::string& description) {
   m_Parameter->Description = description;
 }
 
-void ParameterBuilder::AddShortcut() {
+void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"shortcut"};
@@ -60,6 +60,16 @@ void ParameterBuilder::AddShortcut() {
             m_Table.at(name)
         ));
         return;
+      }
+
+      for (auto&& param : params) {
+        if (param->Shortcut == shortcutStr) {
+          Error::Handler::Push(Error::ValueAlreadyInUseError(
+              fmt::format(R"(The shortcut name "{}" is already used for parameter "{}".)", shortcutStr, param->Name),
+              m_Table.at(name)
+          ));
+          return;
+        }
       }
 
       m_Parameter->Shortcut = shortcutStr;
