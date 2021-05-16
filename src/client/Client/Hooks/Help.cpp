@@ -7,6 +7,12 @@
 
 namespace Litr {
 
+// Attention dear reader: I know how this file looks like. There is a lot going on,
+// numbers, formatting, some of it all over the place. It is not pretty, but it works
+// and very important the mess is contained to this file.
+// There will be a refactor for this making some improvements on the way as well:
+// https://github.com/krieselreihe/litr/issues/31
+
 Help::Help(const Ref<Config::Loader>& config) : m_Query(config), m_FilePath(config->GetFilePath()) {}
 
 void Help::Print(const Ref<CLI::Instruction>& instruction) const {
@@ -51,28 +57,33 @@ void Help::PrintCommands() const {
   if (commands.empty()) return;
 
   fmt::print("Commands:\n");
-  const size_t padding{GetCommandPadding()};
+  for (auto&& command : commands) PrintCommand(command, m_CommandName);
+  fmt::print("\n");
+}
 
-  for (auto&& command : commands) {
-    std::string commandPath{command->Name};
+void Help::PrintCommand(const Ref<Config::Command>& command, const std::string& parentName, size_t depth) const {
+  size_t padding{GetCommandPadding()};
+  std::string commandPath{command->Name};
 
-    if (!m_CommandName.empty()) {
-      commandPath = fmt::format("{}.{}", m_CommandName, command->Name);
-    }
-
-    const std::string arguments{GetCommandArguments(commandPath)};
-    const std::string name{fmt::format("{:<{}} {}", command->Name, padding, arguments)};
-
-    if (command->Description.empty()) {
-      fmt::print("  {}\n", name);
-    } else {
-      PrintWithDescription(name, command->Description, arguments.length());
-    }
-
-    // @todo: Sub commands here ?
+  if (!parentName.empty()) {
+    padding -= (depth - 1) * 2;  // Reduce right padding for nested short commands.
+    commandPath = fmt::format("{}.{}", parentName, command->Name);
   }
 
-  fmt::print("\n");
+  const std::string arguments{GetCommandArguments(commandPath)};
+  const std::string name{fmt::format("{: ^{}}{:<{}} {}",
+      "", depth * 2,  // Left side padding
+      command->Name, padding, arguments)};
+
+  if (command->Description.empty()) {
+    fmt::print("{}\n", name);
+  } else {
+    PrintWithDescription(name, fmt::format("  {}", command->Description), arguments.length());
+  }
+
+  for (auto&& childCommand : command->ChildCommands) {
+    PrintCommand(childCommand, commandPath, depth + 1);
+  }
 }
 
 void Help::PrintOptions() const {
@@ -96,6 +107,7 @@ void Help::PrintOptions() const {
       name = fmt::format("   --{}{}", param->Name, argument);
     }
 
+    fmt::print("  ");
     PrintWithDescription(name, param->Description);
     PrintParameterOptions(param);
     PrintDefaultParameterOption(param);
@@ -142,13 +154,13 @@ void Help::PrintWithDescription(const std::string& name, const std::string& desc
 
   for (size_t i{0}; i < lines.size(); ++i) {
     if (useMaxPadding) {
-      if (i == 0) fmt::print("  {}\n", name);
-      fmt::print("  {:<{}} {}\n", " ", padding, lines[i]);
+      if (i == 0) fmt::print("{}\n", name);
+      fmt::print("{:<{}} {}\n", " ", padding, lines[i]);
     } else {
       if (i == 0) {
-        fmt::print("  {:<{}} {}\n", name, padding, lines[i]);
+        fmt::print("{:<{}} {}\n", name, padding, lines[i]);
       } else {
-        fmt::print("  {:<{}} {}\n", " ", padding, lines[i]);
+        fmt::print("{:<{}} {}\n", " ", padding, lines[i]);
       }
     }
   }
@@ -228,6 +240,12 @@ size_t Help::GetCommandPadding() const {
 
   const Config::Query::Commands commands{
       m_CommandName.empty() ? m_Query.GetCommands() : m_Query.GetCommands(m_CommandName)};
+  return GetCommandPadding(commands);
+}
+
+size_t Help::GetCommandPadding(const Config::Query::Commands& commands) const {
+  LITR_PROFILE_FUNCTION();
+
   size_t padding{0};
 
   for (auto&& command : commands) {
@@ -235,6 +253,13 @@ size_t Help::GetCommandPadding() const {
 
     if (padding < commandLength) {
       padding = commandLength;
+    }
+
+    // Add 2 for nested padding alignment. It's a hack, I know ¯\_(ツ)_/¯
+    const size_t childPadding{GetCommandPadding(command->ChildCommands) + 2};
+
+    if (padding < childPadding) {
+      padding = childPadding;
     }
   }
 

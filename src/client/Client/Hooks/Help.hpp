@@ -13,6 +13,7 @@ class Help {
   void PrintWelcomeMessage() const;
   void PrintUsage() const;
   void PrintCommands() const;
+  void PrintCommand(const Ref<Config::Command>& command, const std::string& parentName, size_t depth = 1) const;
   void PrintOptions() const;
   void PrintParameterOptions(const Ref<Config::Parameter>& param) const;
   void PrintDefaultParameterOption(const Ref<Config::Parameter>& param) const;
@@ -22,6 +23,7 @@ class Help {
   [[nodiscard]] std::string GetCommandArguments(const std::string& name) const;
 
   [[nodiscard]] size_t GetCommandPadding() const;
+  [[nodiscard]] size_t GetCommandPadding(const Config::Query::Commands& commands) const;
   [[nodiscard]] size_t GetParameterPadding() const;
 
   [[nodiscard]] static bool SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<Config::Parameter>& p2);
