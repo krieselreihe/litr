@@ -24,7 +24,8 @@ class BaseError {
     UNKNOWN_COMMAND_PROPERTY,  // Unknown option used for command in configuration
     UNKNOWN_PARAM_VALUE,       // Unknown option used for parameter in configuration
     VALUE_ALREADY_IN_USE,      // A value is already used, e.g. a Shortcut name
-    PARSER,                    // Error while parsing CLI input arguments
+    CLI_PARSER,                // Error while parsing CLI input arguments
+    SCRIPT_PARSER,             // Error while parsing scripts
     COMMAND_NOT_FOUND,         // On execution, command not found
     EXECUTION_FAILURE          // Issue executing a command
   };
@@ -66,10 +67,8 @@ class ReservedParamError : public BaseError {
  public:
   ReservedParamError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::RESERVED_PARAM, message, context) {
+    BaseError::Description = "Parameter name is reserved!";
   }
-
- protected:
-  std::string Description{"Parameter name is reserved!"};
 };
 
 class MalformedFileError : public BaseError {
@@ -79,100 +78,88 @@ class MalformedFileError : public BaseError {
   }
   MalformedFileError(const std::string& message, const toml::exception& err)
       : BaseError(ErrorType::MALFORMED_FILE, TomlError::ExtractMessage(message, err.what()), err) {
+    BaseError::Description = "Invalid file format!";
   }
-
- protected:
-  std::string Description{"Invalid file format!"};
 };
 
 class MalformedCommandError : public BaseError {
  public:
   MalformedCommandError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::MALFORMED_COMMAND, message, context) {
+    BaseError::Description = "Command format is wrong!";
   }
-
- protected:
-  std::string Description{"Command format is wrong!"};
 };
 
 class MalformedParamError : public BaseError {
  public:
   MalformedParamError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::MALFORMED_PARAM, message, context) {
+    BaseError::Description = "Parameter format is wrong!";
   }
-
- protected:
-  std::string Description{"Parameter format is wrong!"};
 };
 
 class MalformedScriptError : public BaseError {
  public:
   MalformedScriptError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::MALFORMED_SCRIPT, message, context) {
+    BaseError::Description = "Command script is wrong!";
   }
-
- protected:
-  std::string Description{"Command script is wrong!"};
 };
 
 class UnknownCommandPropertyError : public BaseError {
  public:
   UnknownCommandPropertyError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::UNKNOWN_COMMAND_PROPERTY, message, context) {
+    BaseError::Description = "Command property does not exist!";
   }
-
- protected:
-  std::string Description{"Command property does not exist!"};
 };
 
 class UnknownParamValueError : public BaseError {
  public:
   UnknownParamValueError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::UNKNOWN_PARAM_VALUE, message, context) {
+    BaseError::Description = "Parameter value is not known!";
   }
-
- protected:
-  std::string Description{"Parameter value is not known!"};
 };
 
 class ValueAlreadyInUseError : public BaseError {
  public:
   ValueAlreadyInUseError(const std::string& message, const toml::value& context)
       : BaseError(ErrorType::VALUE_ALREADY_IN_USE, message, context) {
+    BaseError::Description = "Value is is already in use!";
   }
-
- protected:
-  std::string Description{"Value is is already in use!"};
 };
 
-class ParserError : public BaseError {
+class CLIParserError : public BaseError {
  public:
-  ParserError(const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
-      : BaseError(ErrorType::PARSER, message, line, column, lineStr) {
+  CLIParserError(const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
+      : BaseError(ErrorType::CLI_PARSER, message, line, column, lineStr) {
+    BaseError::Description = "Problem parsing command line arguments!";
   }
+};
 
- protected:
-  std::string Description{"Problem parsing command line arguments!"};
+class ScriptParserError : public BaseError {
+ public:
+  ScriptParserError(const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
+      : BaseError(ErrorType::CLI_PARSER, message, line, column, lineStr) {
+    BaseError::Description = "Problem parsing script!";
+  }
 };
 
 class CommandNotFoundError : public BaseError {
  public:
   explicit CommandNotFoundError(const std::string& message)
       : BaseError(ErrorType::COMMAND_NOT_FOUND, message) {
+    BaseError::Description = "Command not found!";
   }
-
- protected:
-  std::string Description{"Command not found!"};
 };
 
 class ExecutionFailureError : public BaseError {
  public:
   explicit ExecutionFailureError(const std::string& message)
       : BaseError(ErrorType::EXECUTION_FAILURE, message) {
+    BaseError::Description = "Problem executing command!";
   }
-
- protected:
-  std::string Description{"Problem executing command!"};
 };
 
 }  // namespace Litr::Error

@@ -186,8 +186,7 @@ Token Scanner::EndSequence() {
 Token Scanner::Untouched() {
   LITR_PROFILE_FUNCTION();
 
-  // @todo: Refactor this condition for the check
-  // `m_Current[-1] != '\\'` of the escape sequence.
+  // @todo: Refactor this condition for the check `m_Current[-1] != '\\'` of the escape sequence.
   while (
       !(Peek() == '%' && PeekNext() == '{' && m_Current[-1] != '\\')
       && !IsAtEnd()) {

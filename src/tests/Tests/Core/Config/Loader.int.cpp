@@ -88,7 +88,7 @@ TEST_SUITE("Config::Loader") {
 
     CHECK(Litr::Error::Handler::HasErrors() == true);
     CHECK(errors.size() == 2);
-    CHECK(errors[0].Message == R"(The "description" can can only be a string.)");
+    CHECK(errors[0].Message == R"(The "description" can only be a string.)");
     CHECK(errors[1].Message == R"(The "output" can either be "unchanged" or "silent".)");
     Litr::Error::Handler::Flush();
   }
@@ -215,8 +215,8 @@ TEST_SUITE("Config::Loader") {
 
     CHECK(Litr::Error::Handler::HasErrors() == true);
     CHECK(errors.size() == 2);
-    CHECK(errors[0].Message == R"(The "description" can can only be a string.)");
-    CHECK(errors[1].Message == R"(A "type" can can only be "string" or an array of options as strings.)");
+    CHECK(errors[0].Message == R"(The "description" can only be a string.)");
+    CHECK(errors[1].Message == R"(A "type" can only be "string" or an array of options as strings.)");
     Litr::Error::Handler::Flush();
   }
 

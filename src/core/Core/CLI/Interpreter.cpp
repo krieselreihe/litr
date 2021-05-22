@@ -5,6 +5,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/CLI/Shell.hpp"
 #include "Core/Script/Compiler.hpp"
+#include "Core/Utils.hpp"
 
 namespace Litr::CLI {
 
@@ -137,7 +138,7 @@ void Interpreter::DefineVariable() {
 
   if (param == nullptr) {
     HandleError(Error::CommandNotFoundError(
-        fmt::format("Parameter with the name \"{}\" is not defined inside the configuration file.", name)
+        fmt::format("Parameter with the name \"{}\" is not defined.\n  Run `litr --help` to see a list available options.", name)
     ));
     return;
   }
@@ -179,8 +180,15 @@ void Interpreter::SetConstant() {
     case Config::Parameter::Type::ARRAY: {
       const auto& args{param->TypeArguments};
       if (std::find(args.begin(), args.end(), value) == args.end()) {
+        std::string options{"Available options are:"};
+        for (auto&& option : args) {
+          options.append(fmt::format(" \"{}\",", option));
+        }
+
         HandleError(Error::CommandNotFoundError(
-            fmt::format(R"(Parameter value "{}" is no valid option for "{}".)", value, param->Name)
+            fmt::format(
+                "Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
+                value, param->Name, Utils::TrimRight(options, ','))
         ));
         return;
       }
@@ -194,7 +202,9 @@ void Interpreter::SetConstant() {
         variable.Value = true;
       } else {
         HandleError(Error::CommandNotFoundError(
-            fmt::format(R"(Parameter value "{}" is no valid for boolean option "{}". Please use "false", "true" or no value for true as well.)", value, param->Name)
+            fmt::format(
+                "Parameter value \"{}\" is not valid for boolean option \"{}\".\n  Please use \"false\", \"true\" or no value for true as well.",
+                value, param->Name)
         ));
       }
       break;
@@ -212,7 +222,9 @@ void Interpreter::CallInstruction() {
 
   if (command == nullptr) {
     HandleError(Error::CommandNotFoundError(
-        fmt::format("Command \"{}\" could not be found.", name)
+        fmt::format(
+            "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.",
+            name)
     ));
     return;
   }

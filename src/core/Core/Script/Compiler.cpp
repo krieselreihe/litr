@@ -264,9 +264,9 @@ void Compiler::ErrorAt(Token *token, const std::string& message) {
     outMessage.append(fmt::format(" at `{}`", Scanner::GetTokenValue(token)));
   }
 
-  outMessage.append(fmt::format(": {}\n", message));
+  outMessage.append(fmt::format(": {}", message));
 
-  Error::Handler::Push(Error::ParserError(
+  Error::Handler::Push(Error::ScriptParserError(
       outMessage,
       m_Location.Line,
       m_Location.Column + token->Column + 1,

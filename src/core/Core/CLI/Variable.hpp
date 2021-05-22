@@ -17,11 +17,11 @@ struct Variable {
   // are always handled explicit.
   std::variant<std::string, bool> Value{};
 
-  explicit Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
+  Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
   }
-  explicit Variable(std::string name, bool value) : Type(Type::BOOLEAN), Name(std::move(name)), Value(value) {
+  Variable(std::string name, bool value) : Type(Type::BOOLEAN), Name(std::move(name)), Value(value) {
   }
-  explicit Variable(std::string name, std::string value)
+  Variable(std::string name, std::string value)
       : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
   }
   explicit Variable(const Config::Parameter& parameter) {

@@ -32,10 +32,11 @@ ExitStatus Application::Run(int argc, char* argv[]) {
 
   const auto instruction{CreateRef<CLI::Instruction>()};
   const CLI::Parser parser{instruction, m_Source};
+  Error::Reporter errorReporter{m_Config};
 
   // Print parser errors if any:
   if (Error::Handler::HasErrors()) {
-    Error::Reporter::PrintErrors(Error::Handler::GetErrors());
+    errorReporter.PrintErrors(Error::Handler::GetErrors());
     return ExitStatus::FAILURE;
   }
 
@@ -56,7 +57,7 @@ ExitStatus Application::Run(int argc, char* argv[]) {
 
   // Print interpreter errors if any:
   if (Error::Handler::HasErrors()) {
-    Error::Reporter::PrintErrors(Error::Handler::GetErrors());
+    errorReporter.PrintErrors(Error::Handler::GetErrors());
     return ExitStatus::FAILURE;
   }
 

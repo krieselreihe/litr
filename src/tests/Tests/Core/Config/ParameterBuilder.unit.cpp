@@ -37,7 +37,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddDescription();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can can only be a string.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -83,7 +83,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddShortcut();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "shortcut" can can only be a string.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "shortcut" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -117,6 +117,20 @@ TEST_SUITE("ParameterBuilder") {
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Shortcut == "t");
+      Litr::Error::Handler::Flush();
+    }
+
+    SUBCASE("Emits an error if shortcut is already defined") {
+      const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "x")");
+      auto param{Litr::CreateRef<Litr::Config::Parameter>("something")};
+      param->Shortcut = "x";
+      std::vector<Litr::Ref<Litr::Config::Parameter>> params{{param}};
+
+      Litr::Config::ParameterBuilder builder{file, data, "test"};
+      builder.AddShortcut(params);
+
+      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "x" is already used for parameter "something".)");
       Litr::Error::Handler::Flush();
     }
   }
@@ -198,7 +212,7 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "type" can can only be "string" or an array of options as strings.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "type" can only be "string" or an array of options as strings.)");
       Litr::Error::Handler::Flush();
     }
   }

@@ -28,8 +28,6 @@ std::string Trim(const std::string& src, char c) {
   return TrimLeft(TrimRight(src, c), c);
 }
 
-// @todo: This two functions somehow need to be better, maybe using a template.
-
 void SplitInto(const std::string& source, const char& delimiter, std::vector<std::string>& out) {
   LITR_PROFILE_FUNCTION();
 

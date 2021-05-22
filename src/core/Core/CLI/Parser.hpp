@@ -12,7 +12,7 @@ namespace Litr::CLI {
 
 class Parser {
  public:
-  explicit Parser(const Ref<Instruction>& instruction, const std::string& source);
+  Parser(const Ref<Instruction>& instruction, const std::string& source);
 
   void Advance();
   void Consume(TokenType type, const char* message);

@@ -227,9 +227,9 @@ void Parser::ErrorAt(Token* token, const char* message) {
     outMessage.append(fmt::format(" at `{}`", Scanner::GetTokenValue(token)));
   }
 
-  outMessage.append(fmt::format(": {}\n", message));
+  outMessage.append(fmt::format(": {}", message));
 
-  Error::Handler::Push(Error::ParserError(
+  Error::Handler::Push(Error::CLIParserError(
       outMessage,
       1,
       token->Column,

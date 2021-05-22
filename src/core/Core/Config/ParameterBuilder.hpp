@@ -14,6 +14,7 @@ class ParameterBuilder {
 
   void AddDescription();
   void AddDescription(const std::string& description);
+  void AddShortcut();
   void AddShortcut(const std::vector<Ref<Parameter>>& params);
   void AddDefault();
   void AddType();

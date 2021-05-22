@@ -64,7 +64,7 @@ void CommandBuilder::AddDescription() {
     }
 
     Error::Handler::Push(Error::MalformedCommandError(
-        fmt::format(R"(The "{}" can can only be a string.)", name),
+        fmt::format(R"(The "{}" can only be a string.)", name),
         m_Table.at(name)
     ));
   }
@@ -83,7 +83,7 @@ void CommandBuilder::AddExample() {
     }
 
     Error::Handler::Push(Error::MalformedCommandError(
-        fmt::format(R"(The "{}" can can only be a string.)", name),
+        fmt::format(R"(The "{}" can only be a string.)", name),
         m_Table.at(name)
     ));
   }

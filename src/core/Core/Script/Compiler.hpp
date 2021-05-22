@@ -14,7 +14,7 @@ class Compiler {
  public:
   using Variables = std::unordered_map<std::string, CLI::Variable>;
 
-  explicit Compiler(const std::string& source, Config::Location location, Variables variables);
+  Compiler(const std::string& source, Config::Location location, Variables variables);
   [[nodiscard]] std::string GetScript() const;
   [[nodiscard]] std::vector<std::string> GetUsedVariables() const;
 

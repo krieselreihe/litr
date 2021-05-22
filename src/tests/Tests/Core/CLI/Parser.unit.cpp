@@ -186,7 +186,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -200,7 +200,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -214,7 +214,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -228,7 +228,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -242,7 +242,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -256,7 +256,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -270,7 +270,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.\n");
+    CHECK(errors[0].Message == "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::Flush();
   }
 
@@ -323,7 +323,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse: Unexpected character.\n");
+    CHECK(errors[0].Message == "Cannot parse: Unexpected character.");
     Litr::Error::Handler::Flush();
   }
 
@@ -337,7 +337,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `\"debug\"`: This is not allowed here.\n");
+    CHECK(errors[0].Message == "Cannot parse at `\"debug\"`: This is not allowed here.");
     Litr::Error::Handler::Flush();
   }
 
@@ -351,7 +351,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `23`: This is not allowed here.\n");
+    CHECK(errors[0].Message == "Cannot parse at `23`: This is not allowed here.");
     Litr::Error::Handler::Flush();
   }
 
@@ -365,7 +365,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse: Unexpected character.\n");
+    CHECK(errors[0].Message == "Cannot parse: Unexpected character.");
     Litr::Error::Handler::Flush();
   }
 
@@ -379,7 +379,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `=`: You are missing a parameter in front of the assignment.\n");
+    CHECK(errors[0].Message == "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
     Litr::Error::Handler::Flush();
   }
 
@@ -393,7 +393,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `=`: Value assignment missing.\n");
+    CHECK(errors[0].Message == "Cannot parse at `=`: Value assignment missing.");
     Litr::Error::Handler::Flush();
   }
 
@@ -407,7 +407,7 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{Litr::Error::Handler::GetErrors()};
     CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse: A parameter can only start with the characters A-Za-z.\n");
+    CHECK(errors[0].Message == "Cannot parse: A parameter can only start with the characters A-Za-z.");
     Litr::Error::Handler::Flush();
   }
 }

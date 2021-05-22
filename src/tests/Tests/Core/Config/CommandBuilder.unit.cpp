@@ -125,7 +125,7 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.AddDescription();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can can only be a string.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -160,7 +160,7 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.AddExample();
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "example" can can only be a string.)");
+      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "example" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 

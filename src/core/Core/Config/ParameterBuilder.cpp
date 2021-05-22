@@ -28,7 +28,7 @@ void ParameterBuilder::AddDescription() {
 
   if (!description.is_string()) {
     Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(The "{}" can can only be a string.)", name),
+        fmt::format(R"(The "{}" can only be a string.)", name),
         m_Table.at(name)
     ));
     return;
@@ -41,6 +41,10 @@ void ParameterBuilder::AddDescription(const std::string& description) {
   LITR_PROFILE_FUNCTION();
 
   m_Parameter->Description = description;
+}
+
+void ParameterBuilder::AddShortcut() {
+  AddShortcut({});
 }
 
 void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
@@ -77,7 +81,7 @@ void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
     }
 
     Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(A "{}" can can only be a string.)", name),
+        fmt::format(R"(A "{}" can only be a string.)", name),
         m_Table.at(name)
     ));
   }
@@ -122,7 +126,7 @@ void ParameterBuilder::AddType() {
     }
 
     Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(A "{}" can can only be "string" or an array of options as strings.)", name),
+        fmt::format(R"(A "{}" can only be "string" or an array of options as strings.)", name),
         m_Table.at(name)
     ));
   }
