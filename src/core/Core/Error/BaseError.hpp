@@ -6,6 +6,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Config/Location.hpp"
+#include "Core/Error/TomlError.hpp"
 
 namespace Litr::Error {
 
@@ -77,7 +78,7 @@ class MalformedFileError : public BaseError {
       : BaseError(ErrorType::MALFORMED_FILE, message) {
   }
   MalformedFileError(const std::string& message, const toml::exception& err)
-      : BaseError(ErrorType::MALFORMED_FILE, message, err) {
+      : BaseError(ErrorType::MALFORMED_FILE, TomlError::ExtractMessage(message, err.what()), err) {
   }
 
  protected:

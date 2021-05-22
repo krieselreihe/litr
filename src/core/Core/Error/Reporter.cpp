@@ -8,18 +8,6 @@
 
 namespace Litr::Error {
 
-static uint32_t CountDigits(uint32_t number) {
-  LITR_PROFILE_FUNCTION();
-
-  if (number < 10) return 1;
-  uint32_t count{0};
-  while (number > 0) {
-    number /= 10;
-    count++;
-  }
-  return count;
-}
-
 void Reporter::PrintErrors(const std::vector<BaseError>& errors) {
   LITR_PROFILE_FUNCTION();
 
@@ -54,6 +42,18 @@ void Reporter::PrintError(const BaseError& error) {
       break;
     }
   }
+}
+
+uint32_t Reporter::CountDigits(uint32_t number) {
+  LITR_PROFILE_FUNCTION();
+
+  if (number < 10) return 1;
+  uint32_t count{0};
+  while (number > 0) {
+    number /= 10;
+    count++;
+  }
+  return count;
 }
 
 }  // namespace Litr::Error

@@ -9,6 +9,7 @@ add_library(${NAME} STATIC
   Core/FileSystem.cpp Core/FileSystem.hpp Core/Environment.hpp
   Core/Utils.cpp Core/Utils.hpp
   Core/Error/Reporter.cpp Core/Error/Reporter.hpp Core/Error/BaseError.hpp
+  Core/Error/TomlError.cpp Core/Error/TomlError.hpp
   Core/Error/Handler.cpp Core/Error/Handler.hpp
   Core/Config/FileResolver.cpp Core/Config/FileResolver.hpp
   Core/Config/Loader.cpp Core/Config/Loader.hpp

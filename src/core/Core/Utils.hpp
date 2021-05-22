@@ -16,4 +16,6 @@ void SplitInto(const std::string& source, const char& delimiter, std::deque<std:
 
 void Deduplicate(std::vector<std::string>& items);
 
+std::string Replace(const std::string& source, const std::string& from, const std::string& to);
+
 }  // namespace Litr::Utils

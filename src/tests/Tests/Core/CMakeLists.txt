@@ -39,3 +39,9 @@ target_link_libraries(Script_Scanner PRIVATE TestBase Core)
 add_executable(Script_Compiler Script/Compiler.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Script_Compiler COMMAND Script_Compiler)
 target_link_libraries(Script_Compiler PRIVATE TestBase Core)
+
+# --- Misc ---
+
+add_executable(Misc_Utils Utils.unit.cpp $<TARGET_OBJECTS:Tests>)
+add_test(NAME Misc_Utils COMMAND Misc_Utils)
+target_link_libraries(Misc_Utils PRIVATE TestBase Core)
