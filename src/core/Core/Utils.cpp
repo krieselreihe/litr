@@ -51,11 +51,15 @@ void SplitInto(const std::string& source, const char& delimiter, std::deque<std:
 }
 
 void Deduplicate(std::vector<std::string>& items) {
+  LITR_PROFILE_FUNCTION();
+
   std::sort(items.begin(), items.end());
   items.erase(std::unique(items.begin(), items.end()), items.end());
 }
 
 std::string Replace(const std::string& source, const std::string& from, const std::string& to) {
+  LITR_PROFILE_FUNCTION();
+
   std::string extract{source};
   const size_t startPos{extract.find(from)};
 
