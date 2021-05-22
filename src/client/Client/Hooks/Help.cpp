@@ -66,7 +66,7 @@ void Help::PrintCommand(const Ref<Config::Command>& command, const std::string& 
   std::string commandPath{command->Name};
 
   if (!parentName.empty()) {
-    padding -= (depth - 1) * 2;  // Reduce right padding for nested short commands.
+    padding -= (depth - 1) * 2;  // Reduce right padding for short child commands.
     commandPath = fmt::format("{}.{}", parentName, command->Name);
   }
 
@@ -255,7 +255,7 @@ size_t Help::GetCommandPadding(const Config::Query::Commands& commands) const {
       padding = commandLength;
     }
 
-    // Add 2 for nested padding alignment. It's a hack, I know ¯\_(ツ)_/¯
+    // Add 2 for child command padding alignment. It's a hack, I know ¯\_(ツ)_/¯
     const size_t childPadding{GetCommandPadding(command->ChildCommands) + 2};
 
     if (padding < childPadding) {
