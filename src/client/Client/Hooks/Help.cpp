@@ -81,8 +81,28 @@ void Help::PrintCommand(const Ref<Config::Command>& command, const std::string& 
     PrintWithDescription(name, fmt::format("  {}", command->Description), arguments.length());
   }
 
+  PrintExample(command);
+
   for (auto&& childCommand : command->ChildCommands) {
     PrintCommand(childCommand, commandPath, depth + 1);
+  }
+}
+
+void Help::PrintExample(const Ref<Config::Command>& command) const {
+  if (!command->Example.empty()) {
+    const size_t padding{GetParameterPadding()};
+
+    std::vector<std::string> lines{};
+    Utils::SplitInto(command->Example, '\n', lines);
+
+    fmt::print(fg(fmt::color::dark_gray), "{:<{}}   ┌ Example(s):\n", " ", padding);
+    for (auto&& line : lines) {
+      if (line != lines.back()) {
+        fmt::print(fg(fmt::color::dark_gray), "{:<{}}   │ {}\n", " ", padding, line);
+      } else {
+        fmt::print(fg(fmt::color::dark_gray), "{:<{}}   └ {}\n", " ", padding, line);
+      }
+    }
   }
 }
 

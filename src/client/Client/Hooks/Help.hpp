@@ -14,6 +14,7 @@ class Help {
   void PrintUsage() const;
   void PrintCommands() const;
   void PrintCommand(const Ref<Config::Command>& command, const std::string& parentName, size_t depth = 1) const;
+  void PrintExample(const Ref<Config::Command>& command) const;
   void PrintOptions() const;
   void PrintParameterOptions(const Ref<Config::Parameter>& param) const;
   void PrintDefaultParameterOption(const Ref<Config::Parameter>& param) const;
