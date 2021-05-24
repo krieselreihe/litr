@@ -310,6 +310,11 @@ std::string Interpreter::ParseScript(const std::string& script, const Config::Lo
 
   const Variables variables{GetScopeVariables()};
   Script::Compiler parser{script, location, variables};
+
+  if (Error::Handler::HasErrors()) {
+    m_StopExecution = true;
+  }
+
   return parser.GetScript();
 }
 
