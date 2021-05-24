@@ -132,9 +132,14 @@ void Compiler::Identifier() {
   auto variable{m_Variables.find(name)};
 
   if (variable == m_Variables.end()) {
+    // @todo: Check if parameter is required to alter the error message accordingly.
+    // https://github.com/krieselreihe/litr/issues/35
     Error("Undefined parameter.");
     return;
   }
+
+  // @todo: Check if variable is empty but required on string types.
+  // https://github.com/krieselreihe/litr/issues/35
 
   if (std::find(m_UsedVariables.begin(), m_UsedVariables.end(), variable->second.Name) == m_UsedVariables.end()) {
     m_UsedVariables.push_back(variable->second.Name);
