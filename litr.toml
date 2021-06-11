@@ -3,7 +3,7 @@ update = "git pull && git submodule update --init"
 build = [
   """cmake -GNinja %{trace '-DDISASSEMBLE=ON -DTRACE=ON'} \
   -DCMAKE_BUILD_TYPE=%{target} \
-  --build build/%{target}""",
+  -B build/%{target}""",
   "ninja -C build/%{target}"
 ]
 run = "./build/%{target}/src/client/Client"
