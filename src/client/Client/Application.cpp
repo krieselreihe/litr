@@ -40,6 +40,12 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return ExitStatus::FAILURE;
   }
 
+  // Litr called without any arguments:
+  if (instruction->Count() == 0) {
+    fmt::print("You can run `litr --help` to see what you can do here.\n");
+    return ExitStatus::FAILURE;
+  }
+
   const auto interpreter{CreateRef<CLI::Interpreter>(instruction, m_Config)};
 
   const Help help{m_Config};
