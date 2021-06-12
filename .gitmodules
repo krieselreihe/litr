@@ -13,7 +13,7 @@
 [submodule "vendor/toml11"]
 	path = vendor/toml11
 	url = https://github.com/ToruNiina/toml11.git
-	branch = v3.6.1
+	branch = v3.7.0
 [submodule "vendor/ordered-map"]
 	path = vendor/ordered-map
 	url = https://github.com/krieselreihe/ordered-map.git
