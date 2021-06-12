@@ -69,7 +69,8 @@ void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
       for (auto&& param : params) {
         if (param->Shortcut == shortcutStr) {
           Error::Handler::Push(Error::ValueAlreadyInUseError(
-              fmt::format(R"(The shortcut name "{}" is already used for parameter "{}".)", shortcutStr, param->Name),
+              fmt::format(
+                  R"(The shortcut name "{}" is already used for parameter "{}".)", shortcutStr, param->Name),
               m_Table.at(name)
           ));
           return;
@@ -102,7 +103,8 @@ void ParameterBuilder::AddType() {
         m_Parameter->Type = Parameter::Type::BOOLEAN;
       } else {
         Error::Handler::Push(Error::UnknownParamValueError(
-            fmt::format(R"(The "{}" option as string can only be "string" or "boolean". Provided value "{}" is not known.)",
+            fmt::format(
+                R"(The "{}" option as string can only be "string" or "boolean". Provided value "{}" is not known.)",
                         name, static_cast<std::string>(type.as_string())),
             m_Table.at(name)
         ));
@@ -126,7 +128,8 @@ void ParameterBuilder::AddType() {
     }
 
     Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(A "{}" can only be "string" or an array of options as strings.)", name),
+        fmt::format(
+            R"(A "{}" can only be "string" or an array of options as strings.)", name),
         m_Table.at(name)
     ));
   }

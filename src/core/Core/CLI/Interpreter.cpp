@@ -9,6 +9,7 @@
 
 namespace Litr::CLI {
 
+/** @private */
 static void CommandPathToHumanReadable(std::string& path) {
   LITR_PROFILE_FUNCTION();
 
@@ -138,7 +139,8 @@ void Interpreter::DefineVariable() {
 
   if (param == nullptr) {
     HandleError(Error::CommandNotFoundError(
-        fmt::format("Parameter with the name \"{}\" is not defined.\n  Run `litr --help` to see a list available options.", name)
+        fmt::format("Parameter with the name \"{}\" is not defined."
+                    "\n  Run `litr --help` to see a list available options.", name)
     ));
     return;
   }
@@ -195,7 +197,7 @@ void Interpreter::SetConstant() {
       variable.Value = value;
       break;
     }
-    case Config::Parameter::Type::BOOLEAN:
+    case Config::Parameter::Type::BOOLEAN: {
       if (value == "false") {
         variable.Value = false;
       } else if (value == "true") {
@@ -203,11 +205,14 @@ void Interpreter::SetConstant() {
       } else {
         HandleError(Error::CommandNotFoundError(
             fmt::format(
-                "Parameter value \"{}\" is not valid for boolean option \"{}\".\n  Please use \"false\", \"true\" or no value for true as well.",
+                "Parameter value \"{}\" is not valid for boolean option \"{}\"."
+                "\n  Please use \"false\", \"true\" or no value for true as well.",
                 value, param->Name)
         ));
+        return;
       }
       break;
+    }
   }
 
   m_Scope.back().insert_or_assign(variable.Name, variable);

@@ -18,7 +18,7 @@ class Loader {
   using Parameters = std::vector<Ref<Parameter>>;
 
   explicit Loader(const Path& filePath);
-  virtual ~Loader() = default;
+  ~Loader() = default;
 
   [[nodiscard]] inline Commands GetCommands() const { return m_Commands; };
   [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; };

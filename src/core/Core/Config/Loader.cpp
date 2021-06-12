@@ -35,12 +35,20 @@ Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
   }
 
   if (config.contains("commands")) {
-    const toml::table& commands{toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "commands")};
+    const toml::table& commands{
+        toml::find<toml::table,
+        toml::discard_comments,
+        tsl::ordered_map>(config, "commands")
+    };
     CollectCommands(commands);
   }
 
   if (config.contains("params")) {
-    const toml::table& params{toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "params")};
+    const toml::table& params{
+        toml::find<toml::table,
+        toml::discard_comments,
+        tsl::ordered_map>(config, "params")
+    };
     CollectParams(params);
   }
 }
@@ -129,7 +137,8 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
       Error::Handler::Push(Error::UnknownCommandPropertyError(
-          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+          fmt::format(
+              R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property)
       ));
       properties.pop();

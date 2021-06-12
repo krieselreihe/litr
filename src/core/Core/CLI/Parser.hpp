@@ -40,9 +40,9 @@ class Parser {
   [[nodiscard]] inline bool HasErrors() const { return m_HasError; };
 
  private:
-  void Error(const char* message);
-  void ErrorAtCurrent(const char* message);
-  void ErrorAt(Token* token, const char* message);
+  void Error(const std::string& message);
+  void ErrorAtCurrent(const std::string& message);
+  void ErrorAt(Token* token, const std::string& message);
 
   [[nodiscard]] std::string GetScopePath() const;
 

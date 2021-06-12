@@ -199,19 +199,19 @@ void Parser::EndOfString() {
   Consume(TokenType::EOS, "Expected end.");
 }
 
-void Parser::ErrorAtCurrent(const char* message) {
+void Parser::ErrorAtCurrent(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
   ErrorAt(&m_Current, message);
 }
 
-void Parser::Error(const char* message) {
+void Parser::Error(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
   ErrorAt(&m_Previous, message);
 }
 
-void Parser::ErrorAt(Token* token, const char* message) {
+void Parser::ErrorAt(Token* token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
   if (m_PanicMode) return;
