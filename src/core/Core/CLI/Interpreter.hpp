@@ -57,6 +57,9 @@ class Interpreter {
 
   [[nodiscard]] static enum Variable::Type GetVariableType(const Ref<Config::Parameter>& param);
   [[nodiscard]] bool HookExecuted() const;
+
+  void ValidateRequiredParameters(const Ref<Config::Command>& command);
+  [[nodiscard]] bool IsVariableDefined(const std::string& name) const;
   void HandleError(const Error::BaseError& error);
 
   static void Print(const std::string& message);

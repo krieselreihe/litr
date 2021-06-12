@@ -40,6 +40,8 @@ class Compiler {
   void EndOfSequence();
   void EndOfScript();
 
+  void CollectUsedVariable(const CLI::Variable& variable);
+
   void Error(const std::string& message);
   void ErrorAtCurrent(const std::string& message);
   void ErrorAt(Token* token, const std::string& message);

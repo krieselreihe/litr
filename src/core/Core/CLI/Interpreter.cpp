@@ -239,9 +239,12 @@ void Interpreter::CallCommand(const Ref<Config::Command>& command, const std::st
   LITR_PROFILE_FUNCTION();
 
   std::string commandPath{scope + command->Name};
+
+  ValidateRequiredParameters(command);
+  if (m_StopExecution) return;
+
   const bool printResult{command->Output == Config::Command::Output::SILENT};
   const Scripts scripts{ParseScripts(command)};
-
   if (m_StopExecution) return;
 
   CommandPathToHumanReadable(commandPath);
@@ -355,6 +358,31 @@ bool Interpreter::HookExecuted() const {
   }
 
   return false;
+}
+
+void Interpreter::ValidateRequiredParameters(const Ref<Config::Command>& command) {
+  LITR_PROFILE_FUNCTION();
+
+  const auto params{m_Query.GetParameters(command->Name)};
+
+  for (auto&& param : params) {
+    if (!IsVariableDefined(param->Name)) {
+      HandleError(Error::ExecutionFailureError(
+          fmt::format("The parameter --{} is required. "
+                      "You should run the command again with the required parameter.",
+              param->Name)));
+      m_StopExecution = true;
+    }
+  }
+}
+
+bool Interpreter::IsVariableDefined(const std::string& name) const {
+  LITR_PROFILE_FUNCTION();
+
+  const Variables variables{GetScopeVariables()};
+  return std::any_of(variables.begin(), variables.end(), [&name](std::pair<std::string, CLI::Variable>&& var) {
+    return name == var.second.Name && !std::get<std::string>(var.second.Value).empty();
+  });
 }
 
 void Interpreter::HandleError(const Error::BaseError& error) {
