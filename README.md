@@ -6,9 +6,9 @@ Litr (_Language Independent Task Runner_) lets you configure and then run any ta
 
 ## Vision
 
-Here is the vision of the tool and how it should work in a theoretical "quick setup" guide. **This does not yet work.**
+Here is the vision of the tool and how it should work in a theoretical "quick setup" guide.
 
-Install the tool:
+Install the tool (**This does not yet work,** needs to be build from sources.):
 
 ```shell script
 brew install litr
