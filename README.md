@@ -20,7 +20,7 @@ Define some commands, to make it feel real the example wraps this project with C
 [commands]
 update = "git pull && git submodule update --init"
 build = [
-  "cmake -GNinja -DCMAKE_BUILD_TYPE=%{target} --build build/%{target}",
+  "cmake -GNinja -DCMAKE_BUILD_TYPE=%{target} -B build/%{target}",
   "ninja -C build/%{target}"
 ]
 test = "cd build/%{target}/src/tests && ctest"
