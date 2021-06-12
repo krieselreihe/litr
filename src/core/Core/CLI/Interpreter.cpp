@@ -386,7 +386,11 @@ bool Interpreter::IsVariableDefined(const std::string& name) const {
 
   const Variables variables{GetScopeVariables()};
   return std::any_of(variables.begin(), variables.end(), [&name](std::pair<std::string, CLI::Variable>&& var) {
-    return name == var.second.Name && !std::get<std::string>(var.second.Value).empty();
+    if (var.second.Type == CLI::Variable::Type::STRING) {
+      return name == var.second.Name && !std::get<std::string>(var.second.Value).empty();
+    }
+
+    return name == var.second.Name;
   });
 }
 
