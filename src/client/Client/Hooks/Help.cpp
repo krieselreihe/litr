@@ -115,6 +115,7 @@ void Help::PrintOptions() const {
 
   fmt::print("Options:\n");
   fmt::print("  {:<{}} {}\n", "-h --help", padding, "Show this screen.");
+  fmt::print("  {:<{}} {}\n", "-v --version", padding, "Show current Litr version.");
 
   for (auto&& param : params) {
     std::string name{};
@@ -180,7 +181,7 @@ void Help::PrintWithDescription(const std::string& name, const std::string& desc
       if (i == 0) {
         fmt::print("{:<{}} {}\n", name, padding, lines[i]);
       } else {
-        fmt::print("{:<{}} {}\n", " ", padding, lines[i]);
+        fmt::print("{:<{}}   {}\n", " ", padding, lines[i]);
       }
     }
   }
