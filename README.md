@@ -2,15 +2,15 @@
 
 Litr (_Language Independent Task Runner_) lets you configure and then run any tasks you want for any language. Define scripts, run executables or execute commands on your machine. Litr serves as an abstraction layer to combine different strategies into one tool.
 
-**Note:** This repository only serves for defining the tool, for now. Implementation will follow. Have a look at the [wiki](https://github.com/krieselreihe/litr/wiki) for more details on the current progress.
+**Attention:** This software is currently in alpha ⚠️
 
-## Vision
+## Quick Setup
 
-Here is the vision of the tool and how it should work in a theoretical "quick setup" guide.
+Install the tool via [Homebrew](https://brew.sh/). Currently, a simple installation is only supported under **macOS**. For other platforms you need to [build from source](CONTRIBUTING.md). Support for other platforms will follow [#37, #38].
 
-Install the tool (**This does not yet work,** needs to be build from sources.):
-
-```shell script
+```shell
+# On macOS
+brew tap krieselreihe/litr
 brew install litr
 ```
 
@@ -34,7 +34,7 @@ default = "debug"
 
 Run them all:
 
-```shell script
+```shell
 litr --target=debug update,build,test
 ```
 
