@@ -22,7 +22,10 @@ rm -fr $PUBLISH_DIR
 mkdir -p $PUBLISH_DIR
 
 cp build/release/src/client/Client $PUBLISH_DIR/litr
-tar -czf $PUBLISH_DIR/litr-mac-"$VERSION".tar.gz $PUBLISH_DIR/litr
+# Compressing inside the folder prevents having the folder itself inside the release
+cd $PUBLISH_DIR || exit
+tar -czf litr-mac-"$VERSION".tar.gz litr
+cd ../..
 shasum -a 256 $PUBLISH_DIR/litr-mac-"$VERSION".tar.gz | cut -f1 -d' ' > $PUBLISH_DIR/litr-mac-"$VERSION"-sha256.txt
 rm -f $PUBLISH_DIR/litr
 
