@@ -122,7 +122,7 @@ class Instrumentor {
 
 class InstrumentationTimer {
  public:
-  explicit InstrumentationTimer(const std::string& name)
+  explicit InstrumentationTimer(const char* name)
       : m_Name(name), m_Stopped(false), m_StartTimePoint(std::chrono::steady_clock::now()) {
   }
 
@@ -146,7 +146,7 @@ class InstrumentationTimer {
   }
 
  private:
-  const std::string& m_Name;
+  const char* m_Name;
   bool m_Stopped{false};
   const std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
 };
