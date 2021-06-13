@@ -1,6 +1,6 @@
 # Contributing
 
-You want do contribute to this repo? Nice! And of course: **you are the best!** Here is a guide on how to work with it and what to expect.
+You want to contribute to this repo? Nice! And of course: **you are the best!** Here is a guide on how to work with it and what to expect.
 
 ## Contents
 
@@ -8,9 +8,10 @@ You want do contribute to this repo? Nice! And of course: **you are the best!** 
 - [Setup](#setup)
 - [Update](#update)
 - [Build](#build)
-- [Run](#run)
 - [Tests](#tests)
 - [Profiling](#profiling)
+- [Usage without Litr](#usage-without-litr)
+- [Run](#run)
 - [Files and Directories](#files-and-directories)
 
 ---
@@ -22,9 +23,9 @@ You want do contribute to this repo? Nice! And of course: **you are the best!** 
 * Site: https://cmake.org/
 * Github: https://github.com/Kitware/CMake
 
-Install on Mac (if not already present):
+Install on macOS (if not already present):
 
-```shell script
+```shell
 brew install cmake
 ```
 
@@ -33,9 +34,9 @@ brew install cmake
 * Site: https://llvm.org/
 * Github: https://github.com/llvm/llvm-project
 
-Tools from the LLVM toolchain are used. To install LLVM on Mac run:
+Tools from the LLVM toolchain are used. To install LLVM on macOS run:
 
-```shell script
+```shell
 brew install llvm
 ```
 
@@ -46,7 +47,7 @@ Tools used from the toolset:
 
 To link these tools run (may need to be run as root, you can also pick a different location in your `PATH`):
 
-```shell script
+```shell
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 ```
@@ -56,39 +57,113 @@ ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 * Site: https://ninja-build.org/
 * Github: https://github.com/ninja-build/ninja
 
-You can install Ninja on Mac via brew:
+You can install Ninja on macOS via brew:
 
-```shell script
+```shell
 brew install ninja
+```
+
+### Litr
+
+Of course this repo uses Litr for its tasks. So installing it will make things easier. To install Litr:
+
+```shell
+brew tap krieselreihe/litr
+brew install litr
 ```
 
 ## Setup
 
 Clone the project with all submodules:
 
-```shell script
+```shell
 git clone --recurse-submodules -j8 git@github.com:krieselreihe/litr.git
 ```
 
 ## Update
 
-```shell script
-git pull && git submodule update --init
+```shell
+litr update
 ```
 
 ## Build
 
+For a quick overview of build options run `litr build --help`.
+
 ### Debug
+
+Build a debug build:
+
+```shell
+litr build
+```
+
+Run Litr with the following options if needed:
+
+* Enable detailed execution flow tracing including disassemble any parser statements `litr build --trace`
+* Disable any logging via `litr build --nolog`.
+* Set debug mode, even if build type differs (for debugging purposes) `litr build --debug`
+
+### Release
+
+Build a release version:
+
+```shell
+litr build --target=release
+```
+
+For a release that can be published, and the release process in full, visit the [wiki](https://github.com/krieselreihe/litr/wiki/Release).
+
+## Tests
+
+After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
+
+```shell
+# Run all tests for debugging build
+litr test
+
+# Run all tests for release build
+litr test --target=release
+```
+
+## Profiling
+
+There is a profiling build you can generate (build target is up to you, for real world results use "release"):
+
+```shell
+litr build --target=release --profile
+```
+
+Running the executable directly will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run the local build directly:
+
+```shell
+./build/release/src/client/Client
+```
+
+## Usage without Litr
+
+<details>
+  <summary>Click to expand</summary>
+
+## Update without Litr
+
+```shell
+git pull && git submodule update --init
+```
+
+## Build without Litr
+
+### Debug without Litr
 
 Build the configuration files with cmake:
 
-```shell script
+```shell
 cmake -GNinja -DCMAKE_BUILD_TYPE=Debug --build build/debug
 ```
 
 Build the application:
 
-```shell script
+```shell
 cmake --build build/debug
 ```
 
@@ -99,57 +174,27 @@ Run cmake with the following options if needed:
 * Enable detailed execution flow tracing `-DTRACE=ON`
 * Set debug mode, even if build type differs (for debugging purposes) `-DDEBUG=ON`
 
-### Release
+### Release without Litr
 
 Build the configuration files with cmake:
 
-```shell script
+```shell
 cmake -GNinja -DCMAKE_BUILD_TYPE=Release -B build/release
 ```
 
 Build the application:
 
-```shell script
+```shell
 cmake --build build/release
 ```
 
-### Different compiler
-
-To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be set, specifying the path to the compiler.
-
-Example for clang on MacOS, creating a debug build:
-
-```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -B build/debug
-cmake --build build/debug
-```
-
-Example for gcc on MacOS, creating a debug build:
-
-```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -B build/debug
-cmake --build build/debug
-```
-
-## Run
-
-After [building the application](#build) you can either run the client in debug or release mode:
-
-```shell script
-# Debug
-./build/debug/src/client/Client
-
-# Release
-./build/release/src/client/Client
-```
-
-## Tests
+## Tests without Litr
 
 After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
 
 **Note:** With CMake 3.20 it will be possible to specify the `--test-dir` option for ctest [[source](https://cmake.org/cmake/help/latest/release/3.20.html#ctest)], making test execution easier.
 
-```shell script
+```shell
 # Run all tests for debugging build
 cd build/debug/src/tests && ctest && ../../../..
 
@@ -157,11 +202,11 @@ cd build/debug/src/tests && ctest && ../../../..
 cd build/release/src/tests && ctest && ../../../..
 ```
 
-## Profiling
+## Profiling without Litr
 
 There is a profiling build you can generate running cmake with `PROFILE=ON` (build type is up to you, for real world results use "Release"):
 
-```shell script
+```shell
 # Create config files
 cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release --build build/profile
 
@@ -171,8 +216,40 @@ cmake --build build/profile
 
 Running the profiler executable will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run:
 
-```shell script
+```shell
 ./build/profile/src/client/Client
+```
+
+</details>
+
+### Different compiler
+
+To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be set, specifying the path to the compiler.
+
+Example for clang on macOS, creating a debug build:
+
+```shell
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -B build/debug
+cmake --build build/debug
+```
+
+Example for gcc on macOS, creating a debug build:
+
+```shell
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -B build/debug
+cmake --build build/debug
+```
+
+## Run
+
+After [building the application](#build) you can either run the local client:
+
+```shell
+# Debug
+./build/debug/src/client/Client
+
+# Release
+./build/release/src/client/Client
 ```
 
 ## Files and Directories
