@@ -1,13 +1,25 @@
 [commands]
-update = "git pull && git submodule update --init"
-build = [
+
+[commands.update]
+script = "git pull && git submodule update --init"
+description = "Update all current submodules to the defined targets.\nTargets are defined in .gitmodules"
+
+[commands.build]
+script = [
   """cmake -GNinja %{trace '-DDISASSEMBLE=ON -DTRACE=ON'} \
   -DCMAKE_BUILD_TYPE=%{target} \
   -B build/%{target}""",
   "ninja -C build/%{target}"
 ]
-run = "./build/%{target}/src/client/Client"
-test = "cd build/%{target}/src/tests && ctest && cd ../../../.."
+description = "Build the application for a given traget."
+
+[commands.test]
+script = "cd build/%{target}/src/tests && ctest && cd ../../../.."
+description = "Run all unit tests defined under src/tests"
+
+[commands.release.brew]
+script = "./scripts/release.sh"
+description = "Build a production release for Homebrew on MacOS."
 
 [params.target]
 shortcut = "t"
