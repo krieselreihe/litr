@@ -17,7 +17,7 @@ script = [
 description = "Build the application for a given traget."
 
 [commands.test]
-script = "cd build/%{target}/src/tests && ctest && cd ../../../.."
+script = "cd build/%{target}/src/tests && CTEST_OUTPUT_ON_FAILURE=TRUE ctest && cd ../../../.."
 description = "Run all unit tests defined under src/tests"
 
 [commands.release.brew]

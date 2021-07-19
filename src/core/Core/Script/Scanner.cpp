@@ -80,6 +80,8 @@ Token Scanner::ScanToken() {
     case Mode::UNTOUCHED:  return ScanUntouchedToken();
     case Mode::EXPRESSION: return ScanExpressionToken();
   }
+
+  return {};
 }
 
 Token Scanner::ScanUntouchedToken() {

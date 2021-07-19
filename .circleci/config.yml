@@ -1,0 +1,17 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: "martinhelmut/litr-cci-docker-primary:0.13.0"
+    steps:
+      - checkout
+      - run:
+          name: Create build files
+          command: 'cmake -DCMAKE_BUILD_TYPE=Release -B build'
+      - run:
+          name: Build application
+          command: 'cmake --build build'
+      - run:
+          name: Unit testing
+          command: 'cd build/src/tests && CTEST_OUTPUT_ON_FAILURE=TRUE ctest'

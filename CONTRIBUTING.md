@@ -2,6 +2,10 @@
 
 You want to contribute to this repo? Nice! And of course: **you are the best!** Here is a guide on how to work with it and what to expect.
 
+**Build status:**
+
+[![CircleCI](https://circleci.com/gh/krieselreihe/litr/tree/main.svg?style=svg)](https://circleci.com/gh/krieselreihe/litr/tree/main)
+
 ## Contents
 
 - [Required tools](#required-tools)
