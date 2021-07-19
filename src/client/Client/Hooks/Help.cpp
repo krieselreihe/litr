@@ -326,6 +326,8 @@ bool Help::SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<C
         return 2;
       }
     }
+
+    return -1;
   }};
 
   return RankParameterRequired(p1) < RankParameterRequired(p2);

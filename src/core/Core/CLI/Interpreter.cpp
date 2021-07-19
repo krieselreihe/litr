@@ -338,6 +338,8 @@ enum Variable::Type Interpreter::GetVariableType(const Ref<Config::Parameter>& p
       return Variable::Type::STRING;
     }
   }
+
+  return {};
 }
 
 bool Interpreter::HookExecuted() const {
