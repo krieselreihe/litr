@@ -20,6 +20,8 @@ You want to contribute to this repo? Nice! And of course: **you are the best!** 
 
 ### cmake
 
+CMake is an open-source, cross-platform family of tools designed to build, test and package software.
+
 * Site: https://cmake.org/
 * Github: https://github.com/Kitware/CMake
 
@@ -31,10 +33,12 @@ brew install cmake
 
 ### LLVM
 
+The LLVM Project is a collection of modular and reusable compiler and toolchain technologies. Some tools from the LLVM toolchain are used.
+
 * Site: https://llvm.org/
 * Github: https://github.com/llvm/llvm-project
 
-Tools from the LLVM toolchain are used. To install LLVM on macOS run:
+To install LLVM on macOS run:
 
 ```shell
 brew install llvm
@@ -42,8 +46,8 @@ brew install llvm
 
 Tools used from the toolset:
 
-* clang-tidy
-* clang-format
+* clang-tidy (linting)
+* clang-format (formatting)
 
 To link these tools run (may need to be run as root, you can also pick a different location in your `PATH`):
 
@@ -53,6 +57,8 @@ ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 ```
 
 ### Ninja
+
+Ninja is a small build system with a focus on speed.
 
 * Site: https://ninja-build.org/
 * Github: https://github.com/ninja-build/ninja
@@ -65,7 +71,7 @@ brew install ninja
 
 ### Litr
 
-Of course this repo uses Litr for its tasks. So installing it will make things easier. To install Litr:
+Of course this repo uses Litr itself for its tasks. So installing it will make things easier. To install Litr:
 
 ```shell
 brew tap krieselreihe/litr
@@ -74,10 +80,10 @@ brew install litr
 
 ## Setup
 
-Clone the project with all submodules:
+Clone the project:
 
 ```shell
-git clone --recurse-submodules -j8 git@github.com:krieselreihe/litr.git
+git clone git@github.com:krieselreihe/litr.git
 ```
 
 ## Update
@@ -148,7 +154,7 @@ Running the executable directly will generate a `litr-profile.json` file that ca
 ## Update without Litr
 
 ```shell
-git pull && git submodule update --init
+git pull
 ```
 
 ## Build without Litr

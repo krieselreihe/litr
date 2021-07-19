@@ -18,7 +18,7 @@ Define some commands, to make it feel real the example wraps this project with C
 
 ```toml
 [commands]
-update = "git pull && git submodule update --init"
+update = "git pull"
 build = [
   "cmake -GNinja -DCMAKE_BUILD_TYPE=%{target} -B build/%{target}",
   "ninja -C build/%{target}"
