@@ -1,8 +1,8 @@
 [commands]
 
 [commands.update]
-script = "git pull && git submodule update --init"
-description = "Update all current submodules to the defined targets.\nTargets are defined in .gitmodules"
+script = "git pull"
+description = "Update repository code."
 
 [commands.build]
 script = [

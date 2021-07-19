@@ -16,18 +16,5 @@ add_library(project_warnings INTERFACE)
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(project_warnings)
 
-set(SPDLOG_FMT_EXTERNAL "ON")
-
-# Testing
-add_subdirectory(vendor/doctest)
-
-# Dependencies
-add_subdirectory(vendor/fmt)
-add_subdirectory(vendor/spdlog)
-add_subdirectory(vendor/toml11)
-add_subdirectory(vendor/ordered-map)
-
-# Application libraries and files
-add_subdirectory(src/tests)
-add_subdirectory(src/core)
-add_subdirectory(src/client)
+add_subdirectory(vendor)
+add_subdirectory(src)
