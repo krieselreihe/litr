@@ -1,10 +1,9 @@
 dist: xenial
 language: cpp
-sudo: false
 cache: ccache
 
 compiler:
-  - clang
+#  - clang
   - gcc
 
 os:
@@ -17,9 +16,9 @@ addons:
       - llvm-toolchain-xenial-7
       - ubuntu-toolchain-r-test
     packages:
-      - clang-7
+#      - clang-7
       - cmake
-      - gcc-8
+#      - gcc-8
       - g++-8
   homebrew:
     update: true
