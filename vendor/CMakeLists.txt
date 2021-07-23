@@ -10,7 +10,7 @@ add_subdirectory(fmt)
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
-  GIT_TAG 70d2832c0de306abc86ca06b751a7ed5ac0e525d # 1.8.5 + fmt 8 patch
+  GIT_TAG 61ed2a670e40e9a865edc20b088422a469bdab9e # 1.9.0
 )
 add_subdirectory(spdlog)
 
