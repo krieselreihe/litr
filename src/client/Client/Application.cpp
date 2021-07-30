@@ -106,7 +106,7 @@ std::string Application::SourceFromArguments(int argc, char** argv) {
   std::string source{};
 
   // Start with 1 to skip the program name.
-  for (int i = 1; i < argc; ++i) {
+  for (int i{1}; i < argc; ++i) {
     // !!! HACK ALERT START !!!
     // @todo: https://github.com/krieselreihe/litr/issues/20
     std::string argument{argv[i]};
