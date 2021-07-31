@@ -4,7 +4,7 @@ You want to contribute to this repo? Nice! And of course: **you are the best!** 
 
 **Build status:**
 
-[![CircleCI](https://circleci.com/gh/krieselreihe/litr/tree/main.svg?style=svg)](https://circleci.com/gh/krieselreihe/litr/tree/main)
+[![CircleCI](https://circleci.com/gh/krieselreihe/litr/tree/main.svg?style=shield)](https://circleci.com/gh/krieselreihe/litr/tree/main)
 
 ## Contents
 

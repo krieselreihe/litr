@@ -68,7 +68,7 @@ function(set_project_warnings project_name)
   set(GCC_WARNINGS
           ${CLANG_WARNINGS}
           -Wmisleading-indentation # warn if indentation implies blocks where blocks
-          # Currently not supported in CI
+          # @todo: Currently not supported in CI due to an old gcc version.
           # -Wduplicated-branches # warn if if / else branches have duplicated code
           # -Wduplicated-cond # warn if if / else chain has duplicated conditions
           # -Wlogical-op # warn about logical operations being used where bitwise were
