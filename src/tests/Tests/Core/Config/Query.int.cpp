@@ -79,7 +79,8 @@ TEST_SUITE("Config::Query") {
       CHECK(params.size() == 0);
     }
 
-    // @todo: Figure out why this fails in CI
+    // @todo: Figure out why this fails in CI. Maybe related to the used
+    // version of gcc.
     // "ERROR: test case THREW exception: Unexpected index"
     // https://github.com/krieselreihe/litr/issues/42
 //    SUBCASE("Get parameters used by command") {

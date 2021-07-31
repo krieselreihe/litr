@@ -1,17 +1,44 @@
 version: 2.1
 
+executors:
+  default:
+    docker:
+      - image: "krieselreihe/docker-cpp-cmake:1.0.0"
+
 jobs:
   build:
-    docker:
-      - image: "krieselreihe/docker-cpp-cmake:0.1.0"
+    executor: default
     steps:
       - checkout
       - run:
           name: Create build files
-          command: 'cmake -DCMAKE_BUILD_TYPE=Release -B build'
+          command: |
+            cmake -DCMAKE_BUILD_TYPE=Release -B build
       - run:
           name: Build application
-          command: 'cmake --build build'
+          command: |
+            cmake --build build
+      - persist_to_workspace:
+          root: .
+          paths: ['build']
+  test:
+    executor: default
+    steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Unit testing
-          command: 'cd build/src/tests && CTEST_OUTPUT_ON_FAILURE=TRUE ctest'
+          command: |
+            cd build/src/tests
+            CTEST_OUTPUT_ON_FAILURE=TRUE ctest --output-junit ctest-report.xml
+      - store_test_results:
+          path: build/src
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
