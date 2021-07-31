@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: "krieselreihe/docker-cpp-cmake:0.1.0"
+      - image: "krieselreihe/docker-cpp-cmake:0.6.0"
     steps:
       - checkout
       - run:
