@@ -8,7 +8,7 @@ namespace Litr {
 
 class Application {
  public:
-  Application();
+  Application() = default;
   ExitStatus Run(int argc, char* argv[]);
 
  private:
@@ -16,9 +16,6 @@ class Application {
   [[nodiscard]] static std::string SourceFromArguments(int argc, char* argv[]);
 
  private:
-  Ref<Config::Loader> m_Config;
-
-  std::string m_Source{};
   ExitStatus m_ExitStatus{ExitStatus::SUCCESS};
 };
 

@@ -17,23 +17,11 @@ namespace Litr::CLI {
 class Interpreter {
   using Variables = std::unordered_map<std::string, CLI::Variable>;
   using Scripts = std::vector<std::string>;
-  using HookCallback = std::function<void(const Ref<Instruction>& instruction)>;
-
-  struct Hook {
-    Instruction::Code Code;
-    Instruction::Value Value;
-    HookCallback Callback;
-
-    Hook(Instruction::Code code, Instruction::Value value, HookCallback callback)
-        : Code(code), Value(std::move(value)), Callback(std::move(callback)) {}
-  };
 
  public:
   Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
 
   void Execute();
-  void AddHook(Instruction::Code code, const Instruction::Value& value, const HookCallback& callback);
-  void AddHook(Instruction::Code code, const std::vector<Instruction::Value>& values, const HookCallback& callback);
 
  private:
   [[nodiscard]] Instruction::Value ReadCurrentValue() const;
@@ -56,7 +44,6 @@ class Interpreter {
   [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);
 
   [[nodiscard]] static enum Variable::Type GetVariableType(const Ref<Config::Parameter>& param);
-  [[nodiscard]] bool HookExecuted() const;
 
   void ValidateRequiredParameters(const Ref<Config::Command>& command);
   [[nodiscard]] bool IsVariableDefined(const std::string& name) const;
@@ -71,8 +58,6 @@ class Interpreter {
   size_t m_Offset{0};
   std::string m_CurrentVariableName{};
   bool m_StopExecution{false};
-
-  std::vector<Hook> m_Hooks{};
 
   // Initialize with empty scope
   std::vector<Variables> m_Scope{Variables()};

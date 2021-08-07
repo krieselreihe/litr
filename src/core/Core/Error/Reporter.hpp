@@ -3,14 +3,13 @@
 #include <vector>
 
 #include "Core/Error/BaseError.hpp"
-#include "Core/Config/Loader.hpp"
 #include "Core/FileSystem.hpp"
 
 namespace Litr::Error {
 
 class Reporter {
  public:
-  explicit Reporter(const Ref<Config::Loader>& config);
+  explicit Reporter(const Path& path);
 
   void PrintErrors(const std::vector<BaseError>& errors);
   void PrintError(const BaseError& error);

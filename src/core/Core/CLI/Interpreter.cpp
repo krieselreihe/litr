@@ -26,25 +26,9 @@ void Interpreter::Execute() {
 
   m_Offset = 0;
 
-  if (HookExecuted()) return;
-
   while (m_Offset < m_Instruction->Count()) {
     if (m_StopExecution) return;
     ExecuteInstruction();
-  }
-}
-
-void Interpreter::AddHook(Instruction::Code code, const Instruction::Value& value, const Interpreter::HookCallback& callback) {
-  LITR_PROFILE_FUNCTION();
-
-  m_Hooks.emplace_back(code, value, callback);
-}
-
-void Interpreter::AddHook(Instruction::Code code, const std::vector<Instruction::Value>& values, const Interpreter::HookCallback& callback) {
-  LITR_PROFILE_FUNCTION();
-
-  for (auto&& value : values) {
-    AddHook(code, value, callback);
   }
 }
 
@@ -340,31 +324,6 @@ enum Variable::Type Interpreter::GetVariableType(const Ref<Config::Parameter>& p
   }
 
   return {};
-}
-
-bool Interpreter::HookExecuted() const {
-  LITR_PROFILE_FUNCTION();
-
-  size_t offset{0};
-
-  while (offset < m_Instruction->Count()) {
-    const auto code{static_cast<Instruction::Code>(m_Instruction->Read(offset++))};
-
-    for (auto&& hook : m_Hooks) {
-      if (code != hook.Code) continue;
-      auto value{m_Instruction->ReadConstant(m_Instruction->Read(offset))};
-      if (value == hook.Value) {
-        hook.Callback(m_Instruction);
-        return true;
-      }
-    }
-
-    if (code != Instruction::Code::CLEAR) {
-      offset++;
-    }
-  }
-
-  return false;
 }
 
 void Interpreter::ValidateRequiredParameters(const Ref<Config::Command>& command) {
