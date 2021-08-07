@@ -3,42 +3,19 @@
 #include <fmt/color.h>
 #include <fmt/format.h>
 
+#include "Hooks/Handler.hpp"
 #include "Hooks/Help.hpp"
 #include "Hooks/Version.hpp"
 
 namespace Litr {
 
-Application::Application() {
-  LITR_PROFILE_FUNCTION();
-
-  LITR_TRACE("Hello, Litr!\n");
-
-  Path configPath{GetConfigPath()};
-  if (m_ExitStatus == ExitStatus::FAILURE) {
-    return;
-  }
-
-  m_Config = CreateRef<Config::Loader>(configPath);
-}
-
+// @todo: Error handling here is horrible. In need of refactoring!
 ExitStatus Application::Run(int argc, char* argv[]) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_ExitStatus == ExitStatus::FAILURE) {
-    return m_ExitStatus;
-  }
-
-  m_Source = SourceFromArguments(argc, argv);
-
+  const std::string source{SourceFromArguments(argc, argv)};
   const auto instruction{CreateRef<CLI::Instruction>()};
-  const CLI::Parser parser{instruction, m_Source};
-  Error::Reporter errorReporter{m_Config};
-
-  // Print parser errors if any:
-  if (Error::Handler::HasErrors()) {
-    errorReporter.PrintErrors(Error::Handler::GetErrors());
-    return ExitStatus::FAILURE;
-  }
+  const CLI::Parser parser{instruction, source};
 
   // Litr called without any arguments:
   if (instruction->Count() == 0) {
@@ -46,22 +23,38 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return ExitStatus::FAILURE;
   }
 
-  const auto interpreter{CreateRef<CLI::Interpreter>(instruction, m_Config)};
+  Hook::Handler hooks{instruction};
 
-  const Help help{m_Config};
-  const std::vector<std::string> versionParams{"version", "v"};
-  const std::vector<std::string> helpParams{"help", "h"};
+  // Hooks before config
+  hooks.Add(CLI::Instruction::Code::DEFINE, {"version", "v"}, Hook::Version::Print);
+  if (hooks.Execute()) {
+    return ExitStatus::SUCCESS;
+  }
 
-  interpreter->AddHook(CLI::Instruction::Code::DEFINE, versionParams, Version::Print);
-  interpreter->AddHook(
-      CLI::Instruction::Code::DEFINE, helpParams,
-      [&help](const Ref<CLI::Instruction>& instruction) {
-        help.Print(instruction);
-      });
+  const Path configPath{GetConfigPath()};
+  if (m_ExitStatus == ExitStatus::FAILURE) {
+    return m_ExitStatus;
+  }
 
+  Error::Reporter errorReporter{configPath};
+  if (Error::Handler::HasErrors()) {
+    errorReporter.PrintErrors(Error::Handler::GetErrors());
+    return ExitStatus::FAILURE;
+  }
+
+  const auto config{CreateRef<Config::Loader>(configPath)};
+  const auto interpreter{CreateRef<CLI::Interpreter>(instruction, config)};
+
+  hooks.Add(CLI::Instruction::Code::DEFINE, {"help", "h"}, [&config](const Ref<CLI::Instruction>& instruction) {
+    const Hook::Help help{config};
+    help.Print(instruction);
+  });
+  if (hooks.Execute()) {
+    return ExitStatus::SUCCESS;
+  }
+
+  // Run
   interpreter->Execute();
-
-  // Print interpreter errors if any:
   if (Error::Handler::HasErrors()) {
     errorReporter.PrintErrors(Error::Handler::GetErrors());
     return ExitStatus::FAILURE;

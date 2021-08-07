@@ -10,7 +10,7 @@
 
 namespace Litr::Error {
 
-Reporter::Reporter(const Ref<Config::Loader>& config) : m_FilePath(config->GetFilePath()) {}
+Reporter::Reporter(const Path& path) : m_FilePath(path) {}
 
 void Reporter::PrintErrors(const std::vector<BaseError>& errors) {
   LITR_PROFILE_FUNCTION();
