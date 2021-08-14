@@ -6,7 +6,7 @@ Litr (_Language Independent Task Runner_) lets you configure and then run any ta
 
 ## Quick Setup
 
-Install the tool via [Homebrew](https://brew.sh/). Currently, a simple installation is only supported under **macOS**. For other platforms you need to [build from source](CONTRIBUTING.md). Support for other platforms will follow [#37, #38].
+Install the tool via [Homebrew](https://brew.sh/). Currently, a simple installation is only supported under **macOS** (universal binary for intel and silicon). For other platforms you need to [build from source](CONTRIBUTING.md). Support for other platforms will follow [#37, #38].
 
 ```shell
 # On macOS
