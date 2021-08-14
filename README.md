@@ -1,6 +1,6 @@
 # litr
 
-Litr (_Language Independent Task Runner_) lets you configure and then run any tasks you want for any language. Define scripts, run executables or execute commands on your machine. Litr serves as an abstraction layer to combine different strategies into one tool.
+Litr (_Language Independent Task Runner_), lets you configure and then run any tasks you want for any language. Define scripts, run executables or execute commands on your machine. Litr serves as an abstraction layer to combine different strategies into one tool.
 
 **Attention:** This software is currently in alpha ⚠️
 
