@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+include(cmake/UniversalAppleBuild.cmake)
+
 project(
   Litr
   DESCRIPTION "Language Independent Task Runner lets you configure and run any tasks you want for any language."

@@ -15,7 +15,7 @@ done
 echo "Version is $VERSION"
 
 echo "Build application"
-./build/debug/src/client/Client build --target=release
+litr build --target=release
 
 echo "Setup release"
 rm -fr $PUBLISH_DIR
