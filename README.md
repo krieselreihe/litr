@@ -38,7 +38,7 @@ Run them all:
 litr --target=debug update,build,test
 ```
 
-To find out more go to the [wikis setup section](https://github.com/krieselreihe/litr/wiki/Setup).
+To find out more go to the [wikis setup section](https://github.com/krieselreihe/litr/wiki/Quick-Setup).
 
 ## Development
 
