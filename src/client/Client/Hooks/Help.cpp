@@ -294,7 +294,7 @@ size_t Help::GetParameterPadding() const {
       m_CommandName.empty() ? m_Query.GetParameters() : m_Query.GetParameters(m_CommandName)};
   size_t padding{0};
 
-  constexpr size_t minPadding{4};  // Min padding based on text "help"
+  constexpr size_t minPadding{7};  // Min padding based on text "version"
   constexpr size_t paddingLeft{4};  // Includes space for short parameter
   constexpr size_t paddingRight{2};
 
