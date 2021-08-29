@@ -1,3 +1,0 @@
-# Command Scripts
-
-Some very nice documentation goes brrrr ...

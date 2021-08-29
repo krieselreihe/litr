@@ -16,7 +16,7 @@ module.exports = {
    * ref：https://v1.vuepress.vuejs.org/config/#head
    */
   head: [
-    ['meta', { name: 'theme-color', content: '#448bf0' }],
+    ['meta', { name: 'theme-color', content: '#931bd8' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
   ],
@@ -27,11 +27,9 @@ module.exports = {
    * ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
    */
   themeConfig: {
-    repo: '',
-    editLinks: false,
-    docsDir: '',
-    editLinkText: '',
-    lastUpdated: false,
+    repo: 'krieselreihe/litr',
+    editLinks: true,
+    docsDir: 'src/website',
     logo: 'https://v1.vuepress.vuejs.org/hero.png',
     nav: [
       {
@@ -45,10 +43,6 @@ module.exports = {
       {
         text: 'FAQ',
         link: '/faq/'
-      },
-      {
-        text: 'GitHub',
-        link: 'https://github.com/krieselreihe/litr'
       }
     ],
     sidebar: {
@@ -59,20 +53,12 @@ module.exports = {
           children: [
             '',
             'configure-commands',
-            'parameter-usage',
-            'execution',
-            'command-scripts',
+            'child-commands',
+            'parameters',
+            'execution'
           ]
         }
       ],
     }
-  },
-
-  /**
-   * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
-   */
-  plugins: [
-    '@vuepress/plugin-back-to-top',
-    '@vuepress/plugin-medium-zoom',
-  ]
+  }
 }

@@ -1,17 +1,13 @@
 # Quick Setup
+
 ## Installation
-Install Litr on depending on you operating system:
+
+Install Litr depending on you operating system:
 
 <code-group>
 <code-block title="macOS">
 ```shell
 brew install litr
-```
-</code-block>
-
-<code-block title="Linux">
-```shell
-echo "How to install?"
 ```
 </code-block>
 </code-group>
@@ -23,11 +19,12 @@ litr --version  # 1.0.0
 ```
 
 ## Setup
-Create a `litr.toml` file (you can also use `.litr.toml`) inside your project, user directory or whatever directory you want to execute commands from. You can read up more [about TOML on the official website](https://toml.io/).
+Create a `litr.toml` file (you can also use `.litr.toml`) inside your project, user directory or whatever directory you want to execute commands from. You can read more [about TOML on the official website](https://toml.io/).
 
 Define your first command and parameter:
 
 ```toml
+# litr.toml
 [commands]
 hello = "echo Hello %{name}"
 
@@ -54,6 +51,9 @@ Commands:
   hello  --name=<option>
 
 Options:
-  -h --help  Show this screen.
-     --name  Say hello to this name.
+  -h --help     Show this screen.
+  -v --version  Show current Litr version.
+     --name     Say hello to this name.
 ```
+
+Now let's have a detailed look on how to create and configure commands.
