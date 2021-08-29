@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help improve Litr
 title: ''
-labels: bug
+labels: bug-report
 assignees: ''
 
 ---
