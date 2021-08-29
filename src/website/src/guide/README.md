@@ -7,6 +7,7 @@ Install Litr depending on you operating system:
 <code-group>
 <code-block title="macOS">
 ```shell
+brew tap krieselreihe/litr
 brew install litr
 ```
 </code-block>

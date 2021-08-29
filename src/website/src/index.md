@@ -5,11 +5,11 @@ tagline: Litr (Language Independent Task Runner) lets you configure and then run
 actionText: Quick Start →
 actionLink: /guide/
 features:
-- title: Feature 1 Title
-  details: Feature 1 Description
-- title: Feature 2 Title
-  details: Feature 2 Description
-- title: Feature 3 Title
-  details: Feature 3 Description
+- title: Easy to use
+  details: Uses a TOML configuration and is aimed to be as user-friendly as possible.
+- title: Extensible
+  details: Add your own functionality with Lua (upcoming feature).
+- title: Helpful
+  details: With its auto generated help you'll never be lost.
 footer: Made by Krieselreihe with ❤️
 ---
