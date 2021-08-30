@@ -31,6 +31,7 @@ module.exports = {
     editLinks: true,
     docsDir: 'src/website',
     logo: 'https://v1.vuepress.vuejs.org/hero.png',
+    searchPlaceholder: 'Search...',
     nav: [
       {
         text: 'Guide',
