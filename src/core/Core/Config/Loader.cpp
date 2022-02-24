@@ -122,7 +122,7 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     }
 
     if (property == "dir") {
-      builder.AddDirectory();
+      builder.AddDirectory(m_FilePath.WithoutFilename());
       properties.pop();
       continue;
     }

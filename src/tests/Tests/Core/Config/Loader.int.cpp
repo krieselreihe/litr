@@ -123,7 +123,7 @@ TEST_SUITE("Config::Loader") {
       CHECK(command->Example == "Example");
       CHECK(command->Output == Litr::Config::Command::Output::SILENT);
       CHECK(command->Directory.size() == 1);
-      CHECK(command->Directory[0] == "Directory");
+      CHECK(command->Directory[0] == "../../Fixtures/Config/Directory");
       CHECK(command->ChildCommands.size() == 4);
     }
 
@@ -170,8 +170,8 @@ TEST_SUITE("Config::Loader") {
 
       CHECK(command3->Description == "Description");
       CHECK(command3->Directory.size() == 2);
-      CHECK(command3->Directory[0] == "Directory1");
-      CHECK(command3->Directory[1] == "Directory2");
+      CHECK(command3->Directory[0] == "../../Fixtures/Config/Directory1");
+      CHECK(command3->Directory[1] == "../../Fixtures/Config/Directory2");
     }
 
     SUBCASE("Resolves a very deep nested script") {

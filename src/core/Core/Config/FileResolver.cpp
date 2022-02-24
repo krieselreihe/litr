@@ -6,7 +6,7 @@
 
 namespace Litr::Config {
 
-FileResolver::FileResolver(const std::string& cwd) : FileResolver(static_cast<Path>(cwd)) {
+FileResolver::FileResolver(const std::string& cwd) : FileResolver(Path(cwd)) {
 }
 
 FileResolver::FileResolver(Path cwd) {

@@ -41,6 +41,11 @@ Path Path::Append(const std::string& path) const {
   return static_cast<Path>(m_Path / path);
 }
 
+Path Path::WithoutFilename() const {
+  auto path{m_Path};
+  return Path(path.remove_filename());
+}
+
 size_t Path::Count() const {
   size_t count{0};
   for ([[maybe_unused]] auto&& _ : m_Path) {
