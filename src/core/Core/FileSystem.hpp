@@ -25,6 +25,8 @@ class Path {
   [[nodiscard]] Path Append(const std::string& path) const;
   [[nodiscard]] Path Append(const Path& path) const;
 
+  [[nodiscard]] Path WithoutFilename() const;
+
   [[nodiscard]] size_t Count() const;
 
   explicit operator std::string() const { return ToString(); }
@@ -36,8 +38,8 @@ class Path {
 
   Iterator begin() { return m_Path.begin(); }
   Iterator end() { return m_Path.end(); }
-  ConstIterator begin() const { return m_Path.begin(); }
-  ConstIterator end() const { return m_Path.end(); }
+  [[nodiscard]] ConstIterator begin() const { return m_Path.begin(); }
+  [[nodiscard]] ConstIterator end() const { return m_Path.end(); }
 
   template <typename OStream>
   friend OStream& operator<<(OStream& os, const Path& path) {

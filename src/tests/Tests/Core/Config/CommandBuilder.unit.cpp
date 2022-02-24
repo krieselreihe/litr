@@ -181,7 +181,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Directory.empty());
@@ -192,7 +192,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(dir = 42)");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
       CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
@@ -203,7 +203,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(dir = [1])");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 1);
       CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
@@ -214,7 +214,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(dir = [1, 2])");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 2);
       CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "dir" can either be a string or array of strings.)");
@@ -226,7 +226,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1"])");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Directory[0] == "folder1");
@@ -237,7 +237,7 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [file, data] = CreateTOMLMock("test", R"(dir = ["folder1", "folder2"])");
 
       Litr::Config::CommandBuilder builder{file, data, "test"};
-      builder.AddDirectory();
+      builder.AddDirectory(Litr::Path(""));
 
       CHECK(Litr::Error::Handler::GetErrors().size() == 0);
       CHECK(builder.GetResult()->Directory[0] == "folder1");

@@ -5,6 +5,7 @@
 
 #include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"
+#include "Core/FileSystem.hpp"
 
 namespace Litr::Config {
 
@@ -20,7 +21,7 @@ class CommandBuilder {
 
   void AddDescription();
   void AddExample();
-  void AddDirectory();
+  void AddDirectory(const Path& root);
   void AddOutput();
   void AddChildCommand(const Ref<Command>& command);
 

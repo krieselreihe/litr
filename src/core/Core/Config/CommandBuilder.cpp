@@ -89,7 +89,7 @@ void CommandBuilder::AddExample() {
   }
 }
 
-void CommandBuilder::AddDirectory() {
+void CommandBuilder::AddDirectory(const Path& root) {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"dir"};
@@ -98,7 +98,7 @@ void CommandBuilder::AddDirectory() {
     const toml::value& directories{toml::find(m_Table, name)};
 
     if (directories.is_string()) {
-      m_Command->Directory.emplace_back(directories.as_string());
+      m_Command->Directory.emplace_back(root.Append(directories.as_string()));
       return;
     }
 
@@ -112,7 +112,7 @@ void CommandBuilder::AddDirectory() {
           continue;
         }
 
-        m_Command->Directory.emplace_back(directory.as_string());
+        m_Command->Directory.emplace_back(root.Append(directory.as_string()));
       }
       return;
     }
