@@ -10,7 +10,7 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace Litr::CLI {
+namespace litr::CLI {
 
 Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
     : m_Source(source), m_Scanner(source.c_str()), m_Instruction(instruction) {
@@ -258,4 +258,4 @@ std::string Parser::GetScopePath() const {
   return value;
 }
 
-}  // namespace Litr::CLI
+}  // namespace litr::CLI

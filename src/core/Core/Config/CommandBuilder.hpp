@@ -13,7 +13,7 @@
 #include "Core/Config/Command.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 class CommandBuilder {
  public:
@@ -42,4 +42,4 @@ class CommandBuilder {
   const Ref<Command> m_Command;
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

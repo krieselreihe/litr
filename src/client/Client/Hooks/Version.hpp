@@ -6,11 +6,11 @@
 
 #include "Core.hpp"
 
-namespace Litr::Hook {
+namespace litr::Hook {
 
 class Version {
  public:
   static void Print(const Ref<CLI::Instruction>& instruction);
 };
 
-}  // namespace Litr::Hook
+}  // namespace litr::Hook

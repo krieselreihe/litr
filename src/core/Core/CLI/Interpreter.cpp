@@ -11,7 +11,7 @@
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
 
-namespace Litr::CLI {
+namespace litr::CLI {
 
 /** @private */
 static void CommandPathToHumanReadable(std::string& path) {
@@ -372,4 +372,4 @@ void Interpreter::Print(const std::string& message) {
   fmt::print("{}", message);
 }
 
-}  // namespace Litr::CLI
+}  // namespace litr::CLI

@@ -8,7 +8,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr::Utils {
+namespace litr::Utils {
 
 std::string TrimLeft(const std::string& src, char c) {
   LITR_PROFILE_FUNCTION();
@@ -74,4 +74,4 @@ std::string Replace(const std::string& source, const std::string& from, const st
   return extract;
 }
 
-}  // namespace Litr::Utils
+}  // namespace litr::Utils

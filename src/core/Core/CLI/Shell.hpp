@@ -10,7 +10,7 @@
 #include "Core/Base.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace Litr::CLI {
+namespace litr::CLI {
 
 class Shell {
  public:
@@ -32,4 +32,4 @@ class Shell {
   [[nodiscard]] static std::string CreateCdCommand(const Path& path);
 };
 
-}  // namespace Litr::CLI
+}  // namespace litr::CLI

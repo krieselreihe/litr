@@ -9,7 +9,7 @@
 #include "Core/Environment.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace litr {
 
 static Path UserPath(const std::string& userName) {
   const Path path{fmt::format("/Users/{}", userName)};
@@ -32,4 +32,4 @@ Path Environment::GetHomeDirectory() {
   return {};
 }
 
-}  // namespace Litr
+}  // namespace litr

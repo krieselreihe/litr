@@ -12,7 +12,7 @@
 #include "Core/Base.hpp"
 #include "Core/Config/Parameter.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 class ParameterBuilder {
  public:
@@ -35,4 +35,4 @@ class ParameterBuilder {
   const Ref<Parameter> m_Parameter;
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

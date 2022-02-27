@@ -17,7 +17,7 @@
 #include "Core/Config/Query.hpp"
 #include "Core/Error/Handler.hpp"
 
-namespace Litr::CLI {
+namespace litr::CLI {
 
 class Interpreter {
   using Variables = std::unordered_map<std::string, CLI::Variable>;
@@ -68,4 +68,4 @@ class Interpreter {
   std::vector<Variables> m_Scope{Variables()};
 };
 
-}  // namespace Litr::CLI
+}  // namespace litr::CLI

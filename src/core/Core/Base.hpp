@@ -7,7 +7,7 @@
 #include <memory>
 #include <utility>
 
-namespace Litr {
+namespace litr {
 
 template <typename T>
 using Scope = std::unique_ptr<T>;
@@ -30,4 +30,4 @@ enum class ExitStatus : int {
   FAILURE = 1
 };
 
-}  // namespace Litr
+}  // namespace litr

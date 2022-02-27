@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace Litr {
+namespace litr {
 
 class TomlError {
  public:
@@ -22,4 +22,4 @@ class TomlError {
   static bool IsFileReference(const std::string& line);
 };
 
-}  // namespace Litr
+}  // namespace litr

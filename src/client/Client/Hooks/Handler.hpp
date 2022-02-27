@@ -9,7 +9,7 @@
 
 #include "Core.hpp"
 
-namespace Litr::Hook {
+namespace litr::Hook {
 
 class Handler {
   using HookCallback = std::function<void(const Ref<CLI::Instruction>& instruction)>;
@@ -35,4 +35,4 @@ class Handler {
   std::vector<Hook> m_Hooks{};
 };
 
-}  // namespace Litr::Hook
+}  // namespace litr::Hook

@@ -13,7 +13,7 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace Litr::Script {
+namespace litr::Script {
 
 Compiler::Compiler(const std::string& source, Config::Location location, Variables variables)
     : m_Scanner(source.c_str()), m_Location(std::move(location)), m_Variables(std::move(variables)) {
@@ -283,4 +283,4 @@ void Compiler::ErrorAt(Token *token, const std::string& message) {
   ));
 }
 
-}  // namespace Litr::Script
+}  // namespace litr::Script

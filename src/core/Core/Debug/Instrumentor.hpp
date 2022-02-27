@@ -14,7 +14,7 @@
 
 #include "Core/Log.hpp"
 
-namespace Litr::Debug {
+namespace litr::Debug {
 
 using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
@@ -155,7 +155,7 @@ class InstrumentationTimer {
   const std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
 };
 
-}  // namespace Litr::Debug
+}  // namespace litr::Debug
 
 #if LITR_PROFILE
 // Resolve which function signature macro will be used. Note that this only
@@ -182,12 +182,12 @@ class InstrumentationTimer {
 
 #define JOIN_AGAIN(x, y) x##y
 #define JOIN(x, y) JOIN_AGAIN(x, y)
-#define LITR_PROFILE_BEGIN_SESSION(name) ::Litr::Debug::Instrumentor::Get().BeginSession(name)
+#define LITR_PROFILE_BEGIN_SESSION(name) ::litr::Debug::Instrumentor::Get().BeginSession(name)
 #define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, filePath) \
-  ::Litr::Debug::Instrumentor::Get().BeginSession(name, filePath)
-#define LITR_PROFILE_END_SESSION() ::Litr::Debug::Instrumentor::Get().EndSession()
+  ::litr::Debug::Instrumentor::Get().BeginSession(name, filePath)
+#define LITR_PROFILE_END_SESSION() ::litr::Debug::Instrumentor::Get().EndSession()
 #define LITR_PROFILE_SCOPE(name)                              \
-  ::Litr::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
+  ::litr::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
     name                                                      \
   }
 #define LITR_PROFILE_FUNCTION() LITR_PROFILE_SCOPE(LITR_FUNC_SIG)

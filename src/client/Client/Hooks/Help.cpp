@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace Litr::Hook {
+namespace litr::Hook {
 
 // Attention dear reader: I know how this file looks like. There is a lot going on,
 // numbers, formatting, some of it all over the place. It is not pretty, but it works
@@ -339,4 +339,4 @@ bool Help::SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<C
   return RankParameterRequired(p1) < RankParameterRequired(p2);
 }
 
-}  // namespace Litr::Hook
+}  // namespace litr::Hook

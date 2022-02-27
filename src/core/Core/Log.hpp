@@ -9,7 +9,7 @@
 
 #include "Core/Base.hpp"
 
-namespace Litr {
+namespace litr {
 
 class Log {
  public:
@@ -39,39 +39,39 @@ class Log {
   Ref<spdlog::logger> s_ClientLogger;
 };
 
-}  // namespace Litr
+}  // namespace litr
 
 // Core logging
 
 #ifndef LITR_DEACTIVATE_LOGGING
 
 #if DEBUG
-#define LITR_CORE_TRACE(...) ::Litr::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define LITR_CORE_DEBUG(...) ::Litr::Log::GetCoreLogger()->debug(__VA_ARGS__)
+#define LITR_CORE_TRACE(...) ::litr::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define LITR_CORE_DEBUG(...) ::litr::Log::GetCoreLogger()->debug(__VA_ARGS__)
 #else
 #define LITR_CORE_TRACE(...)
 #define LITR_CORE_DEBUG(...)
 #endif
 
-#define LITR_CORE_INFO(...) ::Litr::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define LITR_CORE_WARN(...) ::Litr::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define LITR_CORE_ERROR(...) ::Litr::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define LITR_CORE_FATAL(...) ::Litr::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define LITR_CORE_INFO(...) ::litr::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define LITR_CORE_WARN(...) ::litr::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define LITR_CORE_ERROR(...) ::litr::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define LITR_CORE_FATAL(...) ::litr::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
 // Client logging
 
 #if DEBUG
-#define LITR_TRACE(...) ::Litr::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define LITR_DEBUG(...) ::Litr::Log::GetClientLogger()->debug(__VA_ARGS__)
+#define LITR_TRACE(...) ::litr::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define LITR_DEBUG(...) ::litr::Log::GetClientLogger()->debug(__VA_ARGS__)
 #else
 #define LITR_TRACE(...)
 #define LITR_DEBUG(...)
 #endif
 
-#define LITR_INFO(...) ::Litr::Log::GetClientLogger()->info(__VA_ARGS__)
-#define LITR_WARN(...) ::Litr::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define LITR_ERROR(...) ::Litr::Log::GetClientLogger()->error(__VA_ARGS__)
-#define LITR_FATAL(...) ::Litr::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define LITR_INFO(...) ::litr::Log::GetClientLogger()->info(__VA_ARGS__)
+#define LITR_WARN(...) ::litr::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define LITR_ERROR(...) ::litr::Log::GetClientLogger()->error(__VA_ARGS__)
+#define LITR_FATAL(...) ::litr::Log::GetClientLogger()->fatal(__VA_ARGS__)
 
 #else
 

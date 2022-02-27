@@ -13,7 +13,7 @@
 #include "Core/Script/Token.hpp"
 #include "Core/Script/Scanner.hpp"
 
-namespace Litr::Script {
+namespace litr::Script {
 
 class Compiler {
  public:
@@ -64,4 +64,4 @@ class Compiler {
   std::vector<std::string> m_UsedVariables{};
 };
 
-}  // namespace Litr::Script
+}  // namespace litr::Script

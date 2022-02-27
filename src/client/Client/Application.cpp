@@ -12,13 +12,13 @@
 #include "Hooks/Help.hpp"
 #include "Hooks/Version.hpp"
 
-namespace Litr {
+namespace litr {
 
 // @todo: Error handling here is horrible. In need of refactoring!
 ExitStatus Application::Run(int argc, char* argv[]) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string source{SourceFromArguments(argc, argv)};
+  const std::string source{source_from_arguments(argc, argv)};
   const auto instruction{CreateRef<CLI::Instruction>()};
   const CLI::Parser parser{instruction, source};
 
@@ -36,9 +36,9 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return ExitStatus::SUCCESS;
   }
 
-  const Path configPath{GetConfigPath()};
-  if (m_ExitStatus == ExitStatus::FAILURE) {
-    return m_ExitStatus;
+  const Path configPath{get_config_path()};
+  if (m_exit_status == ExitStatus::FAILURE) {
+    return m_exit_status;
   }
 
   Error::Reporter errorReporter{configPath};
@@ -65,10 +65,10 @@ ExitStatus Application::Run(int argc, char* argv[]) {
     return ExitStatus::FAILURE;
   }
 
-  return m_ExitStatus;
+  return m_exit_status;
 }
 
-Path Application::GetConfigPath() {
+Path Application::get_config_path() {
   LITR_PROFILE_FUNCTION();
 
   Path cwd{FileSystem::GetCurrentWorkingDirectory()};
@@ -77,7 +77,7 @@ Path Application::GetConfigPath() {
   switch (configPath.GetStatus()) {
     case Config::FileResolver::Status::NOT_FOUND: {
       fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
-      m_ExitStatus = ExitStatus::FAILURE;
+      m_exit_status = ExitStatus::FAILURE;
       break;
     }
     case Config::FileResolver::Status::DUPLICATE: {
@@ -86,7 +86,7 @@ Path Application::GetConfigPath() {
           "You defined both, litr.toml and .litr.toml in {}. "
           "This is probably an error and you only want one of them.\n",
           configPath.GetFileDirectory());
-      m_ExitStatus = ExitStatus::FAILURE;
+      m_exit_status = ExitStatus::FAILURE;
       break;
     }
     case Config::FileResolver::Status::FOUND: {
@@ -98,7 +98,7 @@ Path Application::GetConfigPath() {
   return configPath.GetFilePath();
 }
 
-std::string Application::SourceFromArguments(int argc, char** argv) {
+std::string Application::source_from_arguments(int argc, char** argv) {
   LITR_PROFILE_FUNCTION();
 
   std::string source{};
@@ -123,4 +123,4 @@ std::string Application::SourceFromArguments(int argc, char** argv) {
   return source;
 }
 
-}  // namespace Litr
+}  // namespace litr
