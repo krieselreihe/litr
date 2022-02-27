@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include <doctest/doctest.h>
 
 #include <string>
@@ -18,8 +22,8 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo 'Hello'");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo 'Hello'");
     Litr::Error::Handler::Flush();
   }
 
@@ -29,8 +33,8 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo 'Hello' and more");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo 'Hello' and more");
     Litr::Error::Handler::Flush();
   }
 
@@ -42,8 +46,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo 'Hello'");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo 'Hello'");
     Litr::Error::Handler::Flush();
   }
 
@@ -55,8 +59,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo 'Hello' and more");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo 'Hello' and more");
     Litr::Error::Handler::Flush();
   }
 
@@ -68,8 +72,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo Hello");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo Hello");
     Litr::Error::Handler::Flush();
   }
 
@@ -81,8 +85,8 @@ TEST_SUITE("Script::Compiler") {
     };
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo ");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo ");
     Litr::Error::Handler::Flush();
   }
 
@@ -95,8 +99,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo 'Hello'");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo 'Hello'");
     Litr::Error::Handler::Flush();
   }
 
@@ -109,8 +113,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo ''");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo ''");
     Litr::Error::Handler::Flush();
   }
 
@@ -122,8 +126,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo Hello");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo Hello");
     Litr::Error::Handler::Flush();
   }
 
@@ -135,8 +139,8 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(compiler.GetScript() == "echo Bye");
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(compiler.GetScript(), "echo Bye");
     Litr::Error::Handler::Flush();
   }
 
@@ -148,11 +152,11 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `target`: Undefined parameter.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `target`: Undefined parameter.");
     Litr::Error::Handler::Flush();
   }
 
@@ -165,11 +169,11 @@ TEST_SUITE("Script::Compiler") {
     };
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'Hello'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'Hello'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -182,11 +186,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'Hello'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'Hello'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -199,11 +203,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'Wrong'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'Wrong'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -216,11 +220,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'Wrong'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'Wrong'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -230,11 +234,11 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `' '`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `' '`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -247,11 +251,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `value`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `value`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -263,11 +267,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'b'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'b'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -279,11 +283,11 @@ TEST_SUITE("Script::Compiler") {
     }};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `'b'`: Expected `}`.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `'b'`: Expected `}`.");
     Litr::Error::Handler::Flush();
   }
 
@@ -293,11 +297,11 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `or`: Unexpected character.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `or`: Unexpected character.");
     Litr::Error::Handler::Flush();
   }
 
@@ -307,11 +311,11 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `,`: Unexpected character.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Unexpected character.");
     Litr::Error::Handler::Flush();
   }
 
@@ -321,11 +325,11 @@ TEST_SUITE("Script::Compiler") {
     Variables variables{};
     Compiler compiler{source, location, variables};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
+    CHECK(Litr::Error::Handler::HasErrors());
 
     auto errors{Litr::Error::Handler::GetErrors()};
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "Cannot parse at `(`: Unexpected character.");
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "Cannot parse at `(`: Unexpected character.");
     Litr::Error::Handler::Flush();
   }
 }

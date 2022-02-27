@@ -1,9 +1,15 @@
+/*
+* Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+*/
+
 #include "Help.hpp"
 
-#include <algorithm>
-#include <fmt/color.h>
 #include <fmt/printf.h>
 #include <fmt/format.h>
+#include <fmt/color.h>
+
+#include <algorithm>
+#include <vector>
 
 namespace Litr::Hook {
 
@@ -247,7 +253,7 @@ std::string Help::GetCommandArguments(const std::string& name) const {
         break;
       }
       case Config::Parameter::Type::BOOLEAN: {
-        arguments.append(fmt::format(fg(fmt::color::dark_gray)," [--{}]", param->Name));
+        arguments.append(fmt::format(fg(fmt::color::dark_gray), " [--{}]", param->Name));
         break;
       }
     }

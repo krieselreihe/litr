@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <string>
-#include <toml.hpp>
 #include <utility>
+
+#include <toml.hpp>
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Config/Location.hpp"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include <doctest/doctest.h>
 #include <array>
 
@@ -7,20 +11,20 @@
 
 #include "Core/Script/Scanner.hpp"
 
-#define CHECK_DEFINITION(scanner, definition)                           \
-  {                                                                     \
-    for (auto&& test : (definition)) {                                  \
-      Litr::Script::Token token{(scanner).ScanToken()};                 \
-      CHECK(token.Type == test.Type);                                   \
-      CHECK(Litr::Script::Scanner::GetTokenValue(token) == test.Value); \
-    }                                                                   \
+#define CHECK_DEFINITION(scanner, definition)                            \
+  {                                                                      \
+    for (auto&& test : (definition)) {                                   \
+      Litr::Script::Token token{(scanner).ScanToken()};                  \
+      CHECK_EQ(token.Type, test.Type);                                   \
+      CHECK_EQ(Litr::Script::Scanner::GetTokenValue(token), test.Value); \
+    }                                                                    \
   }
 
-#define CHECK_EOS_TOKEN(scanner)                            \
-  {                                                         \
-    Litr::Script::Token eos{(scanner).ScanToken()};         \
-    CHECK(eos.Type == Litr::Script::TokenType::EOS);        \
-    CHECK(Litr::Script::Scanner::GetTokenValue(eos) == ""); \
+#define CHECK_EOS_TOKEN(scanner)                             \
+  {                                                          \
+    Litr::Script::Token eos{(scanner).ScanToken()};          \
+    CHECK_EQ(eos.Type, Litr::Script::TokenType::EOS);        \
+    CHECK_EQ(Litr::Script::Scanner::GetTokenValue(eos), ""); \
   }
 
 struct TokenDefinition {

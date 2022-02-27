@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Log.hpp"
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+
+#include <vector>
 
 namespace Litr {
 

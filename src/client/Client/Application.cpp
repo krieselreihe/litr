@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Application.hpp"
 
 #include <fmt/color.h>
 #include <fmt/format.h>
+#include <vector>
 
 #include "Hooks/Handler.hpp"
 #include "Hooks/Help.hpp"

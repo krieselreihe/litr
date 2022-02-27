@@ -1,4 +1,9 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include <cstdlib>
+
 #include <fmt/format.h>
 
 #include "Core/Environment.hpp"
@@ -24,7 +29,7 @@ Path Environment::GetHomeDirectory() {
     return UserPath(loginName);
   }
 
-  return Path();
+  return {};
 }
 
 }  // namespace Litr

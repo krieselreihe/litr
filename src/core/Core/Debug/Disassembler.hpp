@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
+
+#include <string>
 
 #include "Core/Base.hpp"
 #include "Core/CLI/Instruction.hpp"

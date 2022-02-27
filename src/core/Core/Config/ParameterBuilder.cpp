@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "ParameterBuilder.hpp"
 
 #include "Core/Debug/Instrumentor.hpp"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "CommandBuilder.hpp"
 
 #include <fmt/format.h>

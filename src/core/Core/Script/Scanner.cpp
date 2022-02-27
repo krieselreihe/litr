@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Scanner.hpp"
 
 #include <cstring>
@@ -130,13 +134,13 @@ Token Scanner::ScanExpressionToken() {
 std::string Scanner::GetTokenValue(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
-  return std::string(token.Start, token.Length);
+  return {token.Start, token.Length};
 }
 
 std::string Scanner::GetTokenValue(Token* token) {
   LITR_PROFILE_FUNCTION();
 
-  return std::string(token->Start, token->Length);
+  return {token->Start, token->Length};
 }
 
 Token Scanner::MakeToken(TokenType type) const {
@@ -238,7 +242,7 @@ TokenType Scanner::IdentifierType() const {
 TokenType Scanner::CheckKeyword(size_t start, size_t length, const char* rest, TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  if (m_Current - m_Start == static_cast<long>(start + length)
+  if (m_Current - m_Start == static_cast<int16_t>(start + length)
       && std::memcmp(m_Start + start, rest, length) == 0) {
     return type;
   }

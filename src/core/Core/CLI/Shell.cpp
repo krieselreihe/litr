@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Shell.hpp"
 
 #include <cstdio>
@@ -36,7 +40,7 @@ Shell::Result Shell::Exec(const std::string& command, const Path& path, const Sh
   FILE* stream{popen(cmd.c_str(), "r")};
 
   if (stream) {
-    const int max_buffer{256};
+    constexpr int max_buffer{256};
     char buffer[max_buffer];
 
     while (!feof(stream)) {

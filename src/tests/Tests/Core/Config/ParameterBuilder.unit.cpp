@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Core/Config/ParameterBuilder.hpp"
 
 #include <doctest/doctest.h>
@@ -13,8 +17,8 @@ TEST_SUITE("ParameterBuilder") {
     Litr::Ref<Litr::Config::Parameter> builderResult{builder.GetResult()};
     Litr::Config::Parameter compare{"test"};
 
-    CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-    CHECK(sizeof(*builderResult) == sizeof(compare));
+    CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+    CHECK_EQ(sizeof(*builderResult), sizeof(compare));
     Litr::Error::Handler::Flush();
   }
 
@@ -25,8 +29,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(You're missing the "description" field.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(You're missing the "description" field.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -36,8 +40,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "description" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The "description" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -47,8 +51,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Description == "Text");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Description, "Text");
       Litr::Error::Handler::Flush();
     }
 
@@ -58,8 +62,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDescription("Text");
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Description == "Text");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Description, "Text");
       Litr::Error::Handler::Flush();
     }
   }
@@ -71,7 +75,7 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
       CHECK(builder.GetResult()->Shortcut.empty());
       Litr::Error::Handler::Flush();
     }
@@ -82,8 +86,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "shortcut" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(A "shortcut" can only be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -93,8 +97,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "help" is reserved by Litr.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "help" is reserved by Litr.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -104,8 +108,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "h" is reserved by Litr.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "h" is reserved by Litr.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -115,8 +119,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Shortcut == "t");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Shortcut, "t");
       Litr::Error::Handler::Flush();
     }
 
@@ -129,8 +133,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddShortcut(params);
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The shortcut name "x" is already used for parameter "something".)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "x" is already used for parameter "something".)");
       Litr::Error::Handler::Flush();
     }
   }
@@ -142,8 +146,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::STRING);
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Type, Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::Flush();
     }
 
@@ -153,8 +157,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -164,8 +168,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::STRING);
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Type, Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::Flush();
     }
 
@@ -175,8 +179,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Type == Litr::Config::Parameter::Type::ARRAY);
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Type, Litr::Config::Parameter::Type::ARRAY);
       Litr::Error::Handler::Flush();
     }
 
@@ -186,8 +190,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The options provided in "type" are not all strings.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The options provided in "type" are not all strings.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -198,10 +202,10 @@ TEST_SUITE("ParameterBuilder") {
       builder.AddType();
       Litr::Ref<Litr::Config::Parameter> result{builder.GetResult()};
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(result->Type == Litr::Config::Parameter::Type::ARRAY);
-      CHECK(result->TypeArguments[0] == "test");
-      CHECK(result->TypeArguments[1] == "debug");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(result->Type, Litr::Config::Parameter::Type::ARRAY);
+      CHECK_EQ(result->TypeArguments[0], "test");
+      CHECK_EQ(result->TypeArguments[1], "debug");
       Litr::Error::Handler::Flush();
     }
 
@@ -211,8 +215,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddType();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(A "type" can only be "string" or an array of options as strings.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(A "type" can only be "string" or an array of options as strings.)");
       Litr::Error::Handler::Flush();
     }
   }
@@ -224,7 +228,7 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
       CHECK(builder.GetResult()->Default.empty());
       Litr::Error::Handler::Flush();
     }
@@ -235,8 +239,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(The field "default" needs to be a string.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(The field "default" needs to be a string.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -248,8 +252,8 @@ default = "Default")");
       builder.AddType();
       builder.AddDefault();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 1);
-      CHECK(Litr::Error::Handler::GetErrors()[0].Message == R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::GetErrors()[0].Message, R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
       Litr::Error::Handler::Flush();
     }
 
@@ -259,8 +263,8 @@ default = "Default")");
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.AddDefault();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Default == "something");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Default, "something");
       Litr::Error::Handler::Flush();
     }
 
@@ -272,8 +276,8 @@ default = "something")");
       builder.AddType();
       builder.AddDefault();
 
-      CHECK(Litr::Error::Handler::GetErrors().size() == 0);
-      CHECK(builder.GetResult()->Default == "something");
+      CHECK_EQ(Litr::Error::Handler::GetErrors().size(), 0);
+      CHECK_EQ(builder.GetResult()->Default, "something");
       Litr::Error::Handler::Flush();
     }
   }
