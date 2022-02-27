@@ -8,40 +8,41 @@
 
 #include "Core.hpp"
 
-namespace litr::Hook {
+namespace litr::hook {
 
 class Help {
  public:
-  explicit Help(const Ref<Config::Loader>& config);
-  void Print(const Ref<CLI::Instruction>& instruction) const;
+  explicit Help(const Ref<config::Loader>& config);
+
+  void print(const Ref<cli::Instruction>& instruction) const;
 
  private:
-  void PrintWelcomeMessage() const;
-  void PrintUsage() const;
-  void PrintCommands() const;
-  void PrintCommand(const Ref<Config::Command>& command, const std::string& parentName, size_t depth = 1) const;
-  void PrintExample(const Ref<Config::Command>& command) const;
-  void PrintOptions() const;
-  void PrintParameterOptions(const Ref<Config::Parameter>& param) const;
-  void PrintDefaultParameterOption(const Ref<Config::Parameter>& param) const;
-  void PrintWithDescription(const std::string& name, const std::string& description, size_t extraPadding = 0) const;
+  void print_welcome_message() const;
+  void print_usage() const;
+  void print_commands() const;
+  void print_command(const Ref<config::Command>& command, const std::string& parent_name, size_t depth = 1) const;
+  void print_example(const Ref<config::Command>& command) const;
+  void print_options() const;
+  void print_parameter_options(const Ref<config::Parameter>& param) const;
+  void print_default_parameter_option(const Ref<config::Parameter>& param) const;
+  void print_with_description(const std::string& name, const std::string& description, size_t extra_padding = 0) const;
 
-  [[nodiscard]] static std::string GetCommandName(const Ref<CLI::Instruction>& instruction);
-  [[nodiscard]] std::string GetCommandArguments(const std::string& name) const;
+  [[nodiscard]] static std::string get_command_name(const Ref<cli::Instruction>& instruction);
+  [[nodiscard]] std::string get_command_arguments(const std::string& name) const;
 
-  [[nodiscard]] size_t GetCommandPadding() const;
-  [[nodiscard]] size_t GetCommandPadding(const Config::Query::Commands& commands) const;
-  [[nodiscard]] size_t GetParameterPadding() const;
+  [[nodiscard]] size_t get_command_padding() const;
+  [[nodiscard]] size_t get_command_padding(const config::Query::Commands& commands) const;
+  [[nodiscard]] size_t get_parameter_padding() const;
 
-  [[nodiscard]] static bool SortParameterByRequired(const Ref<Config::Parameter>& p1, const Ref<Config::Parameter>& p2);
+  [[nodiscard]] static bool sort_parameter_by_required(const Ref<config::Parameter>& p1, const Ref<config::Parameter>& p2);
 
  private:
-  const Config::Query m_Query;
-  const Path m_FilePath;
+  const config::Query m_query;
+  const Path m_file_path;
 
-  mutable std::string m_CommandName{};
+  mutable std::string m_command_name{};
 
-  const std::string m_ArgumentPlaceholder{"=<option>"};
+  const std::string m_argument_placeholder{"=<option>"};
 };
 
-}  // namespace litr::Hook
+}  // namespace litr::hook

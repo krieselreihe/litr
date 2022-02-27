@@ -8,9 +8,9 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::Utils {
+namespace litr::utils {
 
-std::string TrimLeft(const std::string& src, char c) {
+std::string trim_left(const std::string& src, char c) {
   LITR_PROFILE_FUNCTION();
 
   std::string out{src};
@@ -18,7 +18,7 @@ std::string TrimLeft(const std::string& src, char c) {
   return out;
 }
 
-std::string TrimRight(const std::string& src, char c) {
+std::string trim_right(const std::string& src, char c) {
   LITR_PROFILE_FUNCTION();
 
   std::string out{src};
@@ -26,24 +26,13 @@ std::string TrimRight(const std::string& src, char c) {
   return out;
 }
 
-std::string Trim(const std::string& src, char c) {
+std::string trim(const std::string& src, char c) {
   LITR_PROFILE_FUNCTION();
 
-  return TrimLeft(TrimRight(src, c), c);
+  return trim_left(trim_right(src, c), c);
 }
 
-void SplitInto(const std::string& source, const char& delimiter, std::vector<std::string>& out) {
-  LITR_PROFILE_FUNCTION();
-
-  std::stringstream ss{source};
-  std::string part{};
-
-  while (std::getline(ss, part, delimiter)) {
-    out.push_back(part);
-  }
-}
-
-void SplitInto(const std::string& source, const char& delimiter, std::deque<std::string>& out) {
+void split_into(const std::string& source, const char& delimiter, std::vector<std::string>& out) {
   LITR_PROFILE_FUNCTION();
 
   std::stringstream ss{source};
@@ -54,24 +43,35 @@ void SplitInto(const std::string& source, const char& delimiter, std::deque<std:
   }
 }
 
-void Deduplicate(std::vector<std::string>& items) {
+void split_into(const std::string& source, const char& delimiter, std::deque<std::string>& out) {
+  LITR_PROFILE_FUNCTION();
+
+  std::stringstream ss{source};
+  std::string part{};
+
+  while (std::getline(ss, part, delimiter)) {
+    out.push_back(part);
+  }
+}
+
+void deduplicate(std::vector<std::string>& items) {
   LITR_PROFILE_FUNCTION();
 
   std::sort(items.begin(), items.end());
   items.erase(std::unique(items.begin(), items.end()), items.end());
 }
 
-std::string Replace(const std::string& source, const std::string& from, const std::string& to) {
+std::string replace(const std::string& source, const std::string& from, const std::string& to) {
   LITR_PROFILE_FUNCTION();
 
   std::string extract{source};
-  const size_t startPos{extract.find(from)};
+  const size_t start_pos{extract.find(from)};
 
   if (extract.find(from) != std::string::npos) {
-    extract.replace(startPos, from.length(), to);
+    extract.replace(start_pos, from.length(), to);
   }
 
   return extract;
 }
 
-}  // namespace litr::Utils
+}  // namespace litr::utils

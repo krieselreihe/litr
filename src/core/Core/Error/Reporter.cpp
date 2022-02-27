@@ -13,23 +13,23 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::Error {
+namespace litr::error {
 
-Reporter::Reporter(const Path& path) : m_FilePath(path) {}
+Reporter::Reporter(const Path& path) : m_file_path(path) {}
 
-void Reporter::PrintErrors(const std::vector<BaseError>& errors) {
+void Reporter::print_errors(const std::vector<BaseError>& errors) {
   LITR_PROFILE_FUNCTION();
 
-  m_MultipleErrors = false;
+  m_multiple_errors = false;
   for (const BaseError& error : errors) {
-    PrintError(error);
+    print_error(error);
   }
 }
 
-void Reporter::PrintError(const BaseError& error) {
+void Reporter::print_error(const BaseError& error) {
   LITR_PROFILE_FUNCTION();
 
-  switch (error.Type) {
+  switch (error.type) {
     case BaseError::ErrorType::MALFORMED_FILE:
     case BaseError::ErrorType::MALFORMED_COMMAND:
     case BaseError::ErrorType::MALFORMED_PARAM:
@@ -40,40 +40,40 @@ void Reporter::PrintError(const BaseError& error) {
     case BaseError::ErrorType::UNKNOWN_PARAM_VALUE:
     case BaseError::ErrorType::CLI_PARSER:
     case BaseError::ErrorType::SCRIPT_PARSER: {
-      if (m_MultipleErrors) {
+      if (m_multiple_errors) {
         fmt::print(fg(fmt::color::crimson), " ...\n");
       } else {
         // Title
-        fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Description);
+        fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.description);
         // File
-        fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_FilePath);
+        fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_file_path);
       }
 
       // Line view
-      fmt::print(fg(fmt::color::crimson), "{:d} | {}\n", error.Location.Line, error.Location.LineStr);
+      fmt::print(fg(fmt::color::crimson), "{:d} | {}\n", error.location.line, error.location.line_str);
 
       // Message
       fmt::print(fg(fmt::color::crimson), "{:>{}} | {:>{}}{}\n",
-          " ", CountDigits(error.Location.Line), "└─ ", error.Location.Column, error.Message);
+          " ", count_digits(error.location.line), "└─ ", error.location.column, error.message);
       break;
     }
     case BaseError::ErrorType::COMMAND_NOT_FOUND: {
-      fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Message);
+      fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.message);
       break;
     }
     case BaseError::ErrorType::EXECUTION_FAILURE: {
       // Message
-      fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Message);
+      fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.message);
       // File
-      fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_FilePath);
+      fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_file_path);
       break;
     }
   }
 
-  m_MultipleErrors = true;
+  m_multiple_errors = true;
 }
 
-uint32_t Reporter::CountDigits(uint32_t number) {
+uint32_t Reporter::count_digits(uint32_t number) {
   LITR_PROFILE_FUNCTION();
 
   if (number < 10) return 1;
@@ -85,4 +85,4 @@ uint32_t Reporter::CountDigits(uint32_t number) {
   return count;
 }
 
-}  // namespace litr::Error
+}  // namespace litr::error

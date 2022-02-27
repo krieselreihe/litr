@@ -9,30 +9,31 @@
 
 #include "Core.hpp"
 
-namespace litr::Hook {
+namespace litr::hook {
 
 class Handler {
-  using HookCallback = std::function<void(const Ref<CLI::Instruction>& instruction)>;
-  using Code = CLI::Instruction::Code;
-  using Value = CLI::Instruction::Value;
+  using HookCallback = std::function<void(const Ref<cli::Instruction>& instruction)>;
+  using Code = cli::Instruction::Code;
+  using Value = cli::Instruction::Value;
 
   struct Hook {
-    CLI::Instruction::Code Code;
-    CLI::Instruction::Value Value;
-    HookCallback Callback;
+    cli::Instruction::Code code;
+    cli::Instruction::Value value;
+    HookCallback callback;
 
-    Hook(CLI::Instruction::Code code, CLI::Instruction::Value value, HookCallback callback)
-        : Code(code), Value(std::move(value)), Callback(std::move(callback)) {}
+    Hook(cli::Instruction::Code code, cli::Instruction::Value value, HookCallback callback)
+        : code(code), value(std::move(value)), callback(std::move(callback)) {}
   };
 
  public:
-  explicit Handler(const Ref<CLI::Instruction>& instruction);
-  void Add(Code code, const std::vector<Value>& values, const HookCallback& callback);
-  [[nodiscard]] bool Execute() const;
+  explicit Handler(const Ref<cli::Instruction>& instruction);
+
+  void add(Code code, const std::vector<Value>& values, const HookCallback& callback);
+  [[nodiscard]] bool execute() const;
 
  private:
-  const Ref<CLI::Instruction>& m_Instruction;
-  std::vector<Hook> m_Hooks{};
+  const Ref<cli::Instruction>& m_instruction;
+  std::vector<Hook> m_hooks{};
 };
 
-}  // namespace litr::Hook
+}  // namespace litr::hook

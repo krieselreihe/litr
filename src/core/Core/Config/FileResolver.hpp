@@ -8,7 +8,7 @@
 
 #include "Core/FileSystem.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 class FileResolver {
  public:
@@ -21,19 +21,19 @@ class FileResolver {
   explicit FileResolver(Path cwd);
   explicit FileResolver(const std::string& cwd);
 
-  [[nodiscard]] Status GetStatus() const;
-  [[nodiscard]] Path GetFilePath() const;
-  [[nodiscard]] Path GetFileDirectory() const;
+  [[nodiscard]] Status get_status() const;
+  [[nodiscard]] Path get_file_path() const;
+  [[nodiscard]] Path get_file_directory() const;
 
  private:
-  const std::string m_FileName{"litr.toml"};
-  const std::string m_HiddenFileName{".litr.toml"};
+  const std::string m_file_name{"litr.toml"};
+  const std::string m_hidden_filename{".litr.toml"};
 
-  Path m_Directory{};
-  Path m_Path{};
-  Status m_Status{Status::NOT_FOUND};
+  Path m_directory{};
+  Path m_path{};
+  Status m_status{Status::NOT_FOUND};
 
-  void FindFile(const Path& cwd);
+  void find_file(const Path& cwd);
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config

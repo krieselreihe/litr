@@ -7,79 +7,79 @@
 #include "Core/Config/Query.hpp"
 
 TEST_SUITE("Config::Query") {
-  TEST_CASE("GetCommand()") {
+  TEST_CASE("get_command()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
-    const litr::Config::Query query{config};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const litr::config::Query query{config};
 
     SUBCASE("Get top level command") {
-      CHECK_EQ(query.GetCommand("run")->Name, "run");
+      CHECK_EQ(query.get_command("run")->name, "run");
     }
 
     SUBCASE("Get nested command") {
-      CHECK_EQ(query.GetCommand("run.second")->Name, "second");
+      CHECK_EQ(query.get_command("run.second")->name, "second");
     }
 
     SUBCASE("Get deeply nested command") {
-      CHECK_EQ(query.GetCommand("run.fourth.l1")->Name, "l1");
+      CHECK_EQ(query.get_command("run.fourth.l1")->name, "l1");
     }
 
     SUBCASE("Returns a nullptr if command not found") {
-      CHECK_EQ(query.GetCommand("nothing"), nullptr);
+      CHECK_EQ(query.get_command("nothing"), nullptr);
     }
 
     SUBCASE("Returns a nullptr if nested command not found") {
-      CHECK_EQ(query.GetCommand("run.somewhere"), nullptr);
+      CHECK_EQ(query.get_command("run.somewhere"), nullptr);
     }
   }
 
-  TEST_CASE("GetCommands()") {
+  TEST_CASE("get_commands()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
-    const litr::Config::Query query{config};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const litr::config::Query query{config};
 
     SUBCASE("Get all defined commands") {
-      CHECK_EQ(query.GetCommands().size(), 3);
+      CHECK_EQ(query.get_commands().size(), 3);
     }
 
     SUBCASE("Get all defined sub-commands") {
-      CHECK_EQ(query.GetCommands("run").size(), 4);
+      CHECK_EQ(query.get_commands("run").size(), 4);
     }
 
     SUBCASE("Returns an empty vector for undefined script") {
-      CHECK_EQ(query.GetCommands("none").size(), 0);
+      CHECK_EQ(query.get_commands("none").size(), 0);
     }
   }
 
-  TEST_CASE("GetParameter()") {
+  TEST_CASE("get_parameter()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
-    const litr::Config::Query query{config};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const litr::config::Query query{config};
 
     SUBCASE("Get parameter by name") {
-      CHECK_EQ(query.GetParameter("target")->Name, "target");
+      CHECK_EQ(query.get_parameter("target")->name, "target");
     }
 
     SUBCASE("Get parameter by short name") {
-      CHECK_EQ(query.GetParameter("t")->Name, "target");
+      CHECK_EQ(query.get_parameter("t")->name, "target");
     }
 
     SUBCASE("Returns a nullptr for an undefined parameter name") {
-      CHECK_EQ(query.GetParameter("x"), nullptr);
+      CHECK_EQ(query.get_parameter("x"), nullptr);
     }
   }
 
-  TEST_CASE("GetParameters()") {
+  TEST_CASE("get_parameters()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
-    const litr::Config::Query query{config};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const litr::config::Query query{config};
 
     SUBCASE("Get all defined parameters") {
-      CHECK_EQ(query.GetParameters().size(), 2);
+      CHECK_EQ(query.get_parameters().size(), 2);
     }
 
     SUBCASE("Returns an empty vector for undefined script") {
-      auto params{query.GetParameters("none")};
+      auto params{query.get_parameters("none")};
       CHECK_EQ(params.size(), 0);
     }
 
@@ -94,12 +94,12 @@ TEST_SUITE("Config::Query") {
 //    }
 
     SUBCASE("Get no parameters if none are used by command") {
-      auto params{query.GetParameters("update")};
+      auto params{query.get_parameters("update")};
       CHECK_EQ(params.size(), 0);
     }
 
     SUBCASE("Returns an empty vector if command not found") {
-      auto params{query.GetParameters("none")};
+      auto params{query.get_parameters("none")};
       CHECK_EQ(params.size(), 0);
     }
   }

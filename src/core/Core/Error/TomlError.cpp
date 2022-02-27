@@ -11,37 +11,37 @@
 #include "Core/Utils.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr {
+namespace litr::error {
 
-std::string TomlError::ExtractMessage(const std::string& message, const std::string& error) {
+std::string TomlError::extract_message(const std::string& message, const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
-  if (IsDuplicatedValueError(error)) {
-    return ExtractDuplicatedValueError(error);
+  if (is_duplicated_value_error(error)) {
+    return extract_duplicated_value_error(error);
   }
 
-  if (IsDuplicatedTableError(error)) {
-    return ExtractDuplicatedTableError(error);
+  if (is_duplicated_table_error(error)) {
+    return extract_duplicated_table_error(error);
   }
 
   return message;
 }
 
-bool TomlError::IsDuplicatedValueError(const std::string& error) {
+bool TomlError::is_duplicated_value_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
   return error.find("value already exists") != std::string::npos;
 }
 
-std::string TomlError::ExtractDuplicatedValueError(const std::string& error) {
+std::string TomlError::extract_duplicated_value_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string extract{Utils::Replace(error, "[error] toml::insert_value: ", "")};
+  const std::string extract{utils::replace(error, "[error] toml::insert_value: ", "")};
 
   // Reformat lines
   std::vector<std::string> lines{};
   std::string output{};
-  Utils::SplitInto(extract, '\n', lines);
+  utils::split_into(extract, '\n', lines);
 
   for (size_t i{0}; i < lines.size(); ++i) {
     // First line without change
@@ -50,7 +50,7 @@ std::string TomlError::ExtractDuplicatedValueError(const std::string& error) {
       continue;
     }
 
-    if (IsFileReference(lines[i])) continue;
+    if (is_file_reference(lines[i])) continue;
 
     // Ignore last 3 lines
     if (lines.size() - 3 <= i) break;
@@ -59,24 +59,24 @@ std::string TomlError::ExtractDuplicatedValueError(const std::string& error) {
     output.append(lines[i]).append("\n");
   }
 
-  return Utils::Trim(output, '\n');
+  return utils::trim(output, '\n');
 }
 
-bool TomlError::IsDuplicatedTableError(const std::string& error) {
+bool TomlError::is_duplicated_table_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
   return error.find("table already exists") != std::string::npos;
 }
 
-std::string TomlError::ExtractDuplicatedTableError(const std::string& error) {
+std::string TomlError::extract_duplicated_table_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string extract{Utils::Replace(error, "[error] toml::insert_value: ", "")};
+  const std::string extract{utils::replace(error, "[error] toml::insert_value: ", "")};
 
   // Reformat lines
   std::vector<std::string> lines{};
   std::string output{};
-  Utils::SplitInto(extract, '\n', lines);
+  utils::split_into(extract, '\n', lines);
 
   for (size_t i{0}; i < lines.size(); ++i) {
     // First line without change
@@ -85,7 +85,7 @@ std::string TomlError::ExtractDuplicatedTableError(const std::string& error) {
       continue;
     }
 
-    if (IsFileReference(lines[i])) continue;
+    if (is_file_reference(lines[i])) continue;
 
     // Ignore last 3 lines
     if (lines.size() - 3 <= i) break;
@@ -94,11 +94,11 @@ std::string TomlError::ExtractDuplicatedTableError(const std::string& error) {
     output.append(lines[i]).append("\n");
   }
 
-  return Utils::Trim(output, '\n');
+  return utils::trim(output, '\n');
 }
 
-bool TomlError::IsFileReference(const std::string& line) {
+bool TomlError::is_file_reference(const std::string& line) {
   return line.find(" --> ") != std::string::npos;
 }
 
-}  // namespace litr
+}  // namespace litr::error

@@ -8,44 +8,44 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
-Instruction::Instruction(std::vector<std::byte> data) : m_ByteCode(std::move(data)) {
+Instruction::Instruction(std::vector<std::byte> data) : m_byte_code(std::move(data)) {
 }
 
-void Instruction::Write(Instruction::Code code) {
-  Write(static_cast<std::byte>(code));
+void Instruction::write(Instruction::Code code) {
+  write(static_cast<std::byte>(code));
 }
 
-void Instruction::Write(std::byte byte) {
+void Instruction::write(std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
-  m_ByteCode.push_back(byte);
+  m_byte_code.push_back(byte);
 }
 
-std::byte Instruction::Read(size_t offset) const {
+std::byte Instruction::read(size_t offset) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_ByteCode[offset];
+  return m_byte_code[offset];
 }
 
-size_t Instruction::Count() const {
+size_t Instruction::count() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_ByteCode.size();
+  return m_byte_code.size();
 }
 
-std::byte Instruction::WriteConstant(const Instruction::Value& value) {
+std::byte Instruction::write_constant(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 
-  m_Constants.push_back(value);
-  return static_cast<std::byte>(m_Constants.size() - 1);
+  m_constants.push_back(value);
+  return static_cast<std::byte>(m_constants.size() - 1);
 }
 
-Instruction::Value Instruction::ReadConstant(std::byte index) const {
+Instruction::Value Instruction::read_constant(std::byte index) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Constants[static_cast<size_t>(index)];
+  return m_constants[static_cast<size_t>(index)];
 }
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

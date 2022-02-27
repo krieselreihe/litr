@@ -9,7 +9,7 @@
 
 namespace litr {
 
-Path Environment::GetHomeDirectory() {
+Path Environment::get_home_directory() {
   LITR_PROFILE_FUNCTION();
 
   return Path(std::getenv("HOMEPATH"));

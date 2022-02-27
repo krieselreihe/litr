@@ -9,7 +9,7 @@
 #include <cstring>
 #include <vector>
 
-namespace litr::CLI {
+namespace litr::cli {
 
 class Instruction {
  public:
@@ -26,17 +26,17 @@ class Instruction {
   Instruction() = default;
   explicit Instruction(std::vector<std::byte> data);
 
-  void Write(Code code);
-  void Write(std::byte byte);
-  [[nodiscard]] std::byte Read(size_t offset) const;
-  [[nodiscard]] size_t Count() const;
+  void write(Code code);
+  void write(std::byte byte);
+  [[nodiscard]] std::byte read(size_t offset) const;
+  [[nodiscard]] size_t count() const;
 
-  std::byte WriteConstant(const Value& value);
-  [[nodiscard]] Value ReadConstant(std::byte index) const;
+  std::byte write_constant(const Value& value);
+  [[nodiscard]] Value read_constant(std::byte index) const;
 
  private:
-  std::vector<std::byte> m_ByteCode{};
-  std::vector<Value> m_Constants{};
+  std::vector<std::byte> m_byte_code{};
+  std::vector<Value> m_constants{};
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

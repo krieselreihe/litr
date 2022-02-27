@@ -8,26 +8,26 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::Script {
+namespace litr::script {
 
-Scanner::Scanner(const char* source) : m_Start(source), m_Current(source) {
+Scanner::Scanner(const char* source) : m_start(source), m_current(source) {
 }
 
-void Scanner::SkipWhitespace() {
+void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char c{Peek()};
+    char c{peek()};
     switch (c) {
       case '\n':
-        m_Line++;
-        m_Column = 0;
-        Advance();
+        m_line++;
+        m_column = 0;
+        advance();
         break;
       case ' ':
       case '\r':
       case '\t': {
-        Advance();
+        advance();
         break;
       }
       default: {
@@ -37,217 +37,216 @@ void Scanner::SkipWhitespace() {
   }
 }
 
-char Scanner::Peek() const {
+char Scanner::peek() const {
   LITR_PROFILE_FUNCTION();
 
-  return *m_Current;
+  return *m_current;
 }
 
-char Scanner::PeekNext() const {
+char Scanner::peek_next() const {
   LITR_PROFILE_FUNCTION();
 
-  if (IsAtEnd()) {
+  if (is_at_end()) {
     return '\0';
   }
 
-  return m_Current[1];
+  return m_current[1];
 }
 
-char Scanner::Advance() {
+char Scanner::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_Current++;
-  m_Column++;
-  return m_Current[-1];
+  m_current++;
+  m_column++;
+  return m_current[-1];
 }
 
-bool Scanner::Match(char expected) {
+bool Scanner::match(char expected) {
   LITR_PROFILE_FUNCTION();
 
-  if (IsAtEnd()) {
+  if (is_at_end()) {
     return false;
   }
 
-  if (*m_Current != expected) {
+  if (*m_current != expected) {
     return false;
   }
 
-  m_Current++;
-  m_Column++;
+  m_current++;
+  m_column++;
   return true;
 }
 
-Token Scanner::ScanToken() {
+Token Scanner::scan_token() {
   LITR_PROFILE_FUNCTION();
 
-  switch (m_Modes.top()) {
-    case Mode::UNTOUCHED:  return ScanUntouchedToken();
-    case Mode::EXPRESSION: return ScanExpressionToken();
+  switch (m_modes.top()) {
+    case Mode::UNTOUCHED:  return scan_untouched_token();
+    case Mode::EXPRESSION: return scan_expression_token();
   }
 
   return {};
 }
 
-Token Scanner::ScanUntouchedToken() {
+Token Scanner::scan_untouched_token() {
   LITR_PROFILE_FUNCTION();
 
-  m_Start = m_Current;
+  m_start = m_current;
 
-  if (IsAtEnd()) {
-    return MakeToken(TokenType::EOS);
+  if (is_at_end()) {
+    return make_token(TokenType::EOS);
   }
 
-  char c{Advance()};
+  char c{advance()};
 
-  if (c == '%' && Match('{')) {
-    return StartSequence();
+  if (c == '%' && match('{')) {
+    return start_sequence();
   }
 
-  return Untouched();
+  return untouched();
 }
 
-Token Scanner::ScanExpressionToken() {
+Token Scanner::scan_expression_token() {
   LITR_PROFILE_FUNCTION();
 
-  SkipWhitespace();
+  skip_whitespace();
 
-  m_Start = m_Current;
+  m_start = m_current;
 
-  if (IsAtEnd()) {
-    return MakeToken(TokenType::EOS);
+  if (is_at_end()) {
+    return make_token(TokenType::EOS);
   }
 
-  char c{Advance()};
+  char c{advance()};
 
-  if (IsAlpha(c)) return Identifier();
+  if (is_alpha(c)) return identifier();
 
   switch (c) {
-    case ',': return MakeToken(TokenType::COMMA);
-    case '(': return MakeToken(TokenType::LEFT_PAREN);
-    case ')': return MakeToken(TokenType::RIGHT_PAREN);
-    case '}': return EndSequence();
-    case '\'': return String();
-    default: return ErrorToken("Unexpected character.");
+    case ',': return make_token(TokenType::COMMA);
+    case '(': return make_token(TokenType::LEFT_PAREN);
+    case ')': return make_token(TokenType::RIGHT_PAREN);
+    case '}': return end_sequence();
+    case '\'': return string();
+    default: return error_token("Unexpected character.");
   }
 }
 
-std::string Scanner::GetTokenValue(const Token& token) {
+std::string Scanner::get_token_value(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
-  return {token.Start, token.Length};
+  return {token.start, token.length};
 }
 
-std::string Scanner::GetTokenValue(Token* token) {
+std::string Scanner::get_token_value(Token* token) {
   LITR_PROFILE_FUNCTION();
 
-  return {token->Start, token->Length};
+  return {token->start, token->length};
 }
 
-Token Scanner::MakeToken(TokenType type) const {
+Token Scanner::make_token(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  Token token{type, m_Start, static_cast<size_t>(m_Current - m_Start), m_Line, m_Column};
+  Token token{type, m_start, static_cast<size_t>(m_current - m_start), m_line, m_column};
   return token;
 }
 
-Token Scanner::ErrorToken(const char* message) const {
+Token Scanner::error_token(const char* message) const {
   LITR_PROFILE_FUNCTION();
 
-  Token token{TokenType::ERROR, message, strlen(message), m_Line, m_Column};
+  Token token{TokenType::ERROR, message, strlen(message), m_line, m_column};
   return token;
 }
 
-bool Scanner::IsDigit(char c) {
+bool Scanner::is_digit(char c) {
   LITR_PROFILE_FUNCTION();
 
   return c >= '0' && c <= '9';
 }
 
-bool Scanner::IsAlpha(char c) {
+bool Scanner::is_alpha(char c) {
   LITR_PROFILE_FUNCTION();
 
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool Scanner::IsAtEnd() const {
+bool Scanner::is_at_end() const {
   LITR_PROFILE_FUNCTION();
 
-  return *m_Current == '\0';
+  return *m_current == '\0';
 }
 
-Token Scanner::StartSequence() {
+Token Scanner::start_sequence() {
   LITR_PROFILE_FUNCTION();
 
-  m_Modes.push(Mode::EXPRESSION);
-  return MakeToken(TokenType::START_SEQ);
+  m_modes.push(Mode::EXPRESSION);
+  return make_token(TokenType::START_SEQ);
 }
 
-Token Scanner::EndSequence() {
+Token Scanner::end_sequence() {
   LITR_PROFILE_FUNCTION();
 
-  m_Modes.pop();
-  return MakeToken(TokenType::END_SEQ);
+  m_modes.pop();
+  return make_token(TokenType::END_SEQ);
 }
 
-Token Scanner::Untouched() {
+Token Scanner::untouched() {
   LITR_PROFILE_FUNCTION();
 
   // @todo: Refactor this condition for the check `m_Current[-1] != '\\'` of the escape sequence.
   while (
-      !(Peek() == '%' && PeekNext() == '{' && m_Current[-1] != '\\')
-      && !IsAtEnd()) {
-    Advance();
+      !(peek() == '%' && peek_next() == '{' && m_current[-1] != '\\')
+      && !is_at_end()) {
+    advance();
   }
 
-  return MakeToken(TokenType::UNTOUCHED);
+  return make_token(TokenType::UNTOUCHED);
 }
 
-Token Scanner::String() {
+Token Scanner::string() {
   LITR_PROFILE_FUNCTION();
 
-  while (Peek() != '\'' && !IsAtEnd()) {
-    Advance();
+  while (peek() != '\'' && !is_at_end()) {
+    advance();
   }
 
-  if (IsAtEnd()) {
-    return ErrorToken("Unterminated string.");
+  if (is_at_end()) {
+    return error_token("Unterminated string.");
   }
 
   // The closing quote.
-  Advance();
-  return MakeToken(TokenType::STRING);
+  advance();
+  return make_token(TokenType::STRING);
 }
 
-Token Scanner::Identifier() {
+Token Scanner::identifier() {
   LITR_PROFILE_FUNCTION();
 
-  while (IsAlpha(Peek()) || IsDigit(Peek())) {
-    Advance();
+  while (is_alpha(peek()) || is_digit(peek())) { advance();
   }
 
-  return MakeToken(IdentifierType());
+  return make_token(identifier_type());
 }
 
-TokenType Scanner::IdentifierType() const {
+TokenType Scanner::identifier_type() const {
   LITR_PROFILE_FUNCTION();
 
-  switch (m_Start[0]) {
+  switch (m_start[0]) {
     // case 'a': return CheckKeyword(1, 2, "nd", TokenType::AND);
-    case 'o': return CheckKeyword(1, 1, "r", TokenType::OR);
+    case 'o': return check_keyword(1, 1, "r", TokenType::OR);
   }
 
   return TokenType::IDENTIFIER;
 }
 
-TokenType Scanner::CheckKeyword(size_t start, size_t length, const char* rest, TokenType type) const {
+TokenType Scanner::check_keyword(size_t start, size_t length, const char* rest, TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  if (m_Current - m_Start == static_cast<int16_t>(start + length)
-      && std::memcmp(m_Start + start, rest, length) == 0) {
+  if (m_current - m_start == static_cast<int16_t>(start + length)
+      && std::memcmp(m_start + start, rest, length) == 0) {
     return type;
   }
 
   return TokenType::IDENTIFIER;
 }
 
-}  // namespace litr::Script
+}  // namespace litr::script

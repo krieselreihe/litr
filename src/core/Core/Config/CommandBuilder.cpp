@@ -8,167 +8,161 @@
 
 #include "Core/Error/Handler.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_File(file), m_Table(data), m_Command(CreateRef<Command>(name)) {
-  LITR_CORE_TRACE("Creating {}", *m_Command);
+    : m_file(file), m_table(data), m_command(create_ref<Command>(name)) {
+  LITR_CORE_TRACE("Creating {}", *m_command);
 }
 
-void CommandBuilder::AddScriptLine(const std::string& line) {
+void CommandBuilder::add_script_line(const std::string& line) {
   LITR_PROFILE_FUNCTION();
 
-  m_Command->Script.emplace_back(line);
+  m_command->script.emplace_back(line);
 }
 
-void CommandBuilder::AddScriptLine(const std::string& line, const toml::value& context) {
-  AddScriptLine(line);
-  AddLocation(context);
+void CommandBuilder::add_script_line(const std::string& line, const toml::value& context) {
+  add_script_line(line);
+  add_location(context);
 }
 
-void CommandBuilder::AddScript(const std::vector<std::string>& scripts) {
+void CommandBuilder::add_script(const std::vector<std::string>& scripts) {
   LITR_PROFILE_FUNCTION();
 
-  m_Command->Script = scripts;
+  m_command->script = scripts;
 }
 
-void CommandBuilder::AddScript(const std::vector<std::string>& scripts, const toml::value& context) {
-  AddScript(scripts);
-  for (auto&& entry : context.as_array()) AddLocation(entry);
+void CommandBuilder::add_script(const std::vector<std::string>& scripts, const toml::value& context) {
+  add_script(scripts);
+  for (auto&& entry : context.as_array()) add_location(entry);
 }
 
-void CommandBuilder::AddScript(const toml::value& scripts) {
+void CommandBuilder::add_script(const toml::value& scripts) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
-      Error::Handler::Push(Error::MalformedScriptError(
+      error::Handler::push(error::MalformedScriptError(
           "A command script can be either a string or array of strings.",
-          m_File.at(m_Command->Name)
-      ));
+          m_file.at(m_command->name)));
       // Stop after first error in an array of scripts, to avoid being too verbose.
       break;
     }
 
-    AddScriptLine(script.as_string(), script);
+    add_script_line(script.as_string(), script);
   }
 }
 
-void CommandBuilder::AddDescription() {
+void CommandBuilder::add_description() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"description"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& description{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& description{toml::find(m_table, name)};
 
     if (description.is_string()) {
-      m_Command->Description = description.as_string();
+      m_command->description = description.as_string();
       return;
     }
 
-    Error::Handler::Push(Error::MalformedCommandError(
-        fmt::format(R"(The "{}" can only be a string.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(
+        error::MalformedCommandError(fmt::format(R"(The "{}" can only be a string.)", name),
+            m_table.at(name)));
   }
 }
 
-void CommandBuilder::AddExample() {
+void CommandBuilder::add_example() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"example"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& example{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& example{toml::find(m_table, name)};
     if (example.is_string()) {
-      m_Command->Example = example.as_string();
+      m_command->example = example.as_string();
       return;
     }
 
-    Error::Handler::Push(Error::MalformedCommandError(
-        fmt::format(R"(The "{}" can only be a string.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(
+        error::MalformedCommandError(fmt::format(R"(The "{}" can only be a string.)", name),
+            m_table.at(name)));
   }
 }
 
-void CommandBuilder::AddDirectory(const Path& root) {
+void CommandBuilder::add_directory(const Path& root) {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"dir"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& directories{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& directories{toml::find(m_table, name)};
 
     if (directories.is_string()) {
-      m_Command->Directory.emplace_back(root.Append(directories.as_string()));
+      m_command->directory.emplace_back(root.append(directories.as_string()));
       return;
     }
 
     if (directories.is_array()) {
       for (auto&& directory : directories.as_array()) {
         if (!directory.is_string()) {
-          Error::Handler::Push(Error::MalformedCommandError(
+          error::Handler::push(error::MalformedCommandError(
               fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
-              m_Table.at(name)
-          ));
+              m_table.at(name)));
           continue;
         }
 
-        m_Command->Directory.emplace_back(root.Append(directory.as_string()));
+        m_command->directory.emplace_back(root.append(directory.as_string()));
       }
       return;
     }
 
-    Error::Handler::Push(Error::MalformedCommandError(
+    error::Handler::push(error::MalformedCommandError(
         fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
-        m_Table.at(name)
-    ));
+        m_table.at(name)));
   }
 }
 
-void CommandBuilder::AddOutput() {
+void CommandBuilder::add_output() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"output"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& output{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& output{toml::find(m_table, name)};
 
     if (output.is_string()) {
       if (output.as_string() == "silent") {
-        m_Command->Output = Command::Output::SILENT;
+        m_command->output = Command::Output::SILENT;
         return;
       }
 
       if (output.as_string() == "unchanged") {
-        m_Command->Output = Command::Output::UNCHANGED;
+        m_command->output = Command::Output::UNCHANGED;
         return;
       }
     }
 
-    Error::Handler::Push(Error::MalformedCommandError(
+    error::Handler::push(error::MalformedCommandError(
         fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
-        m_Table.at(name)
-    ));
+        m_table.at(name)));
   }
 }
 
-void CommandBuilder::AddChildCommand(const Ref<Command>& command) {
+void CommandBuilder::add_child_command(const Ref<Command>& command) {
   LITR_PROFILE_FUNCTION();
 
-  m_Command->ChildCommands.emplace_back(command);
+  m_command->child_commands.emplace_back(command);
 }
 
-void CommandBuilder::AddLocation(const toml::value& context) {
+void CommandBuilder::add_location(const toml::value& context) {
   LITR_PROFILE_FUNCTION();
 
-  m_Command->Locations.emplace_back(
+  m_command->Locations.emplace_back(
       context.location().line(),
       context.location().column(),
       context.location().line_str()
   );
 }
 
-}  // namespace litr::Config
+}  // namespace litr::config

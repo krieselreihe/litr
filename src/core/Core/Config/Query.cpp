@@ -10,22 +10,22 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Script/Compiler.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
-Query::Query(const Ref<Loader>& config) : m_Config(config) {}
+Query::Query(const Ref<Loader>& config) : m_config(config) {}
 
-Ref<Command> Query::GetCommand(const std::string& name) const {
+Ref<Command> Query::get_command(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  Parts names{SplitCommandQuery(name)};
-  return GetCommandByPath(names, GetCommands());
+  Parts names{split_command_query(name)};
+  return get_command_by_path(names, get_commands());
 }
 
-Ref<Parameter> Query::GetParameter(const std::string& name) const {
+Ref<Parameter> Query::get_parameter(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  for (auto&& param : GetParameters()) {
-    if (param->Name == name || param->Shortcut == name) {
+  for (auto&& param : get_parameters()) {
+    if (param->name == name || param->shortcut == name) {
       return param;
     }
   }
@@ -33,72 +33,72 @@ Ref<Parameter> Query::GetParameter(const std::string& name) const {
   return nullptr;
 }
 
-Query::Commands Query::GetCommands() const {
+Query::Commands Query::get_commands() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Config->GetCommands();
+  return m_config->get_commands();
 }
 
-Query::Commands Query::GetCommands(const std::string& name) const {
+Query::Commands Query::get_commands(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{GetCommand(name)};
+  const Ref<Command>& command{get_command(name)};
 
   if (command == nullptr) {
     return {};
   }
 
-  return command->ChildCommands;
+  return command->child_commands;
 }
 
-Query::Parameters Query::GetParameters() const {
+Query::Parameters Query::get_parameters() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Config->GetParameters();
+  return m_config->get_parameters();
 }
 
-Query::Parameters Query::GetParameters(const std::string& name) const {
+Query::Parameters Query::get_parameters(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{GetCommand(name)};
+  const Ref<Command>& command{get_command(name)};
   Query::Parameters parameters{};
 
   if (command == nullptr) {
     return parameters;
   }
 
-  std::vector<std::string> names{GetUsedParameterNames(command)};
+  std::vector<std::string> names{get_used_parameter_names(command)};
 
-  for (auto&& childCommand : command->ChildCommands) {
-    const std::vector<std::string> childNames{GetUsedParameterNames(childCommand)};
-    names.insert(names.end(), childNames.begin(), childNames.end());
+  for (auto&& child_command : command->child_commands) {
+    const std::vector<std::string> child_names{get_used_parameter_names(child_command)};
+    names.insert(names.end(), child_names.begin(), child_names.end());
   }
 
-  Utils::Deduplicate(names);
+  utils::deduplicate(names);
 
   if (!names.empty()) {
     for (auto&& n : names) {
-      parameters.push_back(GetParameter(n));
+      parameters.push_back(get_parameter(n));
     }
   }
 
   return parameters;
 }
 
-Query::Parts Query::SplitCommandQuery(const std::string& query) {
+Query::Parts Query::split_command_query(const std::string& query) {
   LITR_PROFILE_FUNCTION();
 
   Parts parts{};
-  Utils::SplitInto(query, '.', parts);
+  utils::split_into(query, '.', parts);
   return parts;
 }
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Query::GetCommandByPath(Parts& names, const Loader::Commands& commands) {
+Ref<Command> Query::get_command_by_path(Parts& names, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{GetCommandByName(names.front(), commands)};
+  const Ref<Command>& command{get_command_by_name(names.front(), commands)};
 
   if (command == nullptr) {
     return nullptr;
@@ -110,7 +110,7 @@ Ref<Command> Query::GetCommandByPath(Parts& names, const Loader::Commands& comma
     return command;
   }
 
-  if (command->ChildCommands.empty()) {
+  if (command->child_commands.empty()) {
     if (!names.empty()) {
       // Do nothing. This will lead further down the line to a "child command not found"
       // error, as it should be.
@@ -121,14 +121,14 @@ Ref<Command> Query::GetCommandByPath(Parts& names, const Loader::Commands& comma
 
   // Ignore recursion warning.
   // NOLINTNEXTLINE
-  return GetCommandByPath(names, command->ChildCommands);
+  return get_command_by_path(names, command->child_commands);
 }
 
-Ref<Command> Query::GetCommandByName(const std::string& name, const Loader::Commands& commands) {
+Ref<Command> Query::get_command_by_name(const std::string& name, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const Ref<Command>& command : commands) {
-    if (command->Name == name) {
+    if (command->name == name) {
       return command;
     }
   }
@@ -136,35 +136,35 @@ Ref<Command> Query::GetCommandByName(const std::string& name, const Loader::Comm
   return nullptr;
 }
 
-Query::Variables Query::GetParametersAsVariables() const {
+Query::Variables Query::get_parameters_as_variables() const {
   LITR_PROFILE_FUNCTION();
 
-  const Query::Parameters params{GetParameters()};
+  const Query::Parameters params{get_parameters()};
   Variables variables{};
 
   for (auto&& param : params) {
-    variables.insert_or_assign(param->Name, CLI::Variable(*param));
+    variables.insert_or_assign(param->name, cli::Variable(*param));
   }
 
   return variables;
 }
 
-std::vector<std::string> Query::GetUsedParameterNames(const Ref<Command>& command) const {
+std::vector<std::string> Query::get_used_parameter_names(const Ref<Command>& command) const {
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> names{};
   size_t index{0};
 
-  for (auto&& script : command->Script) {
-    const Variables variables{GetParametersAsVariables()};
-    const Script::Compiler compiler{script, command->Locations[index++], variables};
-    const std::vector<std::string> usedNames{compiler.GetUsedVariables()};
+  for (auto&& script : command->script) {
+    const Variables variables{get_parameters_as_variables()};
+    const script::Compiler compiler{script, command->Locations[index++], variables};
+    const std::vector<std::string> usedNames{compiler.get_used_variables()};
     names.insert(names.end(), usedNames.begin(), usedNames.end());
   }
 
-  Utils::Deduplicate(names);
+  utils::deduplicate(names);
 
   return names;
 }
 
-}  // namespace litr::Config
+}  // namespace litr::config

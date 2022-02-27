@@ -15,7 +15,7 @@ You want to contribute to this repo? Nice! And of course: **you are the best!** 
 - [Tests](#tests)
 - [Profiling](#profiling)
 - [Usage without Litr](#usage-without-litr)
-- [Run](#run)
+- [run](#run)
 - [Files and Directories](#files-and-directories)
 
 ---
@@ -108,7 +108,7 @@ Build a debug build:
 litr build
 ```
 
-Run Litr with the following options if needed:
+run Litr with the following options if needed:
 
 * Enable detailed execution flow tracing including disassemble any parser statements `litr build --trace`
 * Disable any logging via `litr build --nolog`.
@@ -129,10 +129,10 @@ For a release that can be published, and the release process in full, visit the 
 After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
 
 ```shell
-# Run all tests for debugging build
+# run all tests for debugging build
 litr test
 
-# Run all tests for release build
+# run all tests for release build
 litr test --target=release
 ```
 
@@ -177,7 +177,7 @@ Build the application:
 cmake --build build/debug
 ```
 
-Run cmake with the following options if needed:
+run cmake with the following options if needed:
 
 * Disassemble any parser statements for debugging using `-DDISASSEMBLE=ON`.
 * Disable any logging via `-DDEACTIVATE_LOGGING=ON`.
@@ -205,10 +205,10 @@ After [building the application](#build) you can run unit tests for the build ou
 **Note:** With CMake 3.20 it will be possible to specify the `--test-dir` option for ctest [[source](https://cmake.org/cmake/help/latest/release/3.20.html#ctest)], making test execution easier.
 
 ```shell
-# Run all tests for debugging build
+# run all tests for debugging build
 cd build/debug/src/tests && ctest && ../../../..
 
-# Run all tests for release build
+# run all tests for release build
 cd build/release/src/tests && ctest && ../../../..
 ```
 
@@ -250,7 +250,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPI
 cmake --build build/debug
 ```
 
-## Run
+## run
 
 After [building the application](#build) you can either run the local client:
 
@@ -276,12 +276,12 @@ Here an overview of **a few** important files and folders when working with the 
 
 #### Debug
 
-- `src/core/Core/Debug`: Code for debugging the application
+- `src/core/Core/Debug`: code for debugging the application
 
-#### Error
+#### error
 
-- `src/core/Core/Error`: Error handling related code
-- `src/core/Core/Error/BaseError.hpp`: Base error class
+- `src/core/Core/error`: error handling related code
+- `src/core/Core/error/BaseError.hpp`: Base error class
 
 #### Config
 
@@ -290,15 +290,15 @@ Here an overview of **a few** important files and folders when working with the 
 - `src/core/Core/Config/Command.hpp`: Configuration command description
 - `src/core/Core/Config/Parameter.hpp`: Configuration parameter description
 
-#### CLI
+#### cli
 
-- `src/core/Core/CLI/Parser.hpp`: Command line argument parser
-- `src/core/Core/CLI/Interpreter.cpp`: Execute parsed instructions
-- `src/core/Core/CLI/Shell.hpp`: Script runner
+- `src/core/Core/cli/Parser.hpp`: Command line argument parser
+- `src/core/Core/cli/Interpreter.cpp`: execute parsed instructions
+- `src/core/Core/cli/Shell.hpp`: script runner
 
-#### Script
+#### script
 
-- `src/core/Core/Script/Compiler.cpp`: Compile CLI instructions to a valid executable script
+- `src/core/Core/script/Compiler.cpp`: Compile cli instructions to a valid executable script
 
 ### Tests
 

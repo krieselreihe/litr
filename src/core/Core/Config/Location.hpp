@@ -7,17 +7,17 @@
 #include <string>
 #include <utility>
 
-namespace litr::Config {
+namespace litr::config {
 
 struct Location {
-  uint32_t Line{};
-  uint32_t Column{};
-  std::string LineStr{};
+  uint32_t line{};
+  uint32_t column{};
+  std::string line_str{};
 
   Location() = default;
   Location(uint32_t line, uint32_t column, std::string lineStr)
-      : Line(line), Column(column), LineStr(std::move(lineStr)) {
+      : line(line), column(column), line_str(std::move(lineStr)) {
   }
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config

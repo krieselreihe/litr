@@ -21,44 +21,44 @@ class Path {
   explicit Path(std::string path);
   virtual ~Path() = default;
 
-  [[nodiscard]] Path ParentPath() const;
-  [[nodiscard]] bool Empty() const;
-  [[nodiscard]] std::string ToString() const;
+  [[nodiscard]] Path parent_path() const;
+  [[nodiscard]] bool empty() const;
+  [[nodiscard]] std::string to_string() const;
 
-  [[nodiscard]] Path Append(const std::filesystem::path& path) const;
-  [[nodiscard]] Path Append(const std::string& path) const;
-  [[nodiscard]] Path Append(const Path& path) const;
+  [[nodiscard]] Path append(const std::filesystem::path& path) const;
+  [[nodiscard]] Path append(const std::string& path) const;
+  [[nodiscard]] Path append(const Path& path) const;
 
-  [[nodiscard]] Path WithoutFilename() const;
+  [[nodiscard]] Path without_filename() const;
 
-  [[nodiscard]] size_t Count() const;
+  [[nodiscard]] size_t count() const;
 
-  explicit operator std::string() const { return ToString(); }
+  explicit operator std::string() const { return to_string(); }
 
-  bool operator!=(const Path& other) const { return other.m_Path != m_Path; }
-  bool operator==(const Path& other) const { return other.m_Path == m_Path; }
-  bool operator!=(const std::string& other) const { return other != m_Path; }
-  bool operator==(const std::string& other) const { return other == m_Path; }
+  bool operator!=(const Path& other) const { return other.m_path != m_path; }
+  bool operator==(const Path& other) const { return other.m_path == m_path; }
+  bool operator!=(const std::string& other) const { return other != m_path; }
+  bool operator==(const std::string& other) const { return other == m_path; }
 
-  Iterator begin() { return m_Path.begin(); }
-  Iterator end() { return m_Path.end(); }
-  [[nodiscard]] ConstIterator begin() const { return m_Path.begin(); }
-  [[nodiscard]] ConstIterator end() const { return m_Path.end(); }
+  Iterator begin() { return m_path.begin(); }
+  Iterator end() { return m_path.end(); }
+  [[nodiscard]] ConstIterator begin() const { return m_path.begin(); }
+  [[nodiscard]] ConstIterator end() const { return m_path.end(); }
 
   template <typename OStream>
   friend OStream& operator<<(OStream& os, const Path& path) {
-    return os << path.ToString();
+    return os << path.to_string();
   }
 
  private:
-  std::filesystem::path m_Path{};
+  std::filesystem::path m_path{};
   friend class FileSystem;
 };
 
 class FileSystem {
  public:
-  [[nodiscard]] static bool Exists(const Path& path);
-  [[nodiscard]] static Path GetCurrentWorkingDirectory();
+  [[nodiscard]] static bool exists(const Path& path);
+  [[nodiscard]] static Path get_current_working_directory();
 };
 
 }  // namespace litr
@@ -73,6 +73,6 @@ struct fmt::formatter<litr::Path> {
 
   template <typename FormatContext>
   auto format(const litr::Path& p, FormatContext& ctx) {
-    return format_to(ctx.out(), "{}", p.ToString());
+    return format_to(ctx.out(), "{}", p.to_string());
   }
 };

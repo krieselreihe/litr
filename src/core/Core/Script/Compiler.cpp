@@ -13,102 +13,100 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::Script {
+namespace litr::script {
 
-Compiler::Compiler(const std::string& source, Config::Location location, Variables variables)
-    : m_Scanner(source.c_str()), m_Location(std::move(location)), m_Variables(std::move(variables)) {
+Compiler::Compiler(const std::string& source, config::Location location, Variables variables)
+    : m_scanner(source.c_str()), m_location(std::move(location)), m_variables(std::move(variables)) {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
-  Source();
-  EndOfScript();
+  advance();
+  source_token();
+  end_of_script();
 }
 
-std::string Compiler::GetScript() const {
-  return m_Script;
+std::string Compiler::get_script() const {
+  return m_script;
 }
 
-std::vector<std::string> Compiler::GetUsedVariables() const {
-  return m_UsedVariables;
+std::vector<std::string> Compiler::get_used_variables() const {
+  return m_used_variables;
 }
 
-void Compiler::Advance() {
+void Compiler::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_Previous = m_Current;
+  m_previous = m_current;
 
   while (true) {
-    m_Current = m_Scanner.ScanToken();
+    m_current = m_scanner.scan_token();
 
-    if (m_Current.Type != TokenType::ERROR) {
+    if (m_current.type != TokenType::ERROR) {
       break;
     }
 
-    ErrorAtCurrent(m_Current.Start);
+    error_at_current(m_current.start);
   }
 }
 
-void Compiler::Consume(TokenType type, const char *message) {
+void Compiler::consume(TokenType type, const char *message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_Current.Type == type) {
-    Advance();
+  if (m_current.type == type) {
+    advance();
     return;
   }
 
-  ErrorAtCurrent(message);
+  error_at_current(message);
 }
 
-bool Compiler::Match(TokenType type) const {
+bool Compiler::match(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Previous.Type == type;
+  return m_previous.type == type;
 }
 
-bool Compiler::Peak(TokenType type) const {
+bool Compiler::peak(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Current.Type == type;
+  return m_current.type == type;
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::Source() {
+void Compiler::source_token() {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
+  advance();
 
-  if (Match(TokenType::UNTOUCHED)) {
-    Untouched();
-    Source();
+  if (match(TokenType::UNTOUCHED)) {
+    untouched();
+    source_token();
     return;
   }
 
-  if (Match(TokenType::START_SEQ)) {
-    Script();
+  if (match(TokenType::START_SEQ)) {
+    script();
     return;
   }
 }
 
-void Compiler::Untouched() {
+void Compiler::untouched() {
   LITR_PROFILE_FUNCTION();
 
-  m_Script.append(Scanner::GetTokenValue(m_Previous));
+  m_script.append(Scanner::get_token_value(m_previous));
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::Script() {
+void Compiler::script() {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
+  advance();
 
-  switch (m_Previous.Type) {
-    case TokenType::STRING:
-      String();
+  switch (m_previous.type) {
+    case TokenType::STRING: string();
       break;
-    case TokenType::IDENTIFIER:
-      Identifier();
+    case TokenType::IDENTIFIER: identifier();
       break;
     case TokenType::LEFT_PAREN:
     case TokenType::RIGHT_PAREN:
@@ -118,169 +116,160 @@ void Compiler::Script() {
     case TokenType::START_SEQ:
     case TokenType::END_SEQ:
     case TokenType::ERROR:
-    case TokenType::EOS:
-      Error("Unexpected character.");
+    case TokenType::EOS: error("Unexpected character.");
       break;
   }
 
-  EndOfSequence();
-  Source();
+  end_of_sequence();
+  source_token();
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::Identifier() {
+void Compiler::identifier() {
   LITR_PROFILE_FUNCTION();
 
-  const std::string name{Scanner::GetTokenValue(m_Previous)};
-  auto variable{m_Variables.find(name)};
+  const std::string name{Scanner::get_token_value(m_previous)};
+  auto variable{m_variables.find(name)};
 
-  if (variable == m_Variables.end()) {
-    Error("Undefined parameter.");
+  if (variable == m_variables.end()) {
+    error("Undefined parameter.");
     return;
   }
 
-  CollectUsedVariable(variable->second);
+  collect_used_variable(variable->second);
 
-  switch (variable->second.Type) {
-    case CLI::Variable::Type::STRING:
-      String(variable->second);
+  switch (variable->second.type) {
+    case cli::Variable::Type::STRING: string(variable->second);
       break;
-    case CLI::Variable::Type::BOOLEAN:
-      Statement(variable->second);
+    case cli::Variable::Type::BOOLEAN: statement(variable->second);
       break;
   }
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::Statement(const CLI::Variable& variable) {
+void Compiler::statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
+  advance();
 
-  if (Peak(TokenType::OR)) {
-    OrStatement(variable);
+  if (peak(TokenType::OR)) {
+    or_statement(variable);
   } else {
-    IfStatement(variable);
+    if_statement(variable);
   }
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::OrStatement(const CLI::Variable& variable) {
+void Compiler::or_statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
-  if (std::get<bool>(variable.Value)) {
-    Expression();
-    Consume(TokenType::OR, R"(Expected `or` after expression.)");
+  if (std::get<bool>(variable.value)) {
+    expression();
+    consume(TokenType::OR, R"(Expected `or` after expression.)");
     // Skip "false" clause
-    Advance();
+    advance();
   } else {
     // Skip over true branch
-    while (!Peak(TokenType::OR) && !Peak(TokenType::EOS)) {
-      Advance();
+    while (!peak(TokenType::OR) && !peak(TokenType::EOS)) { advance();
     }
 
-    Consume(TokenType::OR, R"(Expected `or` after expression.)");
-    Advance();
-    Expression();
+    consume(TokenType::OR, R"(Expected `or` after expression.)");
+    advance();
+    expression();
   }
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::IfStatement(const CLI::Variable& variable) {
+void Compiler::if_statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
-  if (std::get<bool>(variable.Value)) {
-    Expression();
+  if (std::get<bool>(variable.value)) { expression();
   }
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Compiler::Expression() {
+void Compiler::expression() {
   LITR_PROFILE_FUNCTION();
 
-  if (Match(TokenType::STRING)) {
-    String();
+  if (match(TokenType::STRING)) {
+    string();
     return;
   }
 
-  if (Match(TokenType::IDENTIFIER)) {
-    Identifier();
+  if (match(TokenType::IDENTIFIER)) {
+    identifier();
     return;
   }
 }
 
-void Compiler::String() {
+void Compiler::string() {
   LITR_PROFILE_FUNCTION();
 
-  m_Script.append(Utils::Trim(Scanner::GetTokenValue(m_Previous), '\''));
+  m_script.append(utils::trim(Scanner::get_token_value(m_previous), '\''));
 }
 
-void Compiler::String(const CLI::Variable& variable) {
+void Compiler::string(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
-  m_Script.append(std::get<std::string>(variable.Value));
+  m_script.append(std::get<std::string>(variable.value));
 }
 
-void Compiler::EndOfSequence() {
+void Compiler::end_of_sequence() {
   LITR_PROFILE_FUNCTION();
 
-  Consume(TokenType::END_SEQ, "Expected `}`.");
+  consume(TokenType::END_SEQ, "Expected `}`.");
 }
 
-void Compiler::EndOfScript() {
+void Compiler::end_of_script() {
   LITR_PROFILE_FUNCTION();
 
-  Consume(TokenType::EOS, "Expected end.");
+  consume(TokenType::EOS, "Expected end.");
 }
 
-void Compiler::CollectUsedVariable(const CLI::Variable& variable) {
+void Compiler::collect_used_variable(const cli::Variable& variable) {
   // If name is not already collected:
-  if (std::find(m_UsedVariables.begin(), m_UsedVariables.end(), variable.Name) == m_UsedVariables.end()) {
-    m_UsedVariables.push_back(variable.Name);
+  if (std::find(m_used_variables.begin(), m_used_variables.end(), variable.name) == m_used_variables.end()) {
+    m_used_variables.push_back(variable.name);
   }
 }
 
-void Compiler::Error(const std::string& message) {
+void Compiler::error(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  ErrorAt(&m_Previous, message);
+  error_at(&m_previous, message);
 }
 
-void Compiler::ErrorAtCurrent(const std::string& message) {
+void Compiler::error_at_current(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  ErrorAt(&m_Current, message);
+  error_at(&m_current, message);
 }
 
-void Compiler::ErrorAt(Token *token, const std::string& message) {
+void Compiler::error_at(Token *token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_PanicMode) return;
-  m_PanicMode = true;
+  if (m_panic_mode) return;
+  m_panic_mode = true;
 
-  std::string outMessage{"Cannot parse"};
+  std::string out_message{"Cannot parse"};
 
-  if (token->Type == TokenType::EOS) {
-    outMessage.append(" at end");
-  } else if (token->Type == TokenType::ERROR) {
+  if (token->type == TokenType::EOS) {
+    out_message.append(" at end");
+  } else if (token->type == TokenType::ERROR) {
     // Nothing, yet.
   } else {
-    outMessage.append(fmt::format(" at `{}`", Scanner::GetTokenValue(token)));
+    out_message.append(fmt::format(" at `{}`", Scanner::get_token_value(token)));
   }
 
-  outMessage.append(fmt::format(": {}", message));
+  out_message.append(fmt::format(": {}", message));
 
-  Error::Handler::Push(Error::ScriptParserError(
-      outMessage,
-      m_Location.Line,
-      m_Location.Column + token->Column + 1,
-      m_Location.LineStr
-  ));
+  error::Handler::push(error::ScriptParserError(
+      out_message, m_location.line, m_location.column + token->column + 1, m_location.line_str));
 }
 
-}  // namespace litr::Script
+}  // namespace litr::script

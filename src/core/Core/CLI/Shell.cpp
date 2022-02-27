@@ -9,31 +9,31 @@
 #include "Core/Log.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
-Shell::Result Shell::Exec(const std::string& command) {
+Shell::Result Shell::exec(const std::string& command) {
   LITR_PROFILE_FUNCTION();
 
-  return Shell::Exec(command, []([[maybe_unused]] const std::string& _buffer) {});
+  return Shell::exec(command, []([[maybe_unused]] const std::string& _buffer) {});
 }
 
-Shell::Result Shell::Exec(const std::string& command, const Path& path) {
+Shell::Result Shell::exec(const std::string& command, const Path& path) {
   LITR_PROFILE_FUNCTION();
 
-  return Shell::Exec(command, path, []([[maybe_unused]] const std::string& _buffer) {});
+  return Shell::exec(command, path, []([[maybe_unused]] const std::string& _buffer) {});
 }
 
-Shell::Result Shell::Exec(const std::string& command, const Shell::ExecCallback& callback) {
+Shell::Result Shell::exec(const std::string& command, const Shell::ExecCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
-  return Shell::Exec(command, Path(), callback);
+  return Shell::exec(command, Path(), callback);
 }
 
-Shell::Result Shell::Exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback) {
+Shell::Result Shell::exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
   Result result{};
-  std::string cmd{CreateCommandString(command, path)};
+  std::string cmd{create_command_string(command, path)};
 
   LITR_CORE_TRACE("Executing command \"{}\"", cmd);
 
@@ -45,52 +45,52 @@ Shell::Result Shell::Exec(const std::string& command, const Path& path, const Sh
 
     while (!feof(stream)) {
       if (fgets(buffer, max_buffer, stream) != nullptr) {
-        result.Message.append(buffer);
+        result.message.append(buffer);
         callback(std::string(buffer));
       }
     }
 
-    result.Status = GetStatusCode(pclose(stream));
+    result.status = get_status_code(pclose(stream));
   }
 
   return result;
 }
 
-ExitStatus Shell::GetStatusCode(int streamStatus) {
-  return static_cast<ExitStatus>(streamStatus / 256);
+ExitStatus Shell::get_status_code(int stream_status) {
+  return static_cast<ExitStatus>(stream_status / 256);
 }
 
-std::string Shell::CreateCommandString(const std::string& command, const Path& path) {
+std::string Shell::create_command_string(const std::string& command, const Path& path) {
   LITR_PROFILE_FUNCTION();
 
-  std::string mainCommand{command};
-  mainCommand.append(" 2>&1");
+  std::string main_command{command};
+  main_command.append(" 2>&1");
 
-  if (path.Empty()) {
-    return mainCommand;
+  if (path.empty()) {
+    return main_command;
   }
 
   // Change current working directory
-  std::string cmd{CreateCdCommand(path)};
-  cmd.append(" && ").append(mainCommand);
+  std::string cmd{create_cd_command(path)};
+  cmd.append(" && ").append(main_command);
 
   // Reset current working directory
-  Path returnPath{};
-  for (size_t i{0}; i < path.Count(); ++i) {
-    returnPath = returnPath.Append(std::string(".."));
+  Path return_path{};
+  for (size_t i{0}; i < path.count(); ++i) {
+    return_path = return_path.append(std::string(".."));
   }
 
-  cmd.append(" && ").append(CreateCdCommand(returnPath));
+  cmd.append(" && ").append(create_cd_command(return_path));
 
   return cmd;
 }
 
-std::string Shell::CreateCdCommand(const Path& path) {
+std::string Shell::create_cd_command(const Path& path) {
   LITR_PROFILE_FUNCTION();
 
   std::string cmd{"cd "};
-  cmd.append(path.ToString());
+  cmd.append(path.to_string());
   return cmd;
 }
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

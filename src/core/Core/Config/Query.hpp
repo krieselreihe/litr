@@ -13,11 +13,11 @@
 #include "Core/Config/Loader.hpp"
 #include "Core/CLI/Variable.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 class Query {
   using Parts = std::deque<std::string>;
-  using Variables = std::unordered_map<std::string, CLI::Variable>;
+  using Variables = std::unordered_map<std::string, cli::Variable>;
 
  public:
   using Commands = std::vector<Ref<Command>>;
@@ -25,24 +25,23 @@ class Query {
 
   explicit Query(const Ref<Loader>& config);
 
-  [[nodiscard]] Ref<Command> GetCommand(const std::string& name) const;
-  [[nodiscard]] Ref<Parameter> GetParameter(const std::string& name) const;
+  [[nodiscard]] Ref<Command> get_command(const std::string& name) const;
+  [[nodiscard]] Ref<Parameter> get_parameter(const std::string& name) const;
 
-  [[nodiscard]] Commands GetCommands() const;
-  [[nodiscard]] Commands GetCommands(const std::string& name) const;
-  [[nodiscard]] Parameters GetParameters() const;
-  [[nodiscard]] Parameters GetParameters(const std::string& name) const;
-
- private:
-  [[nodiscard]] static Parts SplitCommandQuery(const std::string& query);
-  [[nodiscard]] static Ref<Command> GetCommandByPath(Parts& names, const Loader::Commands& commands);
-  [[nodiscard]] static Ref<Command> GetCommandByName(const std::string& name, const Loader::Commands& commands);
-
-  [[nodiscard]] Variables GetParametersAsVariables() const;
-  [[nodiscard]] std::vector<std::string> GetUsedParameterNames(const Ref<Command>& command) const;
+  [[nodiscard]] Commands get_commands() const;
+  [[nodiscard]] Commands get_commands(const std::string& name) const;
+  [[nodiscard]] Parameters get_parameters() const;
+  [[nodiscard]] Parameters get_parameters(const std::string& name) const;
 
  private:
-  const Ref<Loader>& m_Config;
+  [[nodiscard]] static Parts split_command_query(const std::string& query);
+  [[nodiscard]] static Ref<Command> get_command_by_path(Parts& names, const Loader::Commands& commands);
+  [[nodiscard]] static Ref<Command> get_command_by_name(const std::string& name, const Loader::Commands& commands);
+
+  [[nodiscard]] Variables get_parameters_as_variables() const;
+  [[nodiscard]] std::vector<std::string> get_used_parameter_names(const Ref<Command>& command) const;
+
+  const Ref<Loader>& m_config;
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config

@@ -12,27 +12,27 @@
 #include "Core/Base.hpp"
 #include "Core/Config/Parameter.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 class ParameterBuilder {
  public:
   ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name);
 
-  void AddDescription();
-  void AddDescription(const std::string& description);
-  void AddShortcut();
-  void AddShortcut(const std::vector<Ref<Parameter>>& params);
-  void AddDefault();
-  void AddType();
+  void add_description();
+  void add_description(const std::string& description);
+  void add_shortcut();
+  void add_shortcut(const std::vector<Ref<Parameter>>& params);
+  void add_default();
+  void add_type();
 
-  [[nodiscard]] inline Ref<Parameter> GetResult() const { return m_Parameter; }
+  [[nodiscard]] inline Ref<Parameter> get_result() const { return m_parameter; }
 
-  [[nodiscard]] static bool IsReservedName(const std::string& name);
+  [[nodiscard]] static bool is_reserved_name(const std::string& name);
 
  private:
-  const toml::table& m_File;
-  const toml::value& m_Table;
-  const Ref<Parameter> m_Parameter;
+  const toml::table& m_file;
+  const toml::value& m_table;
+  const Ref<Parameter> m_parameter;
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config

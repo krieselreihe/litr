@@ -16,23 +16,23 @@
   {                                                                                              \
     size_t iteration{0};                                                                         \
     size_t offset{0};                                                                            \
-    while (offset < (instruction)->Count()) {                                                    \
+    while (offset < (instruction)->count()) {                                                    \
       const auto test{(definition)[iteration]};                                                  \
-      const auto code{static_cast<litr::CLI::Instruction::Code>((instruction)->Read(offset++))}; \
+      const auto code{static_cast<litr::cli::Instruction::Code>((instruction)->read(offset++))}; \
       switch (code) {                                                                            \
-        case litr::CLI::Instruction::Code::CONSTANT:                                             \
-        case litr::CLI::Instruction::Code::DEFINE:                                               \
-        case litr::CLI::Instruction::Code::BEGIN_SCOPE:                                          \
-        case litr::CLI::Instruction::Code::EXECUTE: {                                            \
-          const std::byte index{(instruction)->Read(offset)};                                    \
-          const litr::CLI::Instruction::Value constant{(instruction)->ReadConstant(index)};      \
+        case litr::cli::Instruction::Code::CONSTANT:                                             \
+        case litr::cli::Instruction::Code::DEFINE:                                               \
+        case litr::cli::Instruction::Code::BEGIN_SCOPE:                                          \
+        case litr::cli::Instruction::Code::EXECUTE: {                                            \
+          const std::byte index{(instruction)->read(offset)};                                    \
+          const litr::cli::Instruction::Value constant{(instruction)->read_constant(index)};     \
           offset += 1;                                                                           \
-          CHECK(test.Code == code);                                                              \
-          CHECK(test.Value == constant);                                                         \
+          CHECK_EQ(test.code, code);                                                             \
+          CHECK_EQ(test.value, constant);                                                        \
           break;                                                                                 \
         }                                                                                        \
-        case litr::CLI::Instruction::Code::CLEAR: {                                              \
-          CHECK(test.Code == code);                                                              \
+        case litr::cli::Instruction::Code::CLEAR: {                                              \
+          CHECK_EQ(test.code, code);                                                             \
           break;                                                                                 \
         }                                                                                        \
         default:                                                                                 \
@@ -41,377 +41,377 @@
       }                                                                                          \
       iteration++;                                                                               \
     }                                                                                            \
-    CHECK(iteration == (definition).size());                                                     \
+    CHECK_EQ(iteration, (definition).size());                                                    \
   }
 
 struct InstructionDefinition {
-  litr::CLI::Instruction::Code Code;
-  litr::CLI::Instruction::Value Value;
+  litr::cli::Instruction::Code code;
+  litr::cli::Instruction::Value value;
 };
 
 TEST_SUITE("CLI::Parser") {
   TEST_CASE("Single long parameter") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(--target="Some release")"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "target"},
-        {litr::CLI::Instruction::Code::CONSTANT, "Some release"}
+        {litr::cli::Instruction::Code::DEFINE, "target"},
+        {litr::cli::Instruction::Code::CONSTANT, "Some release"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Single short parameter") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug is nice")"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "t"},
-        {litr::CLI::Instruction::Code::CONSTANT, "debug is nice"}
+        {litr::cli::Instruction::Code::DEFINE, "t"},
+        {litr::cli::Instruction::Code::CONSTANT, "debug is nice"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Parameter with empty string") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="")"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "t"},
-        {litr::CLI::Instruction::Code::CONSTANT, ""}
+        {litr::cli::Instruction::Code::DEFINE, "t"},
+        {litr::cli::Instruction::Code::CONSTANT, ""}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Single command") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{{
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build"}
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::EXECUTE, "build"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Multiple commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build cpp"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 3> definition{{
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build.cpp"}
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Multiple comma separated commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build,run"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 5> definition{{
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build"},
-        {litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "run"},
-        {litr::CLI::Instruction::Code::EXECUTE, "run"}
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::EXECUTE, "build"},
+        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
+        {litr::cli::Instruction::Code::EXECUTE, "run"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Long parameter with string values and commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(--target="release" build,run)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 7> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "target"},
-        {litr::CLI::Instruction::Code::CONSTANT, "release"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build"},
-        {litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "run"},
-        {litr::CLI::Instruction::Code::EXECUTE, "run"}
+        {litr::cli::Instruction::Code::DEFINE, "target"},
+        {litr::cli::Instruction::Code::CONSTANT, "release"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::EXECUTE, "build"},
+        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
+        {litr::cli::Instruction::Code::EXECUTE, "run"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Mixed parameters with mixed values") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="release" --debug)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 3> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "t"},
-        {litr::CLI::Instruction::Code::CONSTANT, "release"},
-        {litr::CLI::Instruction::Code::DEFINE, "debug"}
+        {litr::cli::Instruction::Code::DEFINE, "t"},
+        {litr::cli::Instruction::Code::CONSTANT, "release"},
+        {litr::cli::Instruction::Code::DEFINE, "debug"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid comma operator") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{","};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors() == true);
+    CHECK(parser.has_errors() == true);
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Unexpected comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid comma operators with parameter") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" ,)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Unexpected comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid comma operators with command") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"run ,,"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Duplicated comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid multiple comma operators") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{", ,"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Unexpected comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid multiple comma operators with commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build cpp , ,"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Duplicated comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Even more invalid multiple comma operators with commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build cpp ,,,,"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Duplicated comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Invalid multiple comma operators with closing command") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"build cpp , , run"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `,`: Duplicated comma.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Valid nested command execution") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" build cpp)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 5> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "t"},
-        {litr::CLI::Instruction::Code::CONSTANT, "debug"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build.cpp"}
+        {litr::cli::Instruction::Code::DEFINE, "t"},
+        {litr::cli::Instruction::Code::CONSTANT, "debug"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Valid multiple nested command execution") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" build cpp, java)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 8> definition{{
-        {litr::CLI::Instruction::Code::DEFINE, "t"},
-        {litr::CLI::Instruction::Code::CONSTANT, "debug"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build.cpp"},
-        {litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::CLI::Instruction::Code::BEGIN_SCOPE, "java"},
-        {litr::CLI::Instruction::Code::EXECUTE, "build.java"}
+        {litr::cli::Instruction::Code::DEFINE, "t"},
+        {litr::cli::Instruction::Code::CONSTANT, "debug"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"},
+        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+        {litr::cli::Instruction::Code::BEGIN_SCOPE, "java"},
+        {litr::cli::Instruction::Code::EXECUTE, "build.java"}
     }};
 
-    CHECK_FALSE(parser.HasErrors());
+    CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Unsupported characters") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"(9)"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse: Unexpected character.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse: Unexpected character.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Unsupported string between commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(build "debug" project )"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `\"debug\"`: This is not allowed here.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `\"debug\"`: This is not allowed here.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Unsupported number between commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(build 23 project )"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `23`: This is not allowed here.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `23`: This is not allowed here.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Unsupported characters between commands") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(build ++ project )"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse: Unexpected character.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse: Unexpected character.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Assignment missing parameter") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(= "value")"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Duplicated assignment operator") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{R"(-t == "value")"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse at `=`: Value assignment missing.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse at `=`: Value assignment missing.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Duplicated parameter initializer") {
-    const auto instruction{litr::CreateRef<litr::CLI::Instruction>()};
+    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
     const std::string source{"---t"};
 
-    litr::CLI::Parser parser{instruction, source};
+    litr::cli::Parser parser{instruction, source};
 
-    CHECK(parser.HasErrors());
+    CHECK(parser.has_errors());
 
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "Cannot parse: A parameter can only start with the characters A-Za-z.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "Cannot parse: A parameter can only start with the characters A-Za-z.");
+    litr::error::Handler::flush();
   }
 }

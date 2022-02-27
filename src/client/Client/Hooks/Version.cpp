@@ -8,10 +8,10 @@
 
 #include "Core.hpp"
 
-namespace litr::Hook {
+namespace litr::hook {
 
-void Version::Print([[maybe_unused]] const Ref<CLI::Instruction>& instruction) {
+void Version::print([[maybe_unused]] const Ref<cli::Instruction>& instruction) {
   fmt::print("{}.{}.{}\n", LITR_VERSION_MAJOR, LITR_VERSION_MINOR, LITR_VERSION_PATCH);
 }
 
-}  // namespace litr::Hook
+}  // namespace litr::hook

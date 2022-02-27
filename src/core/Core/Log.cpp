@@ -12,7 +12,7 @@
 namespace litr {
 
 Log::Log() {
-  std::vector<spdlog::sink_ptr> logSinks;
+  std::vector<spdlog::sink_ptr> log_sinks;
 
 #ifdef TRACE
   spdlog::level::level_enum level{spdlog::level::trace};
@@ -20,22 +20,22 @@ Log::Log() {
   spdlog::level::level_enum level{spdlog::level::debug};
 #endif
 
-  logSinks.emplace_back(CreateRef<spdlog::sinks::stdout_color_sink_mt>());
-  logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("litr.log", true));
+  log_sinks.emplace_back(create_ref<spdlog::sinks::stdout_color_sink_mt>());
+  log_sinks.emplace_back(create_ref<spdlog::sinks::basic_file_sink_mt>("litr.log", true));
 
-  logSinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
-  logSinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
+  log_sinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
+  log_sinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
 
-  s_CoreLogger = CreateRef<spdlog::logger>("CORE", begin(logSinks), end(logSinks));
-  spdlog::register_logger(s_CoreLogger);
-  s_CoreLogger->set_level(level);
-  s_CoreLogger->flush_on(level);
+  s_core_logger = create_ref<spdlog::logger>("CORE", begin(log_sinks), end(log_sinks));
+  spdlog::register_logger(s_core_logger);
+  s_core_logger->set_level(level);
+  s_core_logger->flush_on(level);
 
-  s_ClientLogger = CreateRef<spdlog::logger>("CLIENT", begin(logSinks), end(logSinks));
-  spdlog::register_logger(s_ClientLogger);
-  spdlog::set_default_logger(s_ClientLogger);
-  s_ClientLogger->set_level(level);
-  s_ClientLogger->flush_on(level);
+  s_client_logger = create_ref<spdlog::logger>("CLIENT", begin(log_sinks), end(log_sinks));
+  spdlog::register_logger(s_client_logger);
+  spdlog::set_default_logger(s_client_logger);
+  s_client_logger->set_level(level);
+  s_client_logger->flush_on(level);
 }
 
 

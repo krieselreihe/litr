@@ -11,7 +11,7 @@
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 /** @private */
 static void CommandPathToHumanReadable(std::string& path) {
@@ -20,35 +20,35 @@ static void CommandPathToHumanReadable(std::string& path) {
   std::replace(path.begin(), path.end(), '.', ' ');
 }
 
-Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config)
-    : m_Instruction(instruction), m_Query(config) {
-  DefineDefaultVariables(config);
+Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<config::Loader>& config)
+    : m_instruction(instruction), m_query(config) {
+  define_default_variables(config);
 }
 
-void Interpreter::Execute() {
+void Interpreter::execute() {
   LITR_PROFILE_FUNCTION();
 
-  m_Offset = 0;
+  m_offset = 0;
 
-  while (m_Offset < m_Instruction->Count()) {
-    if (m_StopExecution) return;
-    ExecuteInstruction();
+  while (m_offset < m_instruction->count()) {
+    if (m_stop_execution) return;
+    execute_instruction();
   }
 }
 
-Instruction::Value Interpreter::ReadCurrentValue() const {
+Instruction::Value Interpreter::read_current_value() const {
   LITR_PROFILE_FUNCTION();
 
-  const std::byte index{m_Instruction->Read(m_Offset)};
-  return m_Instruction->ReadConstant(index);
+  const std::byte index{m_instruction->read(m_offset)};
+  return m_instruction->read_constant(index);
 }
 
-Interpreter::Variables Interpreter::GetScopeVariables() const {
+Interpreter::Variables Interpreter::get_scope_variables() const {
   LITR_PROFILE_FUNCTION();
 
   Variables variables{};
 
-  for (auto&& scope : m_Scope) {
+  for (auto&& scope : m_scope) {
     for (auto&& variable : scope) {
       variables.insert_or_assign(variable.first, variable.second);
     }
@@ -57,22 +57,22 @@ Interpreter::Variables Interpreter::GetScopeVariables() const {
   return variables;
 }
 
-void Interpreter::DefineDefaultVariables(const Ref<Config::Loader>& config) {
+void Interpreter::define_default_variables(const Ref<config::Loader>& config) {
   LITR_PROFILE_FUNCTION();
 
-  const auto params{config->GetParameters()};
+  const auto params{config->get_parameters()};
   for (auto&& param : params) {
-    switch (param->Type) {
-      case Config::Parameter::Type::BOOLEAN: {
-        Variable variable{param->Name, false};
-        m_Scope.back().insert_or_assign(variable.Name, variable);
+    switch (param->type) {
+      case config::Parameter::Type::BOOLEAN: {
+        Variable variable{param->name, false};
+        m_scope.back().insert_or_assign(variable.name, variable);
         break;
       }
-      case Config::Parameter::Type::STRING:
-      case Config::Parameter::Type::ARRAY: {
-        if (!param->Default.empty()) {
-          Variable variable{param->Name, param->Default};
-          m_Scope.back().insert_or_assign(variable.Name, variable);
+      case config::Parameter::Type::STRING:
+      case config::Parameter::Type::ARRAY: {
+        if (!param->default_value.empty()) {
+          Variable variable{param->name, param->default_value};
+          m_scope.back().insert_or_assign(variable.name, variable);
         }
         break;
       }
@@ -80,249 +80,240 @@ void Interpreter::DefineDefaultVariables(const Ref<Config::Loader>& config) {
   }
 }
 
-void Interpreter::ExecuteInstruction() {
+void Interpreter::execute_instruction() {
   LITR_PROFILE_FUNCTION();
 
-  const auto code{static_cast<Instruction::Code>(m_Instruction->Read(m_Offset++))};
+  const auto code{static_cast<Instruction::Code>(m_instruction->read(m_offset++))};
 
   switch (code) {
-    case Instruction::Code::CLEAR:
-      ClearScope();
+    case Instruction::Code::CLEAR: clear_scope();
       break;
-    case Instruction::Code::DEFINE:
-      DefineVariable();
+    case Instruction::Code::DEFINE: define_variable();
       break;
-    case Instruction::Code::CONSTANT:
-      SetConstant();
+    case Instruction::Code::CONSTANT: set_constant();
       break;
-    case Instruction::Code::BEGIN_SCOPE:
-      BeginScope();
+    case Instruction::Code::BEGIN_SCOPE: begin_scope();
       break;
-    case Instruction::Code::EXECUTE:
-      CallInstruction();
+    case Instruction::Code::EXECUTE: call_instruction();
       break;
-    default:
-      m_Offset++;
+    default: m_offset++;
   }
 }
 
-void Interpreter::BeginScope() {
+void Interpreter::begin_scope() {
   LITR_PROFILE_FUNCTION();
 
-  m_Scope.emplace_back(Variables());
-  m_Offset++;
+  m_scope.emplace_back(Variables());
+  m_offset++;
 }
 
-void Interpreter::ClearScope() {
+void Interpreter::clear_scope() {
   LITR_PROFILE_FUNCTION();
 
-  m_Scope.pop_back();
+  m_scope.pop_back();
 }
 
-void Interpreter::DefineVariable() {
+void Interpreter::define_variable() {
   LITR_PROFILE_FUNCTION();
 
-  const Instruction::Value name{ReadCurrentValue()};
-  const Ref<Config::Parameter>& param{m_Query.GetParameter(name)};
+  const Instruction::Value name{read_current_value()};
+  const Ref<config::Parameter>& param{m_query.get_parameter(name)};
 
   if (param == nullptr) {
-    HandleError(Error::CommandNotFoundError(
-        fmt::format("Parameter with the name \"{}\" is not defined."
-                    "\n  Run `litr --help` to see a list available options.", name)
-    ));
+    handle_error(
+        error::CommandNotFoundError(fmt::format(
+            "Parameter with the name \"{}\" is not defined."
+            "\n  Run `litr --help` to see a list available options.",
+            name)));
     return;
   }
 
-  Variable variable{GetVariableType(param), param->Name};
+  Variable variable{get_variable_type(param), param->name};
 
-  switch (param->Type) {
-    case Config::Parameter::Type::BOOLEAN: {
-      variable.Value = true;
+  switch (param->type) {
+    case config::Parameter::Type::BOOLEAN: {
+      variable.value = true;
       break;
     }
-    case Config::Parameter::Type::STRING:
-    case Config::Parameter::Type::ARRAY: {
-      if (!param->Default.empty()) {
-        variable.Value = param->Default;
+    case config::Parameter::Type::STRING:
+    case config::Parameter::Type::ARRAY: {
+      if (!param->default_value.empty()) {
+        variable.value = param->default_value;
       }
       break;
     }
   }
 
-  m_CurrentVariableName = variable.Name;
-  m_Scope.back().insert_or_assign(variable.Name, variable);
+  m_current_variable_name = variable.name;
+  m_scope.back().insert_or_assign(variable.name, variable);
 
-  m_Offset++;
+  m_offset++;
 }
 
-void Interpreter::SetConstant() {
+void Interpreter::set_constant() {
   LITR_PROFILE_FUNCTION();
 
-  const Instruction::Value value{ReadCurrentValue()};
-  CLI::Variable& variable{m_Scope.back().at(m_CurrentVariableName)};
-  const auto param{m_Query.GetParameter(variable.Name)};
+  const Instruction::Value value{read_current_value()};
+  cli::Variable& variable{m_scope.back().at(m_current_variable_name)};
+  const auto param{m_query.get_parameter(variable.name)};
 
-  switch (param->Type) {
-    case Config::Parameter::Type::STRING: {
-      variable.Value = value;
+  switch (param->type) {
+    case config::Parameter::Type::STRING: {
+      variable.value = value;
       break;
     }
-    case Config::Parameter::Type::ARRAY: {
-      const auto& args{param->TypeArguments};
+    case config::Parameter::Type::ARRAY: {
+      const auto& args{param->type_arguments};
       if (std::find(args.begin(), args.end(), value) == args.end()) {
         std::string options{"Available options are:"};
         for (auto&& option : args) {
           options.append(fmt::format(" \"{}\",", option));
         }
 
-        HandleError(Error::CommandNotFoundError(
-            fmt::format(
+        handle_error(
+            error::CommandNotFoundError(fmt::format(
                 "Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
-                value, param->Name, Utils::TrimRight(options, ','))
-        ));
+                value, param->name, utils::trim_right(options, ','))));
         return;
       }
-      variable.Value = value;
+      variable.value = value;
       break;
     }
-    case Config::Parameter::Type::BOOLEAN: {
+    case config::Parameter::Type::BOOLEAN: {
       if (value == "false") {
-        variable.Value = false;
+        variable.value = false;
       } else if (value == "true") {
-        variable.Value = true;
+        variable.value = true;
       } else {
-        HandleError(Error::CommandNotFoundError(
-            fmt::format(
+        handle_error(
+            error::CommandNotFoundError(fmt::format(
                 "Parameter value \"{}\" is not valid for boolean option \"{}\"."
                 "\n  Please use \"false\", \"true\" or no value for true as well.",
-                value, param->Name)
-        ));
+                value, param->name)));
         return;
       }
       break;
     }
   }
 
-  m_Scope.back().insert_or_assign(variable.Name, variable);
-  m_Offset++;
+  m_scope.back().insert_or_assign(variable.name, variable);
+  m_offset++;
 }
 
-void Interpreter::CallInstruction() {
+void Interpreter::call_instruction() {
   LITR_PROFILE_FUNCTION();
 
-  const Instruction::Value name{ReadCurrentValue()};
-  const Ref<Config::Command> command{m_Query.GetCommand(name)};
+  const Instruction::Value name{read_current_value()};
+  const Ref<config::Command> command{m_query.get_command(name)};
 
   if (command == nullptr) {
-    HandleError(Error::CommandNotFoundError(
+    handle_error(error::CommandNotFoundError(
         fmt::format(
-            "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.",
-            name)
-    ));
+            "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.", name)));
     return;
   }
 
-  CallCommand(command);
-  m_Offset++;
+  call_command(command);
+  m_offset++;
 }
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::CallCommand(const Ref<Config::Command>& command, const std::string& scope) {
+void Interpreter::call_command(const Ref<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
-  std::string commandPath{scope + command->Name};
+  std::string command_path{scope + command->name};
 
-  ValidateRequiredParameters(command);
-  if (m_StopExecution) return;
+  validate_required_parameters(command);
+  if (m_stop_execution) return;
 
-  const bool printResult{command->Output == Config::Command::Output::SILENT};
-  const Scripts scripts{ParseScripts(command)};
-  if (m_StopExecution) return;
+  const bool print_result{command->output == config::Command::Output::SILENT};
+  const Scripts scripts{parse_scripts(command)};
+  if (m_stop_execution) return;
 
-  CommandPathToHumanReadable(commandPath);
+  CommandPathToHumanReadable(command_path);
 
-  if (command->Directory.empty()) {
-    RunScripts(scripts, commandPath, "", printResult);
+  if (command->directory.empty()) {
+    run_scripts(scripts, command_path, "", print_result);
   } else {
-    for (auto&& dir : command->Directory) {
-      RunScripts(scripts, commandPath, dir, printResult);
+    for (auto&& dir : command->directory) {
+      run_scripts(scripts, command_path, dir, print_result);
     }
   }
 
-  if (m_StopExecution) return;
+  if (m_stop_execution) return;
 
-  CallChildCommands(command, commandPath.append(" "));
+  call_child_commands(command, command_path.append(" "));
 }
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::CallChildCommands(const Ref<Config::Command>& command, const std::string& scope) {
+void Interpreter::call_child_commands(const Ref<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
-  if (!command->ChildCommands.empty()) {
-    for (auto&& childCommand : command->ChildCommands) {
-      if (m_StopExecution) return;
-      CallCommand(childCommand, scope);
+  if (!command->child_commands.empty()) {
+    for (auto&& childCommand : command->child_commands) {
+      if (m_stop_execution) return;
+      call_command(childCommand, scope);
     }
   }
 }
 
-void Interpreter::RunScripts(const Scripts& scripts, const std::string& commandPath, const std::string& dir, bool printResult) {
+void Interpreter::run_scripts(const Scripts& scripts, const std::string& command_path, const std::string& dir, bool print_result) {
   LITR_PROFILE_FUNCTION();
 
   Path path{dir};
 
   for (auto&& script : scripts) {
-    Shell::Result result{printResult ? Shell::Exec(script, path) : Shell::Exec(script, path, Print)};
+    Shell::Result result{print_result ? Shell::exec(script, path) : Shell::exec(script, path, print)};
 
-    if (result.Status == ExitStatus::FAILURE) {
-      HandleError(Error::ExecutionFailureError(
-          fmt::format("Problem executing the command defined in \"{}\".", commandPath)
-      ));
+    if (result.status == ExitStatus::FAILURE) {
+      handle_error(
+          error::ExecutionFailureError(fmt::format(
+              "Problem executing the command defined in \"{}\".", command_path)));
       return;
     }
   }
 }
 
-Interpreter::Scripts Interpreter::ParseScripts(const Ref<Config::Command>& command) {
+Interpreter::Scripts Interpreter::parse_scripts(const Ref<config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   size_t location{0};
   Scripts scripts{};
 
-  for (auto&& script : command->Script) {
-    const std::string parsedScript{ParseScript(script, command->Locations[location])};
-    if (m_StopExecution) break;
-    scripts.push_back(parsedScript);
+  for (auto&& script : command->script) {
+    const std::string parsed_script{parse_script(script, command->Locations[location])};
+    if (m_stop_execution) break;
+    scripts.push_back(parsed_script);
     location++;
   }
 
   return scripts;
 }
 
-std::string Interpreter::ParseScript(const std::string& script, const Config::Location& location) {
+std::string Interpreter::parse_script(const std::string& script, const config::Location& location) {
   LITR_PROFILE_FUNCTION();
 
-  const Variables variables{GetScopeVariables()};
-  Script::Compiler parser{script, location, variables};
+  const Variables variables{get_scope_variables()};
+  script::Compiler parser{script, location, variables};
 
-  if (Error::Handler::HasErrors()) {
-    m_StopExecution = true;
+  if (error::Handler::has_errors()) {
+    m_stop_execution = true;
   }
 
-  return parser.GetScript();
+  return parser.get_script();
 }
 
-enum Variable::Type Interpreter::GetVariableType(const Ref<Config::Parameter>& param) {
+enum Variable::Type Interpreter::get_variable_type(const Ref<config::Parameter>& param) {
   LITR_PROFILE_FUNCTION();
 
-  switch (param->Type) {
-    case Config::Parameter::Type::BOOLEAN: {
+  switch (param->type) {
+    case config::Parameter::Type::BOOLEAN: {
       return Variable::Type::BOOLEAN;
     }
-    case Config::Parameter::Type::STRING:
-    case Config::Parameter::Type::ARRAY: {
+    case config::Parameter::Type::STRING:
+    case config::Parameter::Type::ARRAY: {
       return Variable::Type::STRING;
     }
   }
@@ -330,46 +321,47 @@ enum Variable::Type Interpreter::GetVariableType(const Ref<Config::Parameter>& p
   return {};
 }
 
-void Interpreter::ValidateRequiredParameters(const Ref<Config::Command>& command) {
+void Interpreter::validate_required_parameters(const Ref<config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
-  const auto params{m_Query.GetParameters(command->Name)};
+  const auto params{m_query.get_parameters(command->name)};
 
   for (auto&& param : params) {
-    if (!IsVariableDefined(param->Name)) {
-      HandleError(Error::ExecutionFailureError(
-          fmt::format("The parameter --{} is required. "
-                      "You should run the command again with the required parameter.",
-              param->Name)));
-      m_StopExecution = true;
+    if (!is_variable_defined(param->name)) {
+      handle_error(
+          error::ExecutionFailureError(fmt::format(
+              "The parameter --{} is required. "
+              "You should run the command again with the required parameter.",
+              param->name)));
+      m_stop_execution = true;
     }
   }
 }
 
-bool Interpreter::IsVariableDefined(const std::string& name) const {
+bool Interpreter::is_variable_defined(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Variables variables{GetScopeVariables()};
-  return std::any_of(variables.begin(), variables.end(), [&name](std::pair<std::string, CLI::Variable>&& var) {
-    if (var.second.Type == CLI::Variable::Type::STRING) {
-      return name == var.second.Name && !std::get<std::string>(var.second.Value).empty();
+  const Variables variables{get_scope_variables()};
+  return std::any_of(variables.begin(), variables.end(), [&name](std::pair<std::string, cli::Variable>&& var) {
+    if (var.second.type == cli::Variable::Type::STRING) {
+      return name == var.second.name && !std::get<std::string>(var.second.value).empty();
     }
 
-    return name == var.second.Name;
+    return name == var.second.name;
   });
 }
 
-void Interpreter::HandleError(const Error::BaseError& error) {
+void Interpreter::handle_error(const error::BaseError& error) {
   LITR_PROFILE_FUNCTION();
 
-  m_StopExecution = true;
-  Error::Handler::Push(error);
+  m_stop_execution = true;
+  error::Handler::push(error);
 }
 
-void Interpreter::Print(const std::string& message) {
+void Interpreter::print(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
   fmt::print("{}", message);
 }
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

@@ -13,51 +13,51 @@
 #include "Core/Base.hpp"
 #include "Core/Config/Location.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 struct Command {
   enum class Output { UNCHANGED = 0, SILENT = 1 };
 
-  std::vector<std::string> Script{};
-  std::vector<std::string> Directory{};
+  std::vector<std::string> script{};
+  std::vector<std::string> directory{};
 
-  const std::string Name;
-  std::string Description{};
-  std::string Example{};
-  std::vector<Ref<Command>> ChildCommands{};
+  const std::string name;
+  std::string description{};
+  std::string example{};
+  std::vector<Ref<Command>> child_commands{};
 
-  Output Output{Output::UNCHANGED};
+  Output output{Output::UNCHANGED};
   std::vector<Location> Locations{};
 
-  explicit Command(std::string name) : Name(std::move(name)) {
+  explicit Command(std::string name) : name(std::move(name)) {
   }
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config
 
 #ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<litr::Config::Command> {
+struct fmt::formatter<litr::config::Command> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const litr::Config::Command& c, FormatContext& ctx) {
+  auto format(const litr::config::Command& c, FormatContext& ctx) {
     std::string childView{};
-    if (!c.ChildCommands.empty()) {
-      for (auto&& child : c.ChildCommands) {
+    if (!c.child_commands.empty()) {
+      for (auto&& child : c.child_commands) {
         childView.append(fmt::format("\n    - Child{}", *child));
       }
     }
 
-    if (!c.Description.empty()) {
-      return format_to(ctx.out(), "Script: {} - {}{}", c.Name, c.Description, childView);
+    if (!c.description.empty()) {
+      return format_to(ctx.out(), "Script: {} - {}{}", c.name, c.description, childView);
     }
 
-    return format_to(ctx.out(), "Script: {}{}", c.Name, childView);
+    return format_to(ctx.out(), "Script: {}{}", c.name, childView);
   }
 };
 #endif

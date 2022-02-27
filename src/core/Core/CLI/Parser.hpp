@@ -12,54 +12,53 @@
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Instruction.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 class Parser {
  public:
   Parser(const Ref<Instruction>& instruction, const std::string& source);
 
-  void Advance();
-  void Consume(TokenType type, const char* message);
-  [[nodiscard]] bool Match(TokenType type) const;
-  [[nodiscard]] bool Match(std::initializer_list<TokenType> types) const;
-  [[nodiscard]] bool Peak(TokenType type) const;
-  std::byte MakeConstant(const Instruction::Value& value);
+  void advance();
+  void consume(TokenType type, const char* message);
+  [[nodiscard]] bool match(TokenType type) const;
+  [[nodiscard]] bool match(std::initializer_list<TokenType> types) const;
+  [[nodiscard]] bool peak(TokenType type) const;
+  std::byte make_constant(const Instruction::Value& value);
 
-  void EmitByte(std::byte byte);
-  void EmitByte(Instruction::Code code);
-  void EmitBytes(Instruction::Code code, std::byte byte);
+  void emit_byte(std::byte byte);
+  void emit_byte(Instruction::Code code);
+  void emit_bytes(Instruction::Code code, std::byte byte);
+  void emit_constant(const Instruction::Value& value);
+  void emit_definition(const Instruction::Value& value);
+  void emit_scope(const Instruction::Value& value);
+  void emit_execution();
+  void emit_clear();
 
-  void EmitConstant(const Instruction::Value& value);
-  void EmitDefinition(const Instruction::Value& value);
-  void EmitScope(const Instruction::Value& value);
-  void EmitExecution();
-  void EmitClear();
+  void arguments();
+  void commands();
+  void parameters();
+  void comma();
+  void end_of_string();
 
-  void Arguments();
-  void Commands();
-  void Parameters();
-  void Comma();
-  void EndOfString();
-
-  [[nodiscard]] inline bool HasErrors() const { return m_HasError; }
+  [[nodiscard]] inline bool has_errors() const { return m_has_error; }
 
  private:
-  void Error(const std::string& message);
-  void ErrorAtCurrent(const std::string& message);
-  void ErrorAt(Token* token, const std::string& message);
+  void error(const std::string& message);
+  void error_at_current(const std::string& message);
+  void error_at(Token* token, const std::string& message);
 
-  [[nodiscard]] std::string GetScopePath() const;
+  [[nodiscard]] std::string get_scope_path() const;
 
-  std::string m_Source;
-  Scanner m_Scanner;
-  const Ref<Instruction>& m_Instruction;
+  std::string m_source;
+  Scanner m_scanner;
+  const Ref<Instruction>& m_instruction;
 
-  Token m_Current{};
-  Token m_Previous{};
-  std::deque<std::string> m_Scope{};
+  Token m_current{};
+  Token m_previous{};
+  std::deque<std::string> m_scope{};
 
-  bool m_HasError{false};
-  bool m_PanicMode{false};
+  bool m_has_error{false};
+  bool m_panic_mode{false};
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

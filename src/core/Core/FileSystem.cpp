@@ -12,49 +12,49 @@ namespace litr {
 
 // Path ------------------------------------------
 
-Path::Path(std::string path) : m_Path(std::move(path)) {
+Path::Path(std::string path) : m_path(std::move(path)) {
 }
 
-Path Path::ParentPath() const {
+Path Path::parent_path() const {
   LITR_PROFILE_FUNCTION();
 
-  return static_cast<Path>(m_Path.parent_path());
+  return static_cast<Path>(m_path.parent_path());
 }
 
-bool Path::Empty() const {
+bool Path::empty() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Path.empty();
+  return m_path.empty();
 }
 
-std::string Path::ToString() const {
+std::string Path::to_string() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Path.string();
+  return m_path.string();
 }
 
-Path Path::Append(const std::filesystem::path& path) const {
-  return Append(path.string());
+Path Path::append(const std::filesystem::path& path) const {
+  return append(path.string());
 }
 
-Path Path::Append(const Path& path) const {
-  return Append(path.ToString());
+Path Path::append(const Path& path) const {
+  return append(path.to_string());
 }
 
-Path Path::Append(const std::string& path) const {
+Path Path::append(const std::string& path) const {
   LITR_PROFILE_FUNCTION();
 
-  return static_cast<Path>(m_Path / path);
+  return static_cast<Path>(m_path / path);
 }
 
-Path Path::WithoutFilename() const {
-  auto path{m_Path};
+Path Path::without_filename() const {
+  auto path{m_path};
   return Path(path.remove_filename());
 }
 
-size_t Path::Count() const {
+size_t Path::count() const {
   size_t count{0};
-  for ([[maybe_unused]] auto&& _ : m_Path) {
+  for ([[maybe_unused]] auto&& _ : m_path) {
     count++;
   }
   return count;
@@ -62,16 +62,16 @@ size_t Path::Count() const {
 
 // FileSystem ------------------------------------
 
-bool FileSystem::Exists(const Path& path) {
+bool FileSystem::exists(const Path& path) {
   LITR_PROFILE_FUNCTION();
 
-  return std::filesystem::exists(path.m_Path);
+  return std::filesystem::exists(path.m_path);
 }
 
-Path FileSystem::GetCurrentWorkingDirectory() {
+Path FileSystem::get_current_working_directory() {
   LITR_PROFILE_FUNCTION();
 
-  return static_cast<Path>(std::filesystem::current_path());
+  return Path(std::filesystem::current_path());
 }
 
 }  // namespace litr
