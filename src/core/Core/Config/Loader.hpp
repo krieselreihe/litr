@@ -16,7 +16,7 @@
 #include "Core/Config/Parameter.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 class Loader {
  public:
@@ -42,4 +42,4 @@ class Loader {
   Parameters m_Parameters{};
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

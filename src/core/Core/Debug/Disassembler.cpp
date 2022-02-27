@@ -6,7 +6,7 @@
 
 #include <fmt/format.h>
 
-namespace Litr::Debug {
+namespace litr::Debug {
 
 /** @private */
 static size_t SimpleInstruction(const std::string& name, size_t offset) {
@@ -55,4 +55,4 @@ void Disassemble(const Ref<CLI::Instruction>& instruction, const std::string& na
   }
 }
 
-}  // namespace Litr::Debug
+}  // namespace litr::Debug

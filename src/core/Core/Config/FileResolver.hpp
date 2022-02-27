@@ -8,7 +8,7 @@
 
 #include "Core/FileSystem.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 class FileResolver {
  public:
@@ -36,4 +36,4 @@ class FileResolver {
   void FindFile(const Path& cwd);
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

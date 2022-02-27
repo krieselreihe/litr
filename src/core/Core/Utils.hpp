@@ -9,7 +9,7 @@
 #include <vector>
 #include <deque>
 
-namespace Litr::Utils {
+namespace litr::Utils {
 
 [[nodiscard]] std::string TrimLeft(const std::string& src, char c);
 [[nodiscard]] std::string TrimRight(const std::string& src, char c);
@@ -22,4 +22,4 @@ void Deduplicate(std::vector<std::string>& items);
 
 std::string Replace(const std::string& source, const std::string& from, const std::string& to);
 
-}  // namespace Litr::Utils
+}  // namespace litr::Utils

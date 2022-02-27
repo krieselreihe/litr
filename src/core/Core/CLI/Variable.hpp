@@ -10,7 +10,7 @@
 
 #include "Core/Config/Parameter.hpp"
 
-namespace Litr::CLI {
+namespace litr::CLI {
 
 struct Variable {
   enum class Type { STRING, BOOLEAN };
@@ -43,4 +43,4 @@ struct Variable {
   }
 };
 
-}  // namespace Litr::CLI
+}  // namespace litr::CLI

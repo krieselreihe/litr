@@ -13,7 +13,7 @@
 #include "Core/Config/Loader.hpp"
 #include "Core/CLI/Variable.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 class Query {
   using Parts = std::deque<std::string>;
@@ -45,4 +45,4 @@ class Query {
   const Ref<Loader>& m_Config;
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

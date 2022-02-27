@@ -9,7 +9,7 @@
 
 #include <vector>
 
-namespace Litr {
+namespace litr {
 
 Log::Log() {
   std::vector<spdlog::sink_ptr> logSinks;
@@ -21,7 +21,7 @@ Log::Log() {
 #endif
 
   logSinks.emplace_back(CreateRef<spdlog::sinks::stdout_color_sink_mt>());
-  logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("Litr.log", true));
+  logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("litr.log", true));
 
   logSinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
   logSinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
@@ -39,4 +39,4 @@ Log::Log() {
 }
 
 
-}  // namespace Litr
+}  // namespace litr

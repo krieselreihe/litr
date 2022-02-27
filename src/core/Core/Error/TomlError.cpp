@@ -11,7 +11,7 @@
 #include "Core/Utils.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace litr {
 
 std::string TomlError::ExtractMessage(const std::string& message, const std::string& error) {
   LITR_PROFILE_FUNCTION();
@@ -101,4 +101,4 @@ bool TomlError::IsFileReference(const std::string& line) {
   return line.find(" --> ") != std::string::npos;
 }
 
-}  // namespace Litr
+}  // namespace litr

@@ -14,7 +14,7 @@
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
   LITR_PROFILE_FUNCTION();
@@ -205,4 +205,4 @@ void Loader::CollectParams(const toml::table& params) {
   }
 }
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

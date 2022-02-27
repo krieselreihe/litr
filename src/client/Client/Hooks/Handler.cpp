@@ -4,7 +4,7 @@
 
 #include "Handler.hpp"
 
-namespace Litr::Hook {
+namespace litr::Hook {
 
 Handler::Handler(const Ref<CLI::Instruction>& instruction) : m_Instruction(instruction) {}
 
@@ -42,4 +42,4 @@ bool Handler::Execute() const {
   return false;
 }
 
-}  // namespace Litr::Hook
+}  // namespace litr::Hook

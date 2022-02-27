@@ -13,9 +13,9 @@
 #include "Core/Config/Location.hpp"
 #include "Core/Error/TomlError.hpp"
 
-namespace Litr::Error {
+namespace litr::Error {
 
-// Forward declaration for `friend` declaration of Litr::Error::Reporter.
+// Forward declaration for `friend` declaration of litr::Error::Reporter.
 class Reporter;
 
 class BaseError {
@@ -167,4 +167,4 @@ class ExecutionFailureError : public BaseError {
   }
 };
 
-}  // namespace Litr::Error
+}  // namespace litr::Error

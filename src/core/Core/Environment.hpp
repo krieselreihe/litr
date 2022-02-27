@@ -6,11 +6,11 @@
 
 #include "Core/FileSystem.hpp"
 
-namespace Litr {
+namespace litr {
 
 class Environment {
  public:
   [[nodiscard]] static Path GetHomeDirectory();
 };
 
-}  // namespace Litr
+}  // namespace litr

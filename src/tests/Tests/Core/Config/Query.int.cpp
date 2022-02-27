@@ -8,9 +8,9 @@
 
 TEST_SUITE("Config::Query") {
   TEST_CASE("GetCommand()") {
-    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
-    const Litr::Config::Query query{config};
+    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const litr::Config::Query query{config};
 
     SUBCASE("Get top level command") {
       CHECK_EQ(query.GetCommand("run")->Name, "run");
@@ -34,9 +34,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("GetCommands()") {
-    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
-    const Litr::Config::Query query{config};
+    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const litr::Config::Query query{config};
 
     SUBCASE("Get all defined commands") {
       CHECK_EQ(query.GetCommands().size(), 3);
@@ -52,9 +52,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("GetParameter()") {
-    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
-    const Litr::Config::Query query{config};
+    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const litr::Config::Query query{config};
 
     SUBCASE("Get parameter by name") {
       CHECK_EQ(query.GetParameter("target")->Name, "target");
@@ -70,9 +70,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("GetParameters()") {
-    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
-    const Litr::Config::Query query{config};
+    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const litr::Config::Query query{config};
 
     SUBCASE("Get all defined parameters") {
       CHECK_EQ(query.GetParameters().size(), 2);

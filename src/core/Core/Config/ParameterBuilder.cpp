@@ -8,7 +8,7 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Log.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 ParameterBuilder::ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name)
     : m_File(file), m_Table(data), m_Parameter(CreateRef<Parameter>(name)) {
@@ -64,7 +64,7 @@ void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
 
       if (IsReservedName(shortcutStr)) {
         Error::Handler::Push(Error::ReservedParamError(
-            fmt::format(R"(The shortcut name "{}" is reserved by Litr.)", shortcutStr),
+            fmt::format(R"(The shortcut name "{}" is reserved by litr.)", shortcutStr),
             m_Table.at(name)
         ));
         return;
@@ -187,4 +187,4 @@ bool ParameterBuilder::IsReservedName(const std::string& name) {
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

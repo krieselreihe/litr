@@ -8,7 +8,7 @@
 
 #include "Core/Error/Handler.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name)
     : m_File(file), m_Table(data), m_Command(CreateRef<Command>(name)) {
@@ -171,4 +171,4 @@ void CommandBuilder::AddLocation(const toml::value& context) {
   );
 }
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

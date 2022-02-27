@@ -8,7 +8,7 @@
 
 #include "Core.hpp"
 
-namespace Litr::Hook {
+namespace litr::Hook {
 
 class Help {
  public:
@@ -44,4 +44,4 @@ class Help {
   const std::string m_ArgumentPlaceholder{"=<option>"};
 };
 
-}  // namespace Litr::Hook
+}  // namespace litr::Hook

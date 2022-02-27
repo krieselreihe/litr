@@ -7,7 +7,7 @@
 #include "Core/Environment.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace Litr {
+namespace litr {
 
 Path Environment::GetHomeDirectory() {
   LITR_PROFILE_FUNCTION();
@@ -15,4 +15,4 @@ Path Environment::GetHomeDirectory() {
   return Path(std::getenv("HOME"));
 }
 
-}  // namespace Litr
+}  // namespace litr

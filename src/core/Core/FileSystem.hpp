@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <string>
 
-namespace Litr {
+namespace litr {
 
 class Path {
  public:
@@ -61,18 +61,18 @@ class FileSystem {
   [[nodiscard]] static Path GetCurrentWorkingDirectory();
 };
 
-}  // namespace Litr
+}  // namespace litr
 
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<Litr::Path> {
+struct fmt::formatter<litr::Path> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Litr::Path& p, FormatContext& ctx) {
+  auto format(const litr::Path& p, FormatContext& ctx) {
     return format_to(ctx.out(), "{}", p.ToString());
   }
 };

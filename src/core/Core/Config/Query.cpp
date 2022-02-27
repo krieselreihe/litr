@@ -10,7 +10,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Script/Compiler.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 Query::Query(const Ref<Loader>& config) : m_Config(config) {}
 
@@ -167,4 +167,4 @@ std::vector<std::string> Query::GetUsedParameterNames(const Ref<Command>& comman
   return names;
 }
 
-}  // namespace Litr::Config
+}  // namespace litr::Config

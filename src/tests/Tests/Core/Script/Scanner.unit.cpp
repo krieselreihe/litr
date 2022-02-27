@@ -14,31 +14,31 @@
 #define CHECK_DEFINITION(scanner, definition)                            \
   {                                                                      \
     for (auto&& test : (definition)) {                                   \
-      Litr::Script::Token token{(scanner).ScanToken()};                  \
+      litr::Script::Token token{(scanner).ScanToken()};                  \
       CHECK_EQ(token.Type, test.Type);                                   \
-      CHECK_EQ(Litr::Script::Scanner::GetTokenValue(token), test.Value); \
+      CHECK_EQ(litr::Script::Scanner::GetTokenValue(token), test.Value); \
     }                                                                    \
   }
 
 #define CHECK_EOS_TOKEN(scanner)                             \
   {                                                          \
-    Litr::Script::Token eos{(scanner).ScanToken()};          \
-    CHECK_EQ(eos.Type, Litr::Script::TokenType::EOS);        \
-    CHECK_EQ(Litr::Script::Scanner::GetTokenValue(eos), ""); \
+    litr::Script::Token eos{(scanner).ScanToken()};          \
+    CHECK_EQ(eos.Type, litr::Script::TokenType::EOS);        \
+    CHECK_EQ(litr::Script::Scanner::GetTokenValue(eos), ""); \
   }
 
 struct TokenDefinition {
-  Litr::Script::TokenType Type;
+  litr::Script::TokenType Type;
   std::string Value;
 };
 
 TEST_SUITE("Script::Scanner") {
   // Successful cases
   TEST_CASE("Nothing to parse") {
-    Litr::Script::Scanner scanner{"echo 'Hello World!'"};
+    litr::Script::Scanner scanner{"echo 'Hello World!'"};
 
     std::array<TokenDefinition, 1> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo 'Hello World!'"}
+        {litr::Script::TokenType::UNTOUCHED, "echo 'Hello World!'"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -46,10 +46,10 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Nothing to parse on escaped sequence") {
-    Litr::Script::Scanner scanner{R"(echo \%{something})"};
+    litr::Script::Scanner scanner{R"(echo \%{something})"};
 
     std::array<TokenDefinition, 1> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, R"(echo \%{something})"}
+        {litr::Script::TokenType::UNTOUCHED, R"(echo \%{something})"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -57,13 +57,13 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Single variable") {
-    Litr::Script::Scanner scanner{"echo %{var}"};
+    litr::Script::Scanner scanner{"echo %{var}"};
 
     std::array<TokenDefinition, 4> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -71,14 +71,14 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Ignores duplicated closing brace") {
-    Litr::Script::Scanner scanner{"echo %{var}}"};
+    litr::Script::Scanner scanner{"echo %{var}}"};
 
     std::array<TokenDefinition, 5> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
-        {Litr::Script::TokenType::UNTOUCHED, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::UNTOUCHED, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -86,17 +86,17 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Multiple variables") {
-    Litr::Script::Scanner scanner{"echo %{var1} and %{var2}"};
+    litr::Script::Scanner scanner{"echo %{var1} and %{var2}"};
 
     std::array<TokenDefinition, 8> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var1"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
-        {Litr::Script::TokenType::UNTOUCHED, " and "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var2"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var1"},
+        {litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::UNTOUCHED, " and "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var2"},
+        {litr::Script::TokenType::END_SEQ, "}"},
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -104,18 +104,18 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Multiple variables in between") {
-    Litr::Script::Scanner scanner{"echo %{var1} and %{var2} end"};
+    litr::Script::Scanner scanner{"echo %{var1} and %{var2} end"};
 
     std::array<TokenDefinition, 9> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var1"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
-        {Litr::Script::TokenType::UNTOUCHED, " and "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var2"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
-        {Litr::Script::TokenType::UNTOUCHED, " end"},
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var1"},
+        {litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::UNTOUCHED, " and "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var2"},
+        {litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::UNTOUCHED, " end"},
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -123,13 +123,13 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Single string") {
-    Litr::Script::Scanner scanner{"echo %{'Hello'}"};
+    litr::Script::Scanner scanner{"echo %{'Hello'}"};
 
     std::array<TokenDefinition, 4> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::STRING, "'Hello'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::STRING, "'Hello'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -137,13 +137,13 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Single string including ignored expression syntax") {
-    Litr::Script::Scanner scanner{"echo %{'He%{ll}o'}"};
+    litr::Script::Scanner scanner{"echo %{'He%{ll}o'}"};
 
     std::array<TokenDefinition, 4> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::STRING, "'He%{ll}o'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::STRING, "'He%{ll}o'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -151,14 +151,14 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Single string with leading variable") {
-    Litr::Script::Scanner scanner{"echo %{var 'Hello'}"};
+    litr::Script::Scanner scanner{"echo %{var 'Hello'}"};
 
     std::array<TokenDefinition, 5> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::STRING, "'Hello'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::STRING, "'Hello'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -166,16 +166,16 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Strings and or-statement") {
-    Litr::Script::Scanner scanner{"echo %{var 'Hello' or 'Bye'}"};
+    litr::Script::Scanner scanner{"echo %{var 'Hello' or 'Bye'}"};
 
     std::array<TokenDefinition, 7> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::STRING, "'Hello'"},
-        {Litr::Script::TokenType::OR, "or"},
-        {Litr::Script::TokenType::STRING, "'Bye'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::STRING, "'Hello'"},
+        {litr::Script::TokenType::OR, "or"},
+        {litr::Script::TokenType::STRING, "'Bye'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -184,16 +184,16 @@ TEST_SUITE("Script::Scanner") {
 
   /*
   TEST_CASE("Strings and and-statement") {
-    Litr::Script::Scanner scanner{"echo %{var1 and var2 'Hello'}"};
+    litr::Script::Scanner scanner{"echo %{var1 and var2 'Hello'}"};
 
     std::array<TokenDefinition, 7> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var1"},
-        {Litr::Script::TokenType::AND, "and"},
-        {Litr::Script::TokenType::IDENTIFIER, "var2"},
-        {Litr::Script::TokenType::STRING, "'Hello'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var1"},
+        {litr::Script::TokenType::AND, "and"},
+        {litr::Script::TokenType::IDENTIFIER, "var2"},
+        {litr::Script::TokenType::STRING, "'Hello'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -202,16 +202,16 @@ TEST_SUITE("Script::Scanner") {
   */
 
   TEST_CASE("Function usage with single argument") {
-    Litr::Script::Scanner scanner{"echo %{case_camel(var)}"};
+    litr::Script::Scanner scanner{"echo %{case_camel(var)}"};
 
     std::array<TokenDefinition, 7> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "case_camel"},
-        {Litr::Script::TokenType::LEFT_PAREN, "("},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::RIGHT_PAREN, ")"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "case_camel"},
+        {litr::Script::TokenType::LEFT_PAREN, "("},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::RIGHT_PAREN, ")"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -219,18 +219,18 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Function usage with two arguments") {
-    Litr::Script::Scanner scanner{"echo %{case_camel(var1, var2)}"};
+    litr::Script::Scanner scanner{"echo %{case_camel(var1, var2)}"};
 
     std::array<TokenDefinition, 9> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "case_camel"},
-        {Litr::Script::TokenType::LEFT_PAREN, "("},
-        {Litr::Script::TokenType::IDENTIFIER, "var1"},
-        {Litr::Script::TokenType::COMMA, ","},
-        {Litr::Script::TokenType::IDENTIFIER, "var2"},
-        {Litr::Script::TokenType::RIGHT_PAREN, ")"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "case_camel"},
+        {litr::Script::TokenType::LEFT_PAREN, "("},
+        {litr::Script::TokenType::IDENTIFIER, "var1"},
+        {litr::Script::TokenType::COMMA, ","},
+        {litr::Script::TokenType::IDENTIFIER, "var2"},
+        {litr::Script::TokenType::RIGHT_PAREN, ")"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -238,19 +238,19 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Function usage with or-statement") {
-    Litr::Script::Scanner scanner{"echo %{fn(var) 'First' or 'Second'}"};
+    litr::Script::Scanner scanner{"echo %{fn(var) 'First' or 'Second'}"};
 
     std::array<TokenDefinition, 10> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "fn"},
-        {Litr::Script::TokenType::LEFT_PAREN, "("},
-        {Litr::Script::TokenType::IDENTIFIER, "var"},
-        {Litr::Script::TokenType::RIGHT_PAREN, ")"},
-        {Litr::Script::TokenType::STRING, "'First'"},
-        {Litr::Script::TokenType::OR, "or"},
-        {Litr::Script::TokenType::STRING, "'Second'"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "fn"},
+        {litr::Script::TokenType::LEFT_PAREN, "("},
+        {litr::Script::TokenType::IDENTIFIER, "var"},
+        {litr::Script::TokenType::RIGHT_PAREN, ")"},
+        {litr::Script::TokenType::STRING, "'First'"},
+        {litr::Script::TokenType::OR, "or"},
+        {litr::Script::TokenType::STRING, "'Second'"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -258,21 +258,21 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Nested function usage") {
-    Litr::Script::Scanner scanner{"echo %{fn1(fn2(var1), var2)}"};
+    litr::Script::Scanner scanner{"echo %{fn1(fn2(var1), var2)}"};
 
     std::array<TokenDefinition, 12> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "fn1"},
-        {Litr::Script::TokenType::LEFT_PAREN, "("},
-        {Litr::Script::TokenType::IDENTIFIER, "fn2"},
-        {Litr::Script::TokenType::LEFT_PAREN, "("},
-        {Litr::Script::TokenType::IDENTIFIER, "var1"},
-        {Litr::Script::TokenType::RIGHT_PAREN, ")"},
-        {Litr::Script::TokenType::COMMA, ","},
-        {Litr::Script::TokenType::IDENTIFIER, "var2"},
-        {Litr::Script::TokenType::RIGHT_PAREN, ")"},
-        {Litr::Script::TokenType::END_SEQ, "}"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "fn1"},
+        {litr::Script::TokenType::LEFT_PAREN, "("},
+        {litr::Script::TokenType::IDENTIFIER, "fn2"},
+        {litr::Script::TokenType::LEFT_PAREN, "("},
+        {litr::Script::TokenType::IDENTIFIER, "var1"},
+        {litr::Script::TokenType::RIGHT_PAREN, ")"},
+        {litr::Script::TokenType::COMMA, ","},
+        {litr::Script::TokenType::IDENTIFIER, "var2"},
+        {litr::Script::TokenType::RIGHT_PAREN, ")"},
+        {litr::Script::TokenType::END_SEQ, "}"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -280,12 +280,12 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Does not care about invalid semantic") {
-    Litr::Script::Scanner scanner{"echo %{var"};
+    litr::Script::Scanner scanner{"echo %{var"};
 
     std::array<TokenDefinition, 3> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::IDENTIFIER, "var"}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::IDENTIFIER, "var"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -293,10 +293,10 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Ignores percentage sign without opening brace") {
-    Litr::Script::Scanner scanner{"echo %var"};
+    litr::Script::Scanner scanner{"echo %var"};
 
     std::array<TokenDefinition, 1> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo %var"}
+        {litr::Script::TokenType::UNTOUCHED, "echo %var"}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -305,12 +305,12 @@ TEST_SUITE("Script::Scanner") {
 
   // Error cases
   TEST_CASE("Unterminated string") {
-    Litr::Script::Scanner scanner{"echo %{'Hello}"};
+    litr::Script::Scanner scanner{"echo %{'Hello}"};
 
     std::array<TokenDefinition, 3> definition{{
-        {Litr::Script::TokenType::UNTOUCHED, "echo "},
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::ERROR, "Unterminated string."}
+        {litr::Script::TokenType::UNTOUCHED, "echo "},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::ERROR, "Unterminated string."}
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -318,13 +318,13 @@ TEST_SUITE("Script::Scanner") {
   }
 
   TEST_CASE("Invalidates unknown characters, but does not stop scanning") {
-    Litr::Script::Scanner scanner{"%{? fn}"};
+    litr::Script::Scanner scanner{"%{? fn}"};
 
     std::array<TokenDefinition, 4> definition{{
-        {Litr::Script::TokenType::START_SEQ, "%{"},
-        {Litr::Script::TokenType::ERROR, "Unexpected character."},
-        {Litr::Script::TokenType::IDENTIFIER, "fn"},
-        {Litr::Script::TokenType::END_SEQ, "}"},
+        {litr::Script::TokenType::START_SEQ, "%{"},
+        {litr::Script::TokenType::ERROR, "Unexpected character."},
+        {litr::Script::TokenType::IDENTIFIER, "fn"},
+        {litr::Script::TokenType::END_SEQ, "}"},
     }};
 
     CHECK_DEFINITION(scanner, definition);

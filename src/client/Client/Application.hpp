@@ -8,7 +8,7 @@
 
 #include "Core.hpp"
 
-namespace Litr {
+namespace litr {
 
 class Application {
  public:
@@ -16,11 +16,11 @@ class Application {
   ExitStatus Run(int argc, char* argv[]);
 
  private:
-  [[nodiscard]] Path GetConfigPath();
-  [[nodiscard]] static std::string SourceFromArguments(int argc, char* argv[]);
+  [[nodiscard]] Path get_config_path();
+  [[nodiscard]] static std::string source_from_arguments(int argc, char* argv[]);
 
  private:
-  ExitStatus m_ExitStatus{ExitStatus::SUCCESS};
+  ExitStatus m_exit_status{ExitStatus::SUCCESS};
 };
 
-}  // namespace Litr
+}  // namespace litr

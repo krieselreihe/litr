@@ -13,7 +13,7 @@
 #include "Core/Base.hpp"
 #include "Core/Config/Location.hpp"
 
-namespace Litr::Config {
+namespace litr::Config {
 
 struct Command {
   enum class Output { UNCHANGED = 0, SILENT = 1 };
@@ -33,19 +33,19 @@ struct Command {
   }
 };
 
-}  // namespace Litr::Config
+}  // namespace litr::Config
 
 #ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<Litr::Config::Command> {
+struct fmt::formatter<litr::Config::Command> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const Litr::Config::Command& c, FormatContext& ctx) {
+  auto format(const litr::Config::Command& c, FormatContext& ctx) {
     std::string childView{};
     if (!c.ChildCommands.empty()) {
       for (auto&& child : c.ChildCommands) {
