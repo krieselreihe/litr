@@ -8,41 +8,41 @@
 
 #include "Core/CLI/Token.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 class Scanner {
  public:
   explicit Scanner(const char* source);
 
-  [[nodiscard]] Token ScanToken();
-  [[nodiscard]] static std::string GetTokenValue(const Token& token);
-  [[nodiscard]] static std::string GetTokenValue(Token* token);
+  [[nodiscard]] Token scan_token();
+  [[nodiscard]] static std::string get_token_value(const Token& token);
+  [[nodiscard]] static std::string get_token_value(Token* token);
 
  private:
-  void SkipWhitespace();
-  char Advance();
-  char Peek();
-  [[nodiscard]] char PeekNext() const;
-  [[nodiscard]] bool Match(char expected);
+  void skip_whitespace();
+  char advance();
+  char peek();
+  [[nodiscard]] char peek_next() const;
+  [[nodiscard]] bool match(char expected);
 
-  [[nodiscard]] Token MakeToken(TokenType type) const;
-  [[nodiscard]] Token ErrorToken(const char* message) const;
+  [[nodiscard]] Token make_token(TokenType type) const;
+  [[nodiscard]] Token error_token(const char* message) const;
 
-  [[nodiscard]] static bool IsDigit(char c);
-  [[nodiscard]] static bool IsAlpha(char c);
-  [[nodiscard]] static bool IsShortAlpha(char c);
-  [[nodiscard]] bool IsAtEnd() const;
+  [[nodiscard]] static bool is_digit(char c);
+  [[nodiscard]] static bool is_alpha(char c);
+  [[nodiscard]] static bool is_short_alpha(char c);
+  [[nodiscard]] bool is_at_end() const;
 
-  [[nodiscard]] Token String();
-  [[nodiscard]] Token Number();
-  [[nodiscard]] Token Command();
-  [[nodiscard]] Token LongParameter();
-  [[nodiscard]] Token ShortParameter();
+  [[nodiscard]] Token string();
+  [[nodiscard]] Token number();
+  [[nodiscard]] Token command();
+  [[nodiscard]] Token long_parameter();
+  [[nodiscard]] Token short_parameter();
 
  private:
-  const char* m_Start;
-  const char* m_Current;
-  uint32_t m_Column{1};
+  const char* m_start;
+  const char* m_current;
+  uint32_t m_column{1};
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

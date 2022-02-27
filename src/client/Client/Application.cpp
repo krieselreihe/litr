@@ -15,53 +15,53 @@
 namespace litr {
 
 // @todo: Error handling here is horrible. In need of refactoring!
-ExitStatus Application::Run(int argc, char* argv[]) {
+ExitStatus Application::run(int argc, char* argv[]) {
   LITR_PROFILE_FUNCTION();
 
   const std::string source{source_from_arguments(argc, argv)};
-  const auto instruction{CreateRef<CLI::Instruction>()};
-  const CLI::Parser parser{instruction, source};
+  const auto instruction{create_ref<cli::Instruction>()};
+  const cli::Parser parser{instruction, source};
 
   // Litr called without any arguments:
-  if (instruction->Count() == 0) {
+  if (instruction->count() == 0) {
     fmt::print("You can run `litr --help` to see what you can do here.\n");
     return ExitStatus::FAILURE;
   }
 
-  Hook::Handler hooks{instruction};
+  hook::Handler hooks{instruction};
 
   // Hooks before config
-  hooks.Add(CLI::Instruction::Code::DEFINE, {"version", "v"}, Hook::Version::Print);
-  if (hooks.Execute()) {
+  hooks.add(cli::Instruction::Code::DEFINE, {"version", "v"}, hook::Version::print);
+  if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
 
-  const Path configPath{get_config_path()};
+  const Path config_path{get_config_path()};
   if (m_exit_status == ExitStatus::FAILURE) {
     return m_exit_status;
   }
 
-  Error::Reporter errorReporter{configPath};
-  if (Error::Handler::HasErrors()) {
-    errorReporter.PrintErrors(Error::Handler::GetErrors());
+  error::Reporter error_reporter{config_path};
+  if (error::Handler::has_errors()) {
+    error_reporter.print_errors(error::Handler::get_errors());
     return ExitStatus::FAILURE;
   }
 
-  const auto config{CreateRef<Config::Loader>(configPath)};
-  const auto interpreter{CreateRef<CLI::Interpreter>(instruction, config)};
+  const auto config{create_ref<config::Loader>(config_path)};
+  const auto interpreter{create_ref<cli::Interpreter>(instruction, config)};
 
-  hooks.Add(CLI::Instruction::Code::DEFINE, {"help", "h"}, [&config](const Ref<CLI::Instruction>& instruction) {
-    const Hook::Help help{config};
-    help.Print(instruction);
+  hooks.add(cli::Instruction::Code::DEFINE, {"help", "h"}, [&config](const Ref<cli::Instruction>& instruction) {
+    const hook::Help help{config};
+    help.print(instruction);
   });
-  if (hooks.Execute()) {
+  if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
 
   // Run
-  interpreter->Execute();
-  if (Error::Handler::HasErrors()) {
-    errorReporter.PrintErrors(Error::Handler::GetErrors());
+  interpreter->execute();
+  if (error::Handler::has_errors()) {
+    error_reporter.print_errors(error::Handler::get_errors());
     return ExitStatus::FAILURE;
   }
 
@@ -71,31 +71,31 @@ ExitStatus Application::Run(int argc, char* argv[]) {
 Path Application::get_config_path() {
   LITR_PROFILE_FUNCTION();
 
-  Path cwd{FileSystem::GetCurrentWorkingDirectory()};
-  Config::FileResolver configPath{cwd};
+  Path cwd{FileSystem::get_current_working_directory()};
+  config::FileResolver config_path{cwd};
 
-  switch (configPath.GetStatus()) {
-    case Config::FileResolver::Status::NOT_FOUND: {
+  switch (config_path.get_status()) {
+    case config::FileResolver::Status::NOT_FOUND: {
       fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
       m_exit_status = ExitStatus::FAILURE;
       break;
     }
-    case Config::FileResolver::Status::DUPLICATE: {
+    case config::FileResolver::Status::DUPLICATE: {
       fmt::print(
           fg(fmt::color::gold),
           "You defined both, litr.toml and .litr.toml in {}. "
           "This is probably an error and you only want one of them.\n",
-          configPath.GetFileDirectory());
+          config_path.get_file_directory());
       m_exit_status = ExitStatus::FAILURE;
       break;
     }
-    case Config::FileResolver::Status::FOUND: {
-      LITR_TRACE("Configuration file found under: {}\n", configPath.GetFilePath());
+    case config::FileResolver::Status::FOUND: {
+      LITR_TRACE("Configuration file found under: {}\n", config_path.get_file_path());
       break;
     }
   }
 
-  return configPath.GetFilePath();
+  return config_path.get_file_path();
 }
 
 std::string Application::source_from_arguments(int argc, char** argv) {
@@ -112,7 +112,7 @@ std::string Application::source_from_arguments(int argc, char** argv) {
 
     if (found != std::string::npos) {
       std::vector<std::string> parts{};
-      Utils::SplitInto(argument, '=', parts);
+      utils::split_into(argument, '=', parts);
       argument = parts[0].append("=\"").append(parts[1]).append("\"");
     }
     // !!! HACK ALERT END !!!

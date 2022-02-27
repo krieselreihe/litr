@@ -9,16 +9,16 @@
 #include "Core/Base.hpp"
 #include "Core/CLI/Instruction.hpp"
 
-namespace litr::Debug {
+namespace litr::debug {
 
-size_t DisassembleInstruction(const Ref<CLI::Instruction>& instruction, size_t offset);
-void Disassemble(const Ref<CLI::Instruction>& instruction, const std::string& name);
+size_t disassemble_instruction(const Ref<cli::Instruction>& instruction, size_t offset);
+void disassemble(const Ref<cli::Instruction>& instruction, const std::string& name);
 
-}  // namespace litr::Debug
+}  // namespace litr::debug
 
 #if LITR_ENABLE_DISASSEMBLE == 1
-#define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset) ::litr::Debug::DisassembleInstruction(instruction, offset)
-#define LITR_DISASSEMBLE(instruction, name) ::litr::Debug::Disassemble(instruction, name)
+#define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset) ::litr::debug::disassemble_instruction(instruction, offset)
+#define LITR_DISASSEMBLE(instruction, name) ::litr::debug::disassemble(instruction, name)
 #else
 #define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset)
 #define LITR_DISASSEMBLE(instruction, name)

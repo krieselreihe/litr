@@ -10,247 +10,245 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
-    : m_Source(source), m_Scanner(source.c_str()), m_Instruction(instruction) {
+    : m_source(source), m_scanner(source.c_str()), m_instruction(instruction) {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
-  Arguments();
-  EndOfString();
+  advance();
+  arguments();
+  end_of_string();
 
-  LITR_DISASSEMBLE(m_Instruction, "CLI::Parser");
+  LITR_DISASSEMBLE(m_instruction, "CLI::Parser");
 }
 
-void Parser::Advance() {
+void Parser::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_Previous = m_Current;
+  m_previous = m_current;
 
   while (true) {
-    m_Current = m_Scanner.ScanToken();
+    m_current = m_scanner.scan_token();
 
-    if (m_Current.Type != TokenType::ERROR) {
+    if (m_current.type != TokenType::ERROR) {
       break;
     }
 
-    ErrorAtCurrent(m_Current.Start);
+    error_at_current(m_current.start);
   }
 }
 
-void Parser::Consume(TokenType type, const char* message) {
+void Parser::consume(TokenType type, const char* message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_Current.Type == type) {
-    Advance();
+  if (m_current.type == type) {
+    advance();
     return;
   }
 
-  ErrorAtCurrent(message);
+  error_at_current(message);
 }
 
-bool Parser::Match(TokenType type) const {
+bool Parser::match(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Previous.Type == type;
+  return m_previous.type == type;
 }
 
-bool Parser::Match(std::initializer_list<TokenType> types) const {
+bool Parser::match(std::initializer_list<TokenType> types) const {
   LITR_PROFILE_FUNCTION();
 
   return std::any_of(types.begin(), types.end(), [&](TokenType type) {
-    return Match(type);
+    return match(type);
   });
 }
 
-bool Parser::Peak(TokenType type) const {
+bool Parser::peak(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  return m_Current.Type == type;
+  return m_current.type == type;
 }
 
-void Parser::EmitByte(std::byte byte) {
+void Parser::emit_byte(std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
-  m_Instruction->Write(byte);
+  m_instruction->write(byte);
 }
 
-void Parser::EmitByte(Instruction::Code code) {
+void Parser::emit_byte(Instruction::Code code) {
   LITR_PROFILE_FUNCTION();
 
-  m_Instruction->Write(code);
+  m_instruction->write(code);
 }
 
-void Parser::EmitBytes(Instruction::Code code, std::byte byte) {
+void Parser::emit_bytes(Instruction::Code code, std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
-  EmitByte(code);
-  EmitByte(byte);
+  emit_byte(code);
+  emit_byte(byte);
 }
 
-void Parser::EmitConstant(const Instruction::Value& value) {
+void Parser::emit_constant(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 
-  EmitBytes(Instruction::Code::CONSTANT, MakeConstant(value));
+  emit_bytes(Instruction::Code::CONSTANT, make_constant(value));
 }
 
-void Parser::EmitDefinition(const Instruction::Value& value) {
+void Parser::emit_definition(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 
-  EmitBytes(Instruction::Code::DEFINE, MakeConstant(value));
+  emit_bytes(Instruction::Code::DEFINE, make_constant(value));
 }
 
-void Parser::EmitScope(const Instruction::Value& value) {
+void Parser::emit_scope(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 
-  m_Scope.push_back(value);
-  EmitBytes(Instruction::Code::BEGIN_SCOPE, MakeConstant(value));
+  m_scope.push_back(value);
+  emit_bytes(Instruction::Code::BEGIN_SCOPE, make_constant(value));
 }
 
-void Parser::EmitExecution() {
+void Parser::emit_execution() {
   LITR_PROFILE_FUNCTION();
 
-  const std::string scopePath{GetScopePath()};
-  EmitBytes(Instruction::Code::EXECUTE, MakeConstant(scopePath));
+  const std::string scopePath{get_scope_path()};
+  emit_bytes(Instruction::Code::EXECUTE, make_constant(scopePath));
 }
 
-void Parser::EmitClear() {
+void Parser::emit_clear() {
   LITR_PROFILE_FUNCTION();
 
-  EmitByte(Instruction::Code::CLEAR);
-  m_Scope.pop_back();
+  emit_byte(Instruction::Code::CLEAR);
+  m_scope.pop_back();
 }
 
-std::byte Parser::MakeConstant(const Instruction::Value& value) {
+std::byte Parser::make_constant(const Instruction::Value& value) {
   LITR_PROFILE_FUNCTION();
 
-  return m_Instruction->WriteConstant(value);
+  return m_instruction->write_constant(value);
 }
 
 // Ignore recursive call action
 // NOLINTNEXTLINE
-void Parser::Arguments() {
+void Parser::arguments() {
   LITR_PROFILE_FUNCTION();
 
-  Advance();
+  advance();
 
-  if (Match(TokenType::EQUAL)) {
-    Error("You are missing a parameter in front of the assignment.");
+  if (match(TokenType::EQUAL)) {
+    error("You are missing a parameter in front of the assignment.");
     return;
   }
 
-  if (Match({TokenType::STRING, TokenType::NUMBER, TokenType::ERROR})) {
-    Error("This is not allowed here.");
+  if (match({TokenType::STRING, TokenType::NUMBER, TokenType::ERROR})) {
+    error("This is not allowed here.");
     return;
   }
 
-  if (Match(TokenType::COMMAND)) {
-    Commands();
-    Arguments();
+  if (match(TokenType::COMMAND)) {
+    commands();
+    arguments();
   }
 
-  if (Match({TokenType::SHORT_PARAMETER, TokenType::LONG_PARAMETER})) {
-    Parameters();
-    Arguments();
+  if (match({TokenType::SHORT_PARAMETER, TokenType::LONG_PARAMETER})) {
+    parameters();
+    arguments();
   }
 
-  if (m_Previous.Type == TokenType::COMMA) {
-    Comma();
-    Arguments();
-  }
-}
-
-void Parser::Commands() {
-  LITR_PROFILE_FUNCTION();
-
-  EmitScope(Scanner::GetTokenValue(m_Previous));
-}
-
-void Parser::Parameters() {
-  LITR_PROFILE_FUNCTION();
-
-  EmitDefinition(Utils::TrimLeft(Scanner::GetTokenValue(m_Previous), '-'));
-
-  if (Peak(TokenType::EQUAL)) {
-    Advance();
-    Consume(TokenType::STRING, "Value assignment missing.");
-    EmitConstant(Utils::Trim(Scanner::GetTokenValue(m_Previous), '"'));
+  if (m_previous.type == TokenType::COMMA) {
+    comma();
+    arguments();
   }
 }
 
-void Parser::Comma() {
+void Parser::commands() {
   LITR_PROFILE_FUNCTION();
 
-  if (m_Scope.empty()) {
-    Error("Unexpected comma.");
+  emit_scope(Scanner::get_token_value(m_previous));
+}
+
+void Parser::parameters() {
+  LITR_PROFILE_FUNCTION();
+
+  emit_definition(utils::trim_left(Scanner::get_token_value(m_previous), '-'));
+
+  if (peak(TokenType::EQUAL)) {
+    advance();
+    consume(TokenType::STRING, "Value assignment missing.");
+    emit_constant(utils::trim(Scanner::get_token_value(m_previous), '"'));
+  }
+}
+
+void Parser::comma() {
+  LITR_PROFILE_FUNCTION();
+
+  if (m_scope.empty()) {
+    error("Unexpected comma.");
     return;
   }
 
-  if (Peak(TokenType::COMMA)) {
-    ErrorAtCurrent("Duplicated comma.");
+  if (peak(TokenType::COMMA)) {
+    error_at_current("Duplicated comma.");
     return;
   }
 
-  EmitExecution();
-  EmitClear();
+  emit_execution();
+  emit_clear();
 }
 
-void Parser::EndOfString() {
+void Parser::end_of_string() {
   LITR_PROFILE_FUNCTION();
 
-  if (!m_Scope.empty()) EmitExecution();
-  Consume(TokenType::EOS, "Expected end.");
+  if (!m_scope.empty()) emit_execution();
+  consume(TokenType::EOS, "Expected end.");
 }
 
-void Parser::ErrorAtCurrent(const std::string& message) {
+void Parser::error_at_current(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  ErrorAt(&m_Current, message);
+  error_at(&m_current, message);
 }
 
-void Parser::Error(const std::string& message) {
+void Parser::error(const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  ErrorAt(&m_Previous, message);
+  error_at(&m_previous, message);
 }
 
-void Parser::ErrorAt(Token* token, const std::string& message) {
+void Parser::error_at(Token* token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_PanicMode) return;
-  m_PanicMode = true;
+  if (m_panic_mode) return;
+  m_panic_mode = true;
 
-  std::string outMessage{"Cannot parse"};
+  std::string out_message{"Cannot parse"};
 
-  if (token->Type == TokenType::EOS) {
-    outMessage.append(" at end");
-  } else if (token->Type == TokenType::ERROR) {
+  if (token->type == TokenType::EOS) {
+    out_message.append(" at end");
+  } else if (token->type == TokenType::ERROR) {
     // Nothing, yet.
   } else {
-    outMessage.append(fmt::format(" at `{}`", Scanner::GetTokenValue(token)));
+    out_message.append(fmt::format(" at `{}`", Scanner::get_token_value(token)));
   }
 
-  outMessage.append(fmt::format(": {}", message));
+  out_message.append(fmt::format(": {}", message));
 
-  Error::Handler::Push(Error::CLIParserError(
-      outMessage,
+  error::Handler::push(error::CLIParserError(out_message,
       1,
-      token->Column,
-      Utils::Trim(m_Source, ' ')
+      token->column, utils::trim(m_source, ' ')
   ));
 
-  m_HasError = true;
+  m_has_error = true;
 }
 
-std::string Parser::GetScopePath() const {
+std::string Parser::get_scope_path() const {
   LITR_PROFILE_FUNCTION();
 
   std::string value{};
 
-  for (size_t i{0}; i < m_Scope.size(); ++i) {
-    value.append(m_Scope[i]);
-    if (i < m_Scope.size() - 1) {
+  for (size_t i{0}; i < m_scope.size(); ++i) {
+    value.append(m_scope[i]);
+    if (i < m_scope.size() - 1) {
       value.append(".");
     }
   }
@@ -258,4 +256,4 @@ std::string Parser::GetScopePath() const {
   return value;
 }
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

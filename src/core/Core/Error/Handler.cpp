@@ -6,30 +6,30 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::Error {
+namespace litr::error {
 
-void Handler::Push(const BaseError& err) {
+void Handler::push(const BaseError& err) {
   LITR_PROFILE_FUNCTION();
 
-  Get().m_Errors.push_back(err);
+  get().m_errors.push_back(err);
 }
 
-void Handler::Flush() {
+void Handler::flush() {
   LITR_PROFILE_FUNCTION();
 
-  Get().m_Errors.clear();
+  get().m_errors.clear();
 }
 
-Handler::Errors Handler::GetErrors() {
+Handler::Errors Handler::get_errors() {
   LITR_PROFILE_FUNCTION();
 
-  return Get().m_Errors;
+  return get().m_errors;
 }
 
-bool Handler::HasErrors() {
+bool Handler::has_errors() {
   LITR_PROFILE_FUNCTION();
 
-  return !Get().m_Errors.empty();
+  return !get().m_errors.empty();
 }
 
-}  // namespace litr::Error
+}  // namespace litr::error

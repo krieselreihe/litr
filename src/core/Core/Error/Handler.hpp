@@ -9,7 +9,7 @@
 
 #include "Core/Error/BaseError.hpp"
 
-namespace litr::Error {
+namespace litr::error {
 
 class Handler {
  public:
@@ -18,22 +18,22 @@ class Handler {
   Handler(const Handler&) = delete;
   Handler& operator=(const Handler&) = delete;
 
-  static void Push(const BaseError& err);
-  static void Flush();
+  static void push(const BaseError& err);
+  static void flush();
 
-  [[nodiscard]] static Errors GetErrors();
-  [[nodiscard]] static bool HasErrors();
+  [[nodiscard]] static Errors get_errors();
+  [[nodiscard]] static bool has_errors();
 
  private:
   Handler() = default;
 
-  static Handler& Get() {
+  static Handler& get() {
     static Handler instance{};
     return instance;
   }
 
  private:
-  Errors m_Errors{};
+  Errors m_errors{};
 };
 
-}  // namespace litr::Error
+}  // namespace litr::error

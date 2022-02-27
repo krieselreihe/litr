@@ -10,42 +10,42 @@
 #include <vector>
 #include <utility>
 
-namespace litr::Config {
+namespace litr::config {
 
 struct Parameter {
   enum class Type { STRING = 0, BOOLEAN = 1, ARRAY = 2 };
 
-  std::vector<std::string> TypeArguments{};
+  std::vector<std::string> type_arguments{};
 
-  const std::string Name;
-  std::string Description{};
-  std::string Shortcut{};
-  std::string Default{};
+  const std::string name;
+  std::string description{};
+  std::string shortcut{};
+  std::string default_value{};
 
-  Type Type{Type::STRING};
+  Type type{Type::STRING};
 
-  explicit Parameter(std::string name) : Name(std::move(name)) {
+  explicit Parameter(std::string name) : name(std::move(name)) {
   }
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config
 
 #ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<litr::Config::Parameter> {
+struct fmt::formatter<litr::config::Parameter> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const litr::Config::Parameter& p, FormatContext& ctx) {
-    if (!p.Description.empty()) {
-      return format_to(ctx.out(), "Param: {} - {}", p.Name, p.Description);
+  auto format(const litr::config::Parameter& p, FormatContext& ctx) {
+    if (!p.description.empty()) {
+      return format_to(ctx.out(), "Param: {} - {}", p.name, p.description);
     }
 
-    return format_to(ctx.out(), "Param: {}", p.Name);
+    return format_to(ctx.out(), "Param: {}", p.name);
   }
 };
 #endif

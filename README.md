@@ -32,7 +32,7 @@ type = ["debug", "release"]
 default = "debug"
 ```
 
-Run them all:
+run them all:
 
 ```shell
 litr --target=debug update,build,test

@@ -6,21 +6,21 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
-Scanner::Scanner(const char* source) : m_Start(source), m_Current(source) {
+Scanner::Scanner(const char* source) : m_start(source), m_current(source) {
 }
 
-void Scanner::SkipWhitespace() {
+void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char c{Peek()};
+    char c{peek()};
     switch (c) {
       case ' ':
       case '\r':
       case '\t': {
-        Advance();
+        advance();
         break;
       }
       default: {
@@ -30,198 +30,193 @@ void Scanner::SkipWhitespace() {
   }
 }
 
-char Scanner::Peek() {
+char Scanner::peek() {
   LITR_PROFILE_FUNCTION();
 
-  return *m_Current;
+  return *m_current;
 }
 
-char Scanner::PeekNext() const {
+char Scanner::peek_next() const {
   LITR_PROFILE_FUNCTION();
 
-  if (IsAtEnd()) {
+  if (is_at_end()) {
     return '\0';
   }
 
-  return m_Current[1];
+  return m_current[1];
 }
 
-char Scanner::Advance() {
+char Scanner::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_Current++;
-  m_Column++;
-  return m_Current[-1];
+  m_current++;
+  m_column++;
+  return m_current[-1];
 }
 
-bool Scanner::Match(char expected) {
+bool Scanner::match(char expected) {
   LITR_PROFILE_FUNCTION();
 
-  if (IsAtEnd()) {
+  if (is_at_end()) {
     return false;
   }
 
-  if (*m_Current != expected) {
+  if (*m_current != expected) {
     return false;
   }
 
-  m_Current++;
-  m_Column++;
+  m_current++;
+  m_column++;
   return true;
 }
 
-Token Scanner::ScanToken() {
+Token Scanner::scan_token() {
   LITR_PROFILE_FUNCTION();
 
-  SkipWhitespace();
+  skip_whitespace();
 
-  m_Start = m_Current;
+  m_start = m_current;
 
-  if (IsAtEnd()) {
-    return MakeToken(TokenType::EOS);
+  if (is_at_end()) {
+    return make_token(TokenType::EOS);
   }
 
-  char c{Advance()};
+  char c{advance()};
 
-  if (IsDigit(c)) return Number();
-  if (IsAlpha(c)) return Command();
+  if (is_digit(c)) return number();
+  if (is_alpha(c)) return command();
 
   switch (c) {
-    case ',': return MakeToken(TokenType::COMMA);
-    case '=': return MakeToken(TokenType::EQUAL);
-    case '-': return Match('-') ? LongParameter() : ShortParameter();
-    case '"': return String();
-    default: return ErrorToken("Unexpected character.");
+    case ',': return make_token(TokenType::COMMA);
+    case '=': return make_token(TokenType::EQUAL);
+    case '-': return match('-') ? long_parameter() : short_parameter();
+    case '"': return string();
+    default: return error_token("Unexpected character.");
   }
 }
 
-std::string Scanner::GetTokenValue(const Token& token) {
+std::string Scanner::get_token_value(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
-  return {token.Start, token.Length};
+  return {token.start, token.length};
 }
 
-std::string Scanner::GetTokenValue(Token* token) {
+std::string Scanner::get_token_value(Token* token) {
   LITR_PROFILE_FUNCTION();
 
-  return {token->Start, token->Length};
+  return {token->start, token->length};
 }
 
-Token Scanner::MakeToken(TokenType type) const {
+Token Scanner::make_token(TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  Token token{type, m_Start, static_cast<size_t>(m_Current - m_Start), m_Column};
+  Token token{type, m_start, static_cast<size_t>(m_current - m_start), m_column};
   return token;
 }
 
-Token Scanner::ErrorToken(const char* message) const {
+Token Scanner::error_token(const char* message) const {
   LITR_PROFILE_FUNCTION();
 
-  Token token{TokenType::ERROR, message, strlen(message), m_Column};
+  Token token{TokenType::ERROR, message, strlen(message), m_column};
   return token;
 }
 
-bool Scanner::IsDigit(char c) {
+bool Scanner::is_digit(char c) {
   return c >= '0' && c <= '9';
 }
 
-bool Scanner::IsAlpha(char c) {
+bool Scanner::is_alpha(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool Scanner::IsShortAlpha(char c) {
+bool Scanner::is_short_alpha(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-bool Scanner::IsAtEnd() const {
-  return *m_Current == '\0';
+bool Scanner::is_at_end() const {
+  return *m_current == '\0';
 }
 
-Token Scanner::String() {
+Token Scanner::string() {
   LITR_PROFILE_FUNCTION();
 
-  while (Peek() != '"' && !IsAtEnd()) {
-    Advance();
+  while (peek() != '"' && !is_at_end()) { advance();
   }
 
-  if (IsAtEnd()) {
-    return ErrorToken("Unterminated string.");
+  if (is_at_end()) {
+    return error_token("Unterminated string.");
   }
 
   // The closing quote.
-  Advance();
-  return MakeToken(TokenType::STRING);
+  advance();
+  return make_token(TokenType::STRING);
 }
 
-Token Scanner::Number() {
+Token Scanner::number() {
   LITR_PROFILE_FUNCTION();
 
-  while (IsDigit(Peek())) {
-    Advance();
+  while (is_digit(peek())) { advance();
   }
 
   // Look for a fractional part.
-  if (Peek() == '.' && IsDigit(PeekNext())) {
+  if (peek() == '.' && is_digit(peek_next())) {
     // Consume the ".".
-    Advance();
+    advance();
 
-    while (IsDigit(Peek())) {
-      Advance();
+    while (is_digit(peek())) { advance();
     }
   }
 
-  return MakeToken(TokenType::NUMBER);
+  return make_token(TokenType::NUMBER);
 }
 
-Token Scanner::Command() {
+Token Scanner::command() {
   LITR_PROFILE_FUNCTION();
 
-  while (IsAlpha(Peek()) || IsDigit(Peek())) {
-    Advance();
+  while (is_alpha(peek()) || is_digit(peek())) { advance();
   }
 
-  return MakeToken(TokenType::COMMAND);
+  return make_token(TokenType::COMMAND);
 }
 
-Token Scanner::LongParameter() {
+Token Scanner::long_parameter() {
   LITR_PROFILE_FUNCTION();
 
   bool hasError{false};
 
-  if (IsDigit(Peek()) || Peek() == '_' || !IsAlpha(Peek())) {
-    Advance();
+  if (is_digit(peek()) || peek() == '_' || !is_alpha(peek())) {
+    advance();
     hasError = true;
   }
 
-  while (IsAlpha(Peek()) || IsDigit(Peek())) {
-    Advance();
+  while (is_alpha(peek()) || is_digit(peek())) { advance();
   }
 
   if (hasError) {
-    return ErrorToken("A parameter can only start with the characters A-Za-z.");
+    return error_token("A parameter can only start with the characters A-Za-z.");
   }
 
-  return MakeToken(TokenType::LONG_PARAMETER);
+  return make_token(TokenType::LONG_PARAMETER);
 }
 
-Token Scanner::ShortParameter() {
+Token Scanner::short_parameter() {
   LITR_PROFILE_FUNCTION();
 
-  if (!IsShortAlpha(Advance())) {
-    return ErrorToken("A short parameter can only be A-Za-z as name.");
+  if (!is_short_alpha(advance())) {
+    return error_token("A short parameter can only be A-Za-z as name.");
   }
 
   int length{1};
-  while (IsAlpha(Peek())) {
-    Advance();
+  while (is_alpha(peek())) {
+    advance();
     length++;
   }
 
   if (length > 1) {
-    return ErrorToken("A short parameter can only contain one character (A-Za-z).");
+    return error_token("A short parameter can only contain one character (A-Za-z).");
   }
 
-  return MakeToken(TokenType::SHORT_PARAMETER);
+  return make_token(TokenType::SHORT_PARAMETER);
 }
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

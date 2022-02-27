@@ -10,26 +10,26 @@
 #include "Core/Base.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 class Shell {
  public:
   struct Result {
-    ExitStatus Status{ExitStatus::SUCCESS};
-    std::string Message{};
+    ExitStatus status{ExitStatus::SUCCESS};
+    std::string message{};
   };
 
   using ExecCallback = std::function<void(const std::string&)>;
 
-  static Result Exec(const std::string& command);
-  static Result Exec(const std::string& command, const Path& path);
-  static Result Exec(const std::string& command, const Shell::ExecCallback& callback);
-  static Result Exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback);
+  static Result exec(const std::string& command);
+  static Result exec(const std::string& command, const Path& path);
+  static Result exec(const std::string& command, const Shell::ExecCallback& callback);
+  static Result exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback);
 
  private:
-  [[nodiscard]] static ExitStatus GetStatusCode(int streamStatus);
-  [[nodiscard]] static std::string CreateCommandString(const std::string& command, const Path& path);
-  [[nodiscard]] static std::string CreateCdCommand(const Path& path);
+  [[nodiscard]] static ExitStatus get_status_code(int stream_status);
+  [[nodiscard]] static std::string create_command_string(const std::string& command, const Path& path);
+  [[nodiscard]] static std::string create_cd_command(const Path& path);
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

@@ -9,20 +9,20 @@
 #include "Core/Error/BaseError.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::Error {
+namespace litr::error {
 
 class Reporter {
  public:
   explicit Reporter(const Path& path);
 
-  void PrintErrors(const std::vector<BaseError>& errors);
-  void PrintError(const BaseError& error);
+  void print_errors(const std::vector<BaseError>& errors);
+  void print_error(const BaseError& error);
 
  private:
-  static uint32_t CountDigits(uint32_t number);
+  static uint32_t count_digits(uint32_t number);
 
-  const Path m_FilePath;
-  bool m_MultipleErrors{false};
+  const Path m_file_path;
+  bool m_multiple_errors{false};
 };
 
-}  // namespace litr::Error
+}  // namespace litr::error

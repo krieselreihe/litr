@@ -13,272 +13,272 @@ TEST_SUITE("ParameterBuilder") {
   TEST_CASE("Initiates a Parameter on construction") {
     const auto [file, data] = CreateTOMLMock("test", "");
 
-    litr::Config::ParameterBuilder builder{file, data, "test"};
-    litr::Ref<litr::Config::Parameter> builderResult{builder.GetResult()};
-    litr::Config::Parameter compare{"test"};
+    litr::config::ParameterBuilder builder{file, data, "test"};
+    litr::Ref<litr::config::Parameter> builderResult{builder.get_result()};
+    litr::config::Parameter compare{"test"};
 
-    CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
+    CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
     CHECK_EQ(sizeof(*builderResult), sizeof(compare));
-    litr::Error::Handler::Flush();
+    litr::error::Handler::flush();
   }
 
-  TEST_CASE("ParameterBuilder::AddDescription") {
-    SUBCASE("Emits an error if AddDescription called without description field") {
+  TEST_CASE("ParameterBuilder::add_description") {
+    SUBCASE("Emits an error if add_description called without description field") {
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDescription();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_description();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(You're missing the "description" field.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(You're missing the "description" field.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if description is not a string") {
       const auto [file, data] = CreateTOMLMock("test", "description = 42");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDescription();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_description();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The "description" can only be a string.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "description" can only be a string.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Extracts a description from toml data") {
       const auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDescription();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_description();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Description, "Text");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->description, "Text");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Applies a description directly from a string") {
       const auto [file, data] = CreateTOMLMock("test", "");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDescription("Text");
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_description("Text");
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Description, "Text");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->description, "Text");
+      litr::error::Handler::flush();
     }
   }
 
-  TEST_CASE("ParameterBuilder::AddShortcut") {
+  TEST_CASE("ParameterBuilder::add_shortcut") {
     SUBCASE("Does nothing if no shortcut is not set") {
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK(builder.GetResult()->Shortcut.empty());
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK(builder.get_result()->shortcut.empty());
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if shortcut is not a string") {
       const auto [file, data] = CreateTOMLMock("test", "shortcut = 42");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(A "shortcut" can only be a string.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "shortcut" can only be a string.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'help'") {
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "help")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "help" is reserved by Litr.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "help" is reserved by Litr.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'h'") {
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "h")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "h" is reserved by Litr.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "h" is reserved by Litr.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Extracts the shortcut from toml data") {
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "t")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Shortcut, "t");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->shortcut, "t");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if shortcut is already defined") {
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "x")");
-      auto param{litr::CreateRef<litr::Config::Parameter>("something")};
-      param->Shortcut = "x";
-      std::vector<litr::Ref<litr::Config::Parameter>> params{{param}};
+      auto param{litr::create_ref<litr::config::Parameter>("something")};
+      param->shortcut = "x";
+      std::vector<litr::Ref<litr::config::Parameter>> params{{param}};
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddShortcut(params);
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_shortcut(params);
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The shortcut name "x" is already used for parameter "something".)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "x" is already used for parameter "something".)");
+      litr::error::Handler::flush();
     }
   }
 
-  TEST_CASE("ParameterBuilder::AddType") {
+  TEST_CASE("ParameterBuilder::add_type") {
     SUBCASE("Does nothing if no type is not set") {
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Type, litr::Config::Parameter::Type::STRING);
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->type, litr::config::Parameter::Type::STRING);
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if string is set with an unknown option") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = "unknown")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Sets the type successfully to String if options is string") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = "string")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Type, litr::Config::Parameter::Type::STRING);
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->type, litr::config::Parameter::Type::STRING);
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Sets the type to Array on empty arrays") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = [])");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Type, litr::Config::Parameter::Type::ARRAY);
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->type, litr::config::Parameter::Type::ARRAY);
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if a non string value is contained in the type array") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["1", 2, "3"])");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The options provided in "type" are not all strings.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The options provided in "type" are not all strings.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Sets the type to Array with and populates TypeArguments") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["test", "debug"])");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
-      litr::Ref<litr::Config::Parameter> result{builder.GetResult()};
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
+      litr::Ref<litr::config::Parameter> result{builder.get_result()};
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(result->Type, litr::Config::Parameter::Type::ARRAY);
-      CHECK_EQ(result->TypeArguments[0], "test");
-      CHECK_EQ(result->TypeArguments[1], "debug");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(result->type, litr::config::Parameter::Type::ARRAY);
+      CHECK_EQ(result->type_arguments[0], "test");
+      CHECK_EQ(result->type_arguments[1], "debug");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if type is neither a string nor an array") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = 32)");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(A "type" can only be "string" or an array of options as strings.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "type" can only be "string" or an array of options as strings.)");
+      litr::error::Handler::flush();
     }
   }
 
-  TEST_CASE("ParameterBuilder::AddDefault") {
+  TEST_CASE("ParameterBuilder::add_default") {
     SUBCASE("Does nothing if default is not set") {
       const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDefault();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_default();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK(builder.GetResult()->Default.empty());
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK(builder.get_result()->default_value.empty());
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if default is not a string") {
       const auto [file, data] = CreateTOMLMock("test", R"(default = 1)");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDefault();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_default();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(The field "default" needs to be a string.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The field "default" needs to be a string.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Emits an error if default value is not found inside type array") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["Not default"]
 default = "Default")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
-      builder.AddDefault();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
+      builder.add_default();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 1);
-      CHECK_EQ(litr::Error::Handler::GetErrors()[0].Message, R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Sets default if defined as string") {
       const auto [file, data] = CreateTOMLMock("test", R"(default = "something")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddDefault();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_default();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Default, "something");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->default_value, "something");
+      litr::error::Handler::flush();
     }
 
     SUBCASE("Sets default if defined as string and type array contains value") {
       const auto [file, data] = CreateTOMLMock("test", R"(type = ["something"]
 default = "something")");
 
-      litr::Config::ParameterBuilder builder{file, data, "test"};
-      builder.AddType();
-      builder.AddDefault();
+      litr::config::ParameterBuilder builder{file, data, "test"};
+      builder.add_type();
+      builder.add_default();
 
-      CHECK_EQ(litr::Error::Handler::GetErrors().size(), 0);
-      CHECK_EQ(builder.GetResult()->Default, "something");
-      litr::Error::Handler::Flush();
+      CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
+      CHECK_EQ(builder.get_result()->default_value, "something");
+      litr::error::Handler::flush();
     }
   }
 }

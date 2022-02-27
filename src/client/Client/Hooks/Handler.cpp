@@ -4,32 +4,32 @@
 
 #include "Handler.hpp"
 
-namespace litr::Hook {
+namespace litr::hook {
 
-Handler::Handler(const Ref<CLI::Instruction>& instruction) : m_Instruction(instruction) {}
+Handler::Handler(const Ref<cli::Instruction>& instruction) : m_instruction(instruction) {}
 
-void Handler::Add(Code code, const std::vector<Value>& values,
+void Handler::add(Code code, const std::vector<Value>& values,
     const Handler::HookCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& value : values) {
-    m_Hooks.emplace_back(code, value, callback);
+    m_hooks.emplace_back(code, value, callback);
   }
 }
 
-bool Handler::Execute() const {
+bool Handler::execute() const {
   LITR_PROFILE_FUNCTION();
 
   size_t offset{0};
 
-  while (offset < m_Instruction->Count()) {
-    const auto code{static_cast<Code>(m_Instruction->Read(offset++))};
+  while (offset < m_instruction->count()) {
+    const auto code{static_cast<Code>(m_instruction->read(offset++))};
 
-    for (auto&& hook : m_Hooks) {
-      if (code != hook.Code) continue;
-      auto value{m_Instruction->ReadConstant(m_Instruction->Read(offset))};
-      if (value == hook.Value) {
-        hook.Callback(m_Instruction);
+    for (auto&& hook : m_hooks) {
+      if (code != hook.code) continue;
+      auto value{m_instruction->read_constant(m_instruction->read(offset))};
+      if (value == hook.value) {
+        hook.callback(m_instruction);
         return true;
       }
     }
@@ -42,4 +42,4 @@ bool Handler::Execute() const {
   return false;
 }
 
-}  // namespace litr::Hook
+}  // namespace litr::hook

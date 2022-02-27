@@ -10,37 +10,37 @@
 
 #include "Core/Config/Parameter.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 struct Variable {
   enum class Type { STRING, BOOLEAN };
 
-  Type Type;
-  std::string Name;
+  Type type;
+  std::string name;
   // Default value should be an empty string as booleans
   // are always handled explicit.
-  std::variant<std::string, bool> Value{};
+  std::variant<std::string, bool> value{};
 
-  Variable(enum Type type, std::string name) : Type(type), Name(std::move(name)) {
+  Variable(enum Type type, std::string name) : type(type), name(std::move(name)) {
   }
-  Variable(std::string name, bool value) : Type(Type::BOOLEAN), Name(std::move(name)), Value(value) {
+  Variable(std::string name, bool value) : type(Type::BOOLEAN), name(std::move(name)), value(value) {
   }
   Variable(std::string name, std::string value)
-      : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
+      : type(Type::STRING), name(std::move(name)), value(std::move(value)) {
   }
-  explicit Variable(const Config::Parameter& parameter) : Name(parameter.Name) {
-    switch (parameter.Type) {
-      case Config::Parameter::Type::STRING:
-      case Config::Parameter::Type::ARRAY:
-        Type = Type::STRING;
-        Value = "";
+  explicit Variable(const config::Parameter& parameter) : name(parameter.name) {
+    switch (parameter.type) {
+      case config::Parameter::Type::STRING:
+      case config::Parameter::Type::ARRAY:
+        type = Type::STRING;
+        value = "";
         break;
-      case Config::Parameter::Type::BOOLEAN:
-        Type = Type::BOOLEAN;
-        Value = false;
+      case config::Parameter::Type::BOOLEAN:
+        type = Type::BOOLEAN;
+        value = false;
         break;
     }
   }
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

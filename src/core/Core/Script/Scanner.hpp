@@ -9,52 +9,52 @@
 
 #include "Core/Script/Token.hpp"
 
-namespace litr::Script {
+namespace litr::script {
 
 class Scanner {
  public:
   explicit Scanner(const char* source);
 
-  [[nodiscard]] Token ScanToken();
-  [[nodiscard]] Token ScanUntouchedToken();
-  [[nodiscard]] Token ScanExpressionToken();
+  [[nodiscard]] Token scan_token();
+  [[nodiscard]] Token scan_untouched_token();
+  [[nodiscard]] Token scan_expression_token();
 
-  [[nodiscard]] static std::string GetTokenValue(const Token& token);
-  [[nodiscard]] static std::string GetTokenValue(Token* token);
+  [[nodiscard]] static std::string get_token_value(const Token& token);
+  [[nodiscard]] static std::string get_token_value(Token* token);
 
  private:
   enum class Mode { UNTOUCHED, EXPRESSION };
 
-  void SkipWhitespace();
-  char Advance();
-  [[nodiscard]] char Peek() const;
-  [[nodiscard]] char PeekNext() const;
-  [[nodiscard]] bool Match(char expected);
+  void skip_whitespace();
+  char advance();
+  [[nodiscard]] char peek() const;
+  [[nodiscard]] char peek_next() const;
+  [[nodiscard]] bool match(char expected);
 
-  [[nodiscard]] Token MakeToken(TokenType type) const;
-  [[nodiscard]] Token ErrorToken(const char* message) const;
+  [[nodiscard]] Token make_token(TokenType type) const;
+  [[nodiscard]] Token error_token(const char* message) const;
 
-  [[nodiscard]] static bool IsAlpha(char c);
-  [[nodiscard]] static bool IsDigit(char c);
-  [[nodiscard]] bool IsAtEnd() const;
+  [[nodiscard]] static bool is_alpha(char c);
+  [[nodiscard]] static bool is_digit(char c);
+  [[nodiscard]] bool is_at_end() const;
 
-  [[nodiscard]] Token StartSequence();
-  [[nodiscard]] Token EndSequence();
-  [[nodiscard]] Token Untouched();
-  [[nodiscard]] Token String();
-  [[nodiscard]] Token Identifier();
+  [[nodiscard]] Token start_sequence();
+  [[nodiscard]] Token end_sequence();
+  [[nodiscard]] Token untouched();
+  [[nodiscard]] Token string();
+  [[nodiscard]] Token identifier();
 
-  [[nodiscard]] TokenType IdentifierType() const;
-  [[nodiscard]] TokenType CheckKeyword(size_t start, size_t length, const char* rest, TokenType type) const;
+  [[nodiscard]] TokenType identifier_type() const;
+  [[nodiscard]] TokenType check_keyword(size_t start, size_t length, const char* rest, TokenType type) const;
 
  private:
-  const char* m_Start;
-  const char* m_Current;
+  const char* m_start;
+  const char* m_current;
 
-  uint32_t m_Line{1};
-  uint32_t m_Column{1};
+  uint32_t m_line{1};
+  uint32_t m_column{1};
 
-  std::stack<Mode> m_Modes{{Mode::UNTOUCHED}};
+  std::stack<Mode> m_modes{{Mode::UNTOUCHED}};
 };
 
-}  // namespace litr::Script
+}  // namespace litr::script

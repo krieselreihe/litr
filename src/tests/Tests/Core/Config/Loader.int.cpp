@@ -13,238 +13,238 @@
 TEST_SUITE("Config::Loader") {
   TEST_CASE("Loads a config file without issues") {
     const litr::Path path{"../../Fixtures/Config/empty.toml"};
-    const litr::Config::Loader config{path};
+    const litr::config::Loader config{path};
 
-    CHECK_FALSE(litr::Error::Handler::HasErrors());
-    litr::Error::Handler::Flush();
+    CHECK_FALSE(litr::error::Handler::has_errors());
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Emits a custom syntax error on exception") {
     const litr::Path path{"../../Fixtures/Config/syntax-error.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "There is a syntax error inside the configuration file.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "There is a syntax error inside the configuration file.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Emits an error on malformed command") {
     const litr::Path path{"../../Fixtures/Config/malformed-command.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "A command can be a string or table.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "A command can be a string or table.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Emits an error if command script is not a string") {
     const litr::Path path{"../../Fixtures/Config/malformed-command-script.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "A command script can be either a string or array of strings.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Emits an error if command property unknown") {
     const litr::Path path{"../../Fixtures/Config/unknown-command-property.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, R"(The command property "unknown" does not exist. Please refer to the docs.)");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, R"(The command property "unknown" does not exist. Please refer to the docs.)");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Copies errors from CommandBuilder to Loader on malformed script array") {
     const litr::Path path{"../../Fixtures/Config/command-script-array-malformed.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "A command script can be either a string or array of strings.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Copies errors from CommandBuilder to Loader on detailed malformed script array") {
     const litr::Path path{"../../Fixtures/Config/command-detailed-script-array-malformed.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "A command script can be either a string or array of strings.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Copies errors from CommandBuilder to Loader on multiple malformed fields") {
     const litr::Path path{"../../Fixtures/Config/command-description-and-output-malformed.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
-    CHECK_EQ(errors[0].Message, R"(The "description" can only be a string.)");
-    CHECK_EQ(errors[1].Message, R"(The "output" can either be "unchanged" or "silent".)");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, R"(The "description" can only be a string.)");
+    CHECK_EQ(errors[1].message, R"(The "output" can either be "unchanged" or "silent".)");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Does nothing if no commands or parameters defined") {
     const litr::Path path{"../../Fixtures/Config/empty-commands-params.toml"};
-    const litr::Config::Loader config{path};
+    const litr::config::Loader config{path};
 
-    CHECK_FALSE(litr::Error::Handler::HasErrors());
-    CHECK_EQ(config.GetCommands().size(), 0);
-    CHECK_EQ(config.GetParameters().size(), 0);
-    litr::Error::Handler::Flush();
+    CHECK_FALSE(litr::error::Handler::has_errors());
+    CHECK_EQ(config.get_commands().size(), 0);
+    CHECK_EQ(config.get_parameters().size(), 0);
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Loads commands") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
-      CHECK_FALSE(litr::Error::Handler::HasErrors());
-      CHECK_EQ(config->GetCommands().size(), 3);
+      CHECK_FALSE(litr::error::Handler::has_errors());
+      CHECK_EQ(config->get_commands().size(), 3);
     }
 
     SUBCASE("Resolves all fields on a command") {
-      const litr::Config::Query query{config};
-      const auto command{query.GetCommand("run")};
+      const litr::config::Query query{config};
+      const auto command{query.get_command("run")};
 
-      CHECK_EQ(command->Name, "run");
-      CHECK_EQ(command->Script.size(), 1);
-      CHECK_EQ(command->Script[0], "Script");
-      CHECK_EQ(command->Description, "Description");
-      CHECK_EQ(command->Example, "Example");
-      CHECK_EQ(command->Output, litr::Config::Command::Output::SILENT);
-      CHECK_EQ(command->Directory.size(), 1);
-      CHECK_EQ(command->Directory[0], "../../Fixtures/Config/Directory");
-      CHECK_EQ(command->ChildCommands.size(), 4);
+      CHECK_EQ(command->name, "run");
+      CHECK_EQ(command->script.size(), 1);
+      CHECK_EQ(command->script[0], "script");
+      CHECK_EQ(command->description, "Description");
+      CHECK_EQ(command->example, "Example");
+      CHECK_EQ(command->output, litr::config::Command::Output::SILENT);
+      CHECK_EQ(command->directory.size(), 1);
+      CHECK_EQ(command->directory[0], "../../Fixtures/Config/Directory");
+      CHECK_EQ(command->child_commands.size(), 4);
     }
 
     SUBCASE("Resolves all fields on a command without sub commands") {
-      const litr::Config::Query query{config};
-      const auto command{query.GetCommand("update")};
+      const litr::config::Query query{config};
+      const auto command{query.get_command("update")};
 
-      CHECK_EQ(command->Name, "update");
-      CHECK_EQ(command->Script.size(), 1);
-      CHECK_EQ(command->Script[0], "git pull && git submodule update --init");
-      CHECK(command->Description.empty());
-      CHECK(command->Example.empty());
-      CHECK_EQ(command->Output, litr::Config::Command::Output::UNCHANGED);
-      CHECK(command->Directory.empty());
-      CHECK(command->ChildCommands.empty());
+      CHECK_EQ(command->name, "update");
+      CHECK_EQ(command->script.size(), 1);
+      CHECK_EQ(command->script[0], "git pull && git submodule update --init");
+      CHECK(command->description.empty());
+      CHECK(command->example.empty());
+      CHECK_EQ(command->output, litr::config::Command::Output::UNCHANGED);
+      CHECK(command->directory.empty());
+      CHECK(command->child_commands.empty());
     }
 
     SUBCASE("Resolves all fields on a sub command") {
-      const litr::Config::Query query{config};
-      const auto command1{query.GetCommand("run.first")};
-      const auto command2{query.GetCommand("run.second")};
-      const auto command3{query.GetCommand("run.third")};
-      const auto command4{query.GetCommand("run.fourth")};
+      const litr::config::Query query{config};
+      const auto command1{query.get_command("run.first")};
+      const auto command2{query.get_command("run.second")};
+      const auto command3{query.get_command("run.third")};
+      const auto command4{query.get_command("run.fourth")};
 
       CHECK_NE(command1, nullptr);
       CHECK_NE(command2, nullptr);
       CHECK_NE(command3, nullptr);
       CHECK_NE(command4, nullptr);
 
-      CHECK_EQ(command1->Name, "first");
-      CHECK_EQ(command2->Name, "second");
-      CHECK_EQ(command3->Name, "third");
-      CHECK_EQ(command4->Name, "fourth");
+      CHECK_EQ(command1->name, "first");
+      CHECK_EQ(command2->name, "second");
+      CHECK_EQ(command3->name, "third");
+      CHECK_EQ(command4->name, "fourth");
 
-      CHECK_EQ(command1->Script.size(), 1);
-      CHECK_EQ(command1->Script[0], "run first");
-      CHECK_EQ(command2->Script.size(), 1);
-      CHECK_EQ(command2->Script[0], "run second");
-      CHECK_EQ(command3->Script.size(), 2);
-      CHECK_EQ(command3->Script[0], "Script1");
-      CHECK_EQ(command3->Script[1], "Script2");
-      CHECK_EQ(command4->Script.size(), 1);
-      CHECK_EQ(command4->Script[0], "run fourth");
+      CHECK_EQ(command1->script.size(), 1);
+      CHECK_EQ(command1->script[0], "run first");
+      CHECK_EQ(command2->script.size(), 1);
+      CHECK_EQ(command2->script[0], "run second");
+      CHECK_EQ(command3->script.size(), 2);
+      CHECK_EQ(command3->script[0], "Script1");
+      CHECK_EQ(command3->script[1], "Script2");
+      CHECK_EQ(command4->script.size(), 1);
+      CHECK_EQ(command4->script[0], "run fourth");
 
-      CHECK_EQ(command3->Description, "Description");
-      CHECK_EQ(command3->Directory.size(), 2);
-      CHECK_EQ(command3->Directory[0], "../../Fixtures/Config/Directory1");
-      CHECK_EQ(command3->Directory[1], "../../Fixtures/Config/Directory2");
+      CHECK_EQ(command3->description, "Description");
+      CHECK_EQ(command3->directory.size(), 2);
+      CHECK_EQ(command3->directory[0], "../../Fixtures/Config/Directory1");
+      CHECK_EQ(command3->directory[1], "../../Fixtures/Config/Directory2");
     }
 
     SUBCASE("Resolves a very deep nested script") {
-      const litr::Config::Query query{config};
-      const auto command{query.GetCommand("run.fourth.l1.l2.l3")};
+      const litr::config::Query query{config};
+      const auto command{query.get_command("run.fourth.l1.l2.l3")};
 
       CHECK_NE(command, nullptr);
-      CHECK_EQ(command->Name, "l3");
-      CHECK_EQ(command->Script.size(), 1);
-      CHECK_EQ(command->Script[0], "Deep Script");
+      CHECK_EQ(command->name, "l3");
+      CHECK_EQ(command->script.size(), 1);
+      CHECK_EQ(command->script[0], "Deep script");
     }
   }
 
   TEST_CASE("Emits an error if parameter name is reserved for Litr") {
     const litr::Path path{"../../Fixtures/Config/reserved-parameter.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
-    CHECK_EQ(errors[0].Message, R"(The parameter name "h" is reserved by Litr.)");
-    CHECK_EQ(errors[1].Message, R"(The parameter name "help" is reserved by Litr.)");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, R"(The parameter name "h" is reserved by Litr.)");
+    CHECK_EQ(errors[1].message, R"(The parameter name "help" is reserved by Litr.)");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Emits an error if parameter definition is malformed") {
     const litr::Path path{"../../Fixtures/Config/malformed-parameter.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].Message, "A parameter needs to be a string or table.");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, "A parameter needs to be a string or table.");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Copies errors from ParameterBuilder to Loader on multiple malformed params") {
     const litr::Path path{"../../Fixtures/Config/params-description-and-type-malformed.toml"};
-    const litr::Config::Loader config{path};
-    const auto errors{litr::Error::Handler::GetErrors()};
+    const litr::config::Loader config{path};
+    const auto errors{litr::error::Handler::get_errors()};
 
-    CHECK(litr::Error::Handler::HasErrors());
+    CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
-    CHECK_EQ(errors[0].Message, R"(The "description" can only be a string.)");
-    CHECK_EQ(errors[1].Message, R"(A "type" can only be "string" or an array of options as strings.)");
-    litr::Error::Handler::Flush();
+    CHECK_EQ(errors[0].message, R"(The "description" can only be a string.)");
+    CHECK_EQ(errors[1].message, R"(A "type" can only be "string" or an array of options as strings.)");
+    litr::error::Handler::flush();
   }
 
   TEST_CASE("Loads Parameters") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::CreateRef<litr::Config::Loader>(path)};
+    const auto config{litr::create_ref<litr::config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
-      CHECK_FALSE(litr::Error::Handler::HasErrors());
-      CHECK_EQ(config->GetParameters().size(), 2);
+      CHECK_FALSE(litr::error::Handler::has_errors());
+      CHECK_EQ(config->get_parameters().size(), 2);
     }
 
     SUBCASE("Resolves all fields on a parameter") {
-      const litr::Config::Query query{config};
-      const auto param{query.GetParameter("target")};
+      const litr::config::Query query{config};
+      const auto param{query.get_parameter("target")};
 
-      CHECK_EQ(param->Name, "target");
-      CHECK_EQ(param->Description, "Description");
-      CHECK_EQ(param->Shortcut, "t");
-      CHECK_EQ(param->Default, "debug");
-      CHECK_EQ(param->Type, litr::Config::Parameter::Type::ARRAY);
-      CHECK_EQ(param->TypeArguments.size(), 2);
-      CHECK_EQ(param->TypeArguments[0], "debug");
-      CHECK_EQ(param->TypeArguments[1], "release");
+      CHECK_EQ(param->name, "target");
+      CHECK_EQ(param->description, "Description");
+      CHECK_EQ(param->shortcut, "t");
+      CHECK_EQ(param->default_value, "debug");
+      CHECK_EQ(param->type, litr::config::Parameter::Type::ARRAY);
+      CHECK_EQ(param->type_arguments.size(), 2);
+      CHECK_EQ(param->type_arguments[0], "debug");
+      CHECK_EQ(param->type_arguments[1], "release");
     }
   }
 }

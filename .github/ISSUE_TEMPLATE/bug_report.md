@@ -20,7 +20,7 @@ Configuration file:
 # litr.toml
 ```
 
-Run the following command:
+run the following command:
 
 ```shell
 litr ...

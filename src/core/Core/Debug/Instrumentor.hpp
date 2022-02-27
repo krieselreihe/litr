@@ -14,19 +14,19 @@
 
 #include "Core/Log.hpp"
 
-namespace litr::Debug {
+namespace litr::debug {
 
 using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
 
 struct ProfileResult {
-  std::string Name;
-  FloatingPointMicroseconds Start;
-  std::chrono::microseconds ElapsedTime;
-  std::thread::id ThreadID;
+  std::string name;
+  FloatingPointMicroseconds start;
+  std::chrono::microseconds elapsed_time;
+  std::thread::id thread_id;
 };
 
 struct InstrumentationSession {
-  const std::string Name;
+  const std::string name;
 };
 
 class Instrumentor {
@@ -34,128 +34,127 @@ class Instrumentor {
   Instrumentor(const Instrumentor&) = delete;
   Instrumentor(Instrumentor&&) = delete;
 
-  void BeginSession(const std::string& name, const std::string& filepath = "results.json") {
-    std::lock_guard lock(m_Mutex);
+  void begin_session(const std::string& name, const std::string& filepath = "results.json") {
+    std::lock_guard lock(m_mutex);
 
-    if (m_CurrentSession) {
+    if (m_current_session) {
       // If there is already a current session, then close it before beginning new one.
       // Subsequent profiling output meant for the original session will end up in the
       // newly opened session instead.  That's better than having badly formatted
       // profiling output.
-      LITR_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
-      InternalEndSession();
+      LITR_CORE_ERROR("Instrumentor::begin_session('{0}') when session '{1}' already open.", name, m_current_session->name);
+      internal_end_session();
     }
-    m_OutputStream.open(filepath);
+    m_output_stream.open(filepath);
 
-    if (m_OutputStream.is_open()) {
-      m_CurrentSession = new InstrumentationSession({name});
-      WriteHeader();
+    if (m_output_stream.is_open()) {
+      m_current_session = new InstrumentationSession({name});
+      write_header();
     } else {
       LITR_CORE_ERROR("Instrumentor could not open results file '{0}'.", filepath);
     }
   }
 
-  void EndSession() {
-    std::lock_guard lock(m_Mutex);
-    InternalEndSession();
+  void end_session() {
+    std::lock_guard lock(m_mutex);
+    internal_end_session();
   }
 
-  void WriteProfile(const ProfileResult& result) {
+  void write_profile(const ProfileResult& result) {
     std::stringstream json;
 
-    std::string name{result.Name};
+    std::string name{result.name};
     std::replace(name.begin(), name.end(), '"', '\'');
 
     json << std::setprecision(3) << std::fixed;
     json << ",{";
     json << R"("cat":"function",)";
-    json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
+    json << "\"dur\":" << (result.elapsed_time.count()) << ',';
     json << R"("name":")" << name << "\",";
     json << R"("ph":"X",)";
     json << "\"pid\":0,";
-    json << R"("tid":")" << result.ThreadID << "\",";
-    json << "\"ts\":" << result.Start.count();
+    json << R"("tid":")" << result.thread_id << "\",";
+    json << "\"ts\":" << result.start.count();
     json << "}";
 
-    std::lock_guard lock(m_Mutex);
-    if (m_CurrentSession) {
-      m_OutputStream << json.str();
-      m_OutputStream.flush();
+    std::lock_guard lock(m_mutex);
+    if (m_current_session) {
+      m_output_stream << json.str();
+      m_output_stream.flush();
     }
   }
 
-  static Instrumentor& Get() {
+  static Instrumentor& get() {
     static Instrumentor instance;
     return instance;
   }
 
  private:
-  Instrumentor() : m_CurrentSession(nullptr) {
+  Instrumentor() : m_current_session(nullptr) {
   }
 
   ~Instrumentor() {
-    EndSession();
+    end_session();
   }
 
-  void WriteHeader() {
-    m_OutputStream << R"({"otherData": {},"traceEvents":[{})";
-    m_OutputStream.flush();
+  void write_header() {
+    m_output_stream << R"({"otherData": {},"traceEvents":[{})";
+    m_output_stream.flush();
   }
 
-  void WriteFooter() {
-    m_OutputStream << "]}";
-    m_OutputStream.flush();
+  void write_footer() {
+    m_output_stream << "]}";
+    m_output_stream.flush();
   }
 
   // Note: you must already own lock on m_Mutex before
   // calling InternalEndSession()
-  void InternalEndSession() {
-    if (m_CurrentSession) {
-      WriteFooter();
-      m_OutputStream.close();
-      delete m_CurrentSession;
-      m_CurrentSession = nullptr;
+  void internal_end_session() {
+    if (m_current_session) {
+      write_footer();
+      m_output_stream.close();
+      delete m_current_session;
+      m_current_session = nullptr;
     }
   }
 
- private:
-  std::mutex m_Mutex;
-  InstrumentationSession* m_CurrentSession;
-  std::ofstream m_OutputStream;
+  std::mutex m_mutex;
+  InstrumentationSession* m_current_session;
+  std::ofstream m_output_stream;
 };
 
 class InstrumentationTimer {
  public:
   explicit InstrumentationTimer(const char* name)
-      : m_Name(name), m_Stopped(false), m_StartTimePoint(std::chrono::steady_clock::now()) {
+      : m_name(name), m_stopped(false), m_start_time_point(std::chrono::steady_clock::now()) {
   }
 
   ~InstrumentationTimer() {
-    if (!m_Stopped) {
-      Stop();
+    if (!m_stopped) {
+      stop();
     }
   }
 
-  void Stop() {
-    const auto endTimePoint{std::chrono::steady_clock::now()};
-    const auto highResStart{FloatingPointMicroseconds{m_StartTimePoint.time_since_epoch()}};
-    const auto elapsedTime{
-      std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch() -
-        std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimePoint).time_since_epoch()
+  void stop() {
+    const auto end_time_point{std::chrono::steady_clock::now()};
+    const auto high_res_start{FloatingPointMicroseconds{m_start_time_point.time_since_epoch()}};
+    const auto elapsed_time{
+      std::chrono::time_point_cast<std::chrono::microseconds>(end_time_point).time_since_epoch() -
+        std::chrono::time_point_cast<std::chrono::microseconds>(m_start_time_point).time_since_epoch()
     };
 
-    Instrumentor::Get().WriteProfile({m_Name, highResStart, elapsedTime, std::this_thread::get_id()});
+    Instrumentor::get().write_profile({m_name, high_res_start, elapsed_time, std::this_thread::get_id()});
 
-    m_Stopped = true;
+    m_stopped = true;
   }
 
  private:
-  const char* m_Name;
-  bool m_Stopped{false};
-  const std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
+  const char* m_name;
+  bool m_stopped{false};
+  const std::chrono::time_point<std::chrono::steady_clock> m_start_time_point;
 };
 
-}  // namespace litr::Debug
+}  // namespace litr::debug
 
 #if LITR_PROFILE
 // Resolve which function signature macro will be used. Note that this only
@@ -182,18 +181,18 @@ class InstrumentationTimer {
 
 #define JOIN_AGAIN(x, y) x##y
 #define JOIN(x, y) JOIN_AGAIN(x, y)
-#define LITR_PROFILE_BEGIN_SESSION(name) ::litr::Debug::Instrumentor::Get().BeginSession(name)
-#define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, filePath) \
-  ::litr::Debug::Instrumentor::Get().BeginSession(name, filePath)
-#define LITR_PROFILE_END_SESSION() ::litr::Debug::Instrumentor::Get().EndSession()
+#define LITR_PROFILE_BEGIN_SESSION(name) ::litr::debug::Instrumentor::get().begin_session(name)
+#define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, file_path) \
+  ::litr::debug::Instrumentor::get().begin_session(name, file_path)
+#define LITR_PROFILE_END_SESSION() ::litr::debug::Instrumentor::get().end_session()
 #define LITR_PROFILE_SCOPE(name)                              \
-  ::litr::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
+  ::litr::debug::InstrumentationTimer JOIN(timer, __LINE__) { \
     name                                                      \
   }
 #define LITR_PROFILE_FUNCTION() LITR_PROFILE_SCOPE(LITR_FUNC_SIG)
 #else
 #define LITR_PROFILE_BEGIN_SESSION(name)
-#define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, filePath)
+#define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, file_path)
 #define LITR_PROFILE_END_SESSION()
 #define LITR_PROFILE_SCOPE(name)
 #define LITR_PROFILE_FUNCTION()

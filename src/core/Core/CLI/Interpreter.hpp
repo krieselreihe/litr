@@ -17,55 +17,55 @@
 #include "Core/Config/Query.hpp"
 #include "Core/Error/Handler.hpp"
 
-namespace litr::CLI {
+namespace litr::cli {
 
 class Interpreter {
-  using Variables = std::unordered_map<std::string, CLI::Variable>;
+  using Variables = std::unordered_map<std::string, cli::Variable>;
   using Scripts = std::vector<std::string>;
 
  public:
-  Interpreter(const Ref<Instruction>& instruction, const Ref<Config::Loader>& config);
+  Interpreter(const Ref<Instruction>& instruction, const Ref<config::Loader>& config);
 
-  void Execute();
-
- private:
-  [[nodiscard]] Instruction::Value ReadCurrentValue() const;
-  [[nodiscard]] Variables GetScopeVariables() const;
-  void DefineDefaultVariables(const Ref<Config::Loader>& config);
-
-  void ExecuteInstruction();
-
-  void BeginScope();
-  void ClearScope();
-  void DefineVariable();
-  void SetConstant();
-  void CallInstruction();
-
-  void CallCommand(const Ref<Config::Command>& command, const std::string& scope = "");
-  void CallChildCommands(const Ref<Config::Command>& command, const std::string& scope);
-  void RunScripts(const Scripts& scripts, const std::string& commandPath, const std::string& dir, bool printResult);
-
-  [[nodiscard]] Scripts ParseScripts(const Ref<Config::Command>& command);
-  [[nodiscard]] std::string ParseScript(const std::string& script, const Config::Location& location);
-
-  [[nodiscard]] static enum Variable::Type GetVariableType(const Ref<Config::Parameter>& param);
-
-  void ValidateRequiredParameters(const Ref<Config::Command>& command);
-  [[nodiscard]] bool IsVariableDefined(const std::string& name) const;
-  void HandleError(const Error::BaseError& error);
-
-  static void Print(const std::string& message);
+  void execute();
 
  private:
-  const Ref<Instruction>& m_Instruction;
-  const Config::Query m_Query;
+  [[nodiscard]] Instruction::Value read_current_value() const;
+  [[nodiscard]] Variables get_scope_variables() const;
+  void define_default_variables(const Ref<config::Loader>& config);
 
-  size_t m_Offset{0};
-  std::string m_CurrentVariableName{};
-  bool m_StopExecution{false};
+  void execute_instruction();
+
+  void begin_scope();
+  void clear_scope();
+  void define_variable();
+  void set_constant();
+  void call_instruction();
+
+  void call_command(const Ref<config::Command>& command, const std::string& scope = "");
+  void call_child_commands(const Ref<config::Command>& command, const std::string& scope);
+  void run_scripts(const Scripts& scripts, const std::string& command_path, const std::string& dir, bool print_result);
+
+  [[nodiscard]] Scripts parse_scripts(const Ref<config::Command>& command);
+  [[nodiscard]] std::string parse_script(const std::string& script, const config::Location& location);
+
+  [[nodiscard]] static enum Variable::Type get_variable_type(const Ref<config::Parameter>& param);
+
+  void validate_required_parameters(const Ref<config::Command>& command);
+  [[nodiscard]] bool is_variable_defined(const std::string& name) const;
+  void handle_error(const error::BaseError& error);
+
+  static void print(const std::string& message);
+
+ private:
+  const Ref<Instruction>& m_instruction;
+  const config::Query m_query;
+
+  size_t m_offset{0};
+  std::string m_current_variable_name{};
+  bool m_stop_execution{false};
 
   // Initialize with empty scope
-  std::vector<Variables> m_Scope{Variables()};
+  std::vector<Variables> m_scope{Variables()};
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

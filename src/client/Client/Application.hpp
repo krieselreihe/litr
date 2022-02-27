@@ -13,7 +13,7 @@ namespace litr {
 class Application {
  public:
   Application() = default;
-  ExitStatus Run(int argc, char* argv[]);
+  ExitStatus run(int argc, char* argv[]);
 
  private:
   [[nodiscard]] Path get_config_path();

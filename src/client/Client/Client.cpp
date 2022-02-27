@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
   LITR_PROFILE_BEGIN_SESSION_WITH_FILE("Litr", "litr-profile.json");
 
   litr::Application app{};
-  litr::ExitStatus status{app.Run(argc, argv)};
+  litr::ExitStatus status{app.run(argc, argv)};
 
   LITR_PROFILE_END_SESSION();
 

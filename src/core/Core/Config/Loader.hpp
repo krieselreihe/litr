@@ -16,30 +16,28 @@
 #include "Core/Config/Parameter.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 class Loader {
  public:
   using Commands = std::vector<Ref<Command>>;
   using Parameters = std::vector<Ref<Parameter>>;
 
-  explicit Loader(const Path& filePath);
+  explicit Loader(const Path& file_path);
   ~Loader() = default;
 
-  [[nodiscard]] inline Commands GetCommands() const { return m_Commands; }
-  [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; }
-  [[nodiscard]] inline Path GetFilePath() const { return m_FilePath; }
+  [[nodiscard]] inline Commands get_commands() const { return m_commands; }
+  [[nodiscard]] inline Parameters get_parameters() const { return m_parameters; }
+  [[nodiscard]] inline Path get_file_path() const { return m_file_path; }
 
  private:
-  Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);
-  void CollectCommands(const toml::table& commands);
-  void CollectParams(const toml::table& params);
+  Ref<Command> create_command(const toml::table& commands, const toml::value& definition, const std::string& name);
+  void collect_commands(const toml::table& commands);
+  void collect_params(const toml::table& params);
 
- private:
-  const Path m_FilePath;
-
-  Commands m_Commands{};
-  Parameters m_Parameters{};
+  const Path m_file_path;
+  Commands m_commands{};
+  Parameters m_parameters{};
 };
 
-}  // namespace litr::Config
+}  // namespace litr::config

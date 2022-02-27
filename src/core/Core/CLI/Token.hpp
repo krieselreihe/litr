@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace litr::CLI {
+namespace litr::cli {
 
 enum class TokenType {
   COMMA,
@@ -19,10 +19,10 @@ enum class TokenType {
 };
 
 struct Token {
-  TokenType Type;
-  const char* Start;
-  size_t Length;
-  uint32_t Column;
+  TokenType type;
+  const char* start;
+  size_t length;
+  uint32_t column;
 };
 
-}  // namespace litr::CLI
+}  // namespace litr::cli

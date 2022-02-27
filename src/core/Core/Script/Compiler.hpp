@@ -13,55 +13,56 @@
 #include "Core/Script/Token.hpp"
 #include "Core/Script/Scanner.hpp"
 
-namespace litr::Script {
+namespace litr::script {
 
 class Compiler {
  public:
-  using Variables = std::unordered_map<std::string, CLI::Variable>;
+  using Variables = std::unordered_map<std::string, cli::Variable>;
 
-  Compiler(const std::string& source, Config::Location location, Variables variables);
-  [[nodiscard]] std::string GetScript() const;
-  [[nodiscard]] std::vector<std::string> GetUsedVariables() const;
+  Compiler(const std::string& source, config::Location location, Variables variables);
 
- private:
-  void Advance();
-  void Consume(TokenType type, const char* message);
-
-  [[nodiscard]] bool Match(TokenType type) const;
-  [[nodiscard]] bool Peak(TokenType type) const;
-
-  void Source();
-  void Untouched();
-  void Script();
-  void Identifier();
-
-  void Statement(const CLI::Variable& variable);
-  void OrStatement(const CLI::Variable& variable);
-  void IfStatement(const CLI::Variable& variable);
-
-  void Expression();
-  void String();
-  void String(const CLI::Variable& variable);
-  void EndOfSequence();
-  void EndOfScript();
-
-  void CollectUsedVariable(const CLI::Variable& variable);
-
-  void Error(const std::string& message);
-  void ErrorAtCurrent(const std::string& message);
-  void ErrorAt(Token* token, const std::string& message);
+  [[nodiscard]] std::string get_script() const;
+  [[nodiscard]] std::vector<std::string> get_used_variables() const;
 
  private:
-  Scanner m_Scanner;
-  const Config::Location m_Location;
-  Variables m_Variables;
+  void advance();
+  void consume(TokenType type, const char* message);
 
-  Token m_Current{};
-  Token m_Previous{};
+  [[nodiscard]] bool match(TokenType type) const;
+  [[nodiscard]] bool peak(TokenType type) const;
 
-  bool m_PanicMode{false};
-  std::string m_Script{};
-  std::vector<std::string> m_UsedVariables{};
+  void source_token();
+  void untouched();
+  void script();
+  void identifier();
+
+  void statement(const cli::Variable& variable);
+  void or_statement(const cli::Variable& variable);
+  void if_statement(const cli::Variable& variable);
+
+  void expression();
+  void string();
+  void string(const cli::Variable& variable);
+  void end_of_sequence();
+  void end_of_script();
+
+  void collect_used_variable(const cli::Variable& variable);
+
+  void error(const std::string& message);
+  void error_at_current(const std::string& message);
+  void error_at(Token* token, const std::string& message);
+
+ private:
+  Scanner m_scanner;
+  const config::Location m_location;
+  Variables m_variables;
+
+  Token m_current{};
+  Token m_previous{};
+
+  bool m_panic_mode{false};
+  std::string m_script{};
+  std::vector<std::string> m_used_variables{};
 };
 
-}  // namespace litr::Script
+}  // namespace litr::script

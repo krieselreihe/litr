@@ -8,176 +8,162 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Log.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
 ParameterBuilder::ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_File(file), m_Table(data), m_Parameter(CreateRef<Parameter>(name)) {
-  LITR_CORE_TRACE("Creating {}", *m_Parameter);
+    : m_file(file), m_table(data), m_parameter(create_ref<Parameter>(name)) {
+  LITR_CORE_TRACE("Creating {}", *m_parameter);
 }
 
-void ParameterBuilder::AddDescription() {
+void ParameterBuilder::add_description() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"description"};
 
-  if (!m_Table.contains(name)) {
-    Error::Handler::Push(Error::MalformedParamError(
-        R"(You're missing the "description" field.)",
-        m_File.at(m_Parameter->Name)
-    ));
+  if (!m_table.contains(name)) {
+    error::Handler::push(
+        error::MalformedParamError(
+            R"(You're missing the "description" field.)", m_file.at(m_parameter->name)));
     return;
   }
 
-  const toml::value& description{toml::find(m_Table, name)};
+  const toml::value& description{toml::find(m_table, name)};
 
   if (!description.is_string()) {
-    Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(The "{}" can only be a string.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(
+        error::MalformedParamError(
+            fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
     return;
   }
 
-  m_Parameter->Description = description.as_string();
+  m_parameter->description = description.as_string();
 }
 
-void ParameterBuilder::AddDescription(const std::string& description) {
+void ParameterBuilder::add_description(const std::string& description) {
   LITR_PROFILE_FUNCTION();
 
-  m_Parameter->Description = description;
+  m_parameter->description = description;
 }
 
-void ParameterBuilder::AddShortcut() {
-  AddShortcut({});
+void ParameterBuilder::add_shortcut() {
+  add_shortcut({});
 }
 
-void ParameterBuilder::AddShortcut(const std::vector<Ref<Parameter>>& params) {
+void ParameterBuilder::add_shortcut(const std::vector<Ref<Parameter>>& params) {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"shortcut"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& shortcut{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& shortcut{toml::find(m_table, name)};
 
     if (shortcut.is_string()) {
-      const std::string shortcutStr{shortcut.as_string()};
+      const std::string shortcut_str{shortcut.as_string()};
 
-      if (IsReservedName(shortcutStr)) {
-        Error::Handler::Push(Error::ReservedParamError(
-            fmt::format(R"(The shortcut name "{}" is reserved by litr.)", shortcutStr),
-            m_Table.at(name)
-        ));
+      if (is_reserved_name(shortcut_str)) {
+        error::Handler::push(error::ReservedParamError(
+            fmt::format(R"(The shortcut name "{}" is reserved by Litr.)", shortcut_str),
+            m_table.at(name)));
         return;
       }
 
       for (auto&& param : params) {
-        if (param->Shortcut == shortcutStr) {
-          Error::Handler::Push(Error::ValueAlreadyInUseError(
+        if (param->shortcut == shortcut_str) {
+          error::Handler::push(error::ValueAlreadyInUseError(
               fmt::format(
-                  R"(The shortcut name "{}" is already used for parameter "{}".)", shortcutStr, param->Name),
-              m_Table.at(name)
-          ));
+                  R"(The shortcut name "{}" is already used for parameter "{}".)", shortcut_str, param->name),
+              m_table.at(name)));
           return;
         }
       }
 
-      m_Parameter->Shortcut = shortcutStr;
+      m_parameter->shortcut = shortcut_str;
       return;
     }
 
-    Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(A "{}" can only be a string.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(
+        error::MalformedParamError(fmt::format(R"(A "{}" can only be a string.)", name),
+            m_table.at(name)));
   }
 }
 
-void ParameterBuilder::AddType() {
+void ParameterBuilder::add_type() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"type"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& type{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& type{toml::find(m_table, name)};
 
     if (type.is_string()) {
       if (type.as_string() == "string") {
-        m_Parameter->Type = Parameter::Type::STRING;
+        m_parameter->type = Parameter::Type::STRING;
       } else if (type.as_string() == "boolean") {
-        m_Parameter->Type = Parameter::Type::BOOLEAN;
+        m_parameter->type = Parameter::Type::BOOLEAN;
       } else {
-        Error::Handler::Push(Error::UnknownParamValueError(
+        error::Handler::push(error::UnknownParamValueError(
             fmt::format(
                 R"(The "{}" option as string can only be "string" or "boolean". Provided value "{}" is not known.)",
-                        name, static_cast<std::string>(type.as_string())),
-            m_Table.at(name)
-        ));
+                name, static_cast<std::string>(type.as_string())),
+            m_table.at(name)));
       }
       return;
     }
 
     if (type.is_array()) {
-      m_Parameter->Type = Parameter::Type::ARRAY;
+      m_parameter->type = Parameter::Type::ARRAY;
       for (auto&& option : type.as_array()) {
         if (option.is_string()) {
-          m_Parameter->TypeArguments.emplace_back(option.as_string());
+          m_parameter->type_arguments.emplace_back(option.as_string());
         } else {
-          Error::Handler::Push(Error::MalformedParamError(
+          error::Handler::push(error::MalformedParamError(
               fmt::format(R"(The options provided in "{}" are not all strings.)", name),
-              m_Table.at(name)
-          ));
+              m_table.at(name)));
         }
       }
       return;
     }
 
-    Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(
-            R"(A "{}" can only be "string" or an array of options as strings.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(error::MalformedParamError(
+        fmt::format(R"(A "{}" can only be "string" or an array of options as strings.)", name),
+        m_table.at(name)));
   }
 }
 
-void ParameterBuilder::AddDefault() {
+void ParameterBuilder::add_default() {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"default"};
 
-  if (m_Table.contains(name)) {
-    const toml::value& def{toml::find(m_Table, name)};
+  if (m_table.contains(name)) {
+    const toml::value& def{toml::find(m_table, name)};
 
     if (def.is_string()) {
-      const std::string defaultValue{def.as_string()};
+      const std::string default_value{def.as_string()};
 
       // Test if default value present in available options
-      if (m_Parameter->Type == Parameter::Type::ARRAY) {
-        const std::vector<std::string>& args{m_Parameter->TypeArguments};
-        if (std::find(args.begin(), args.end(), defaultValue) == args.end()) {
-          Error::Handler::Push(Error::MalformedParamError(
-              fmt::format(
-                  R"(Cannot find default value "{}" inside "type" list defined in line {}.)",
-                  defaultValue,
-                  m_Table.at("type").location().line()
-                  ),
-              m_Table.at(name)
-          ));
+      if (m_parameter->type == Parameter::Type::ARRAY) {
+        const std::vector<std::string>& args{m_parameter->type_arguments};
+        if (std::find(args.begin(), args.end(), default_value) == args.end()) {
+          error::Handler::push(error::MalformedParamError(
+              fmt::format(R"(Cannot find default value "{}" inside "type" list defined in line {}.)", default_value,
+                  m_table.at("type").location().line()),
+              m_table.at(name)));
           return;
         }
       }
 
-      m_Parameter->Default = defaultValue;
+      m_parameter->default_value = default_value;
       return;
     }
 
-    Error::Handler::Push(Error::MalformedParamError(
-        fmt::format(R"(The field "{}" needs to be a string.)", name),
-        m_Table.at(name)
-    ));
+    error::Handler::push(
+        error::MalformedParamError(fmt::format(R"(The field "{}" needs to be a string.)", name),
+            m_table.at(name)));
   }
 }
 
-bool ParameterBuilder::IsReservedName(const std::string& name) {
+bool ParameterBuilder::is_reserved_name(const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   const std::array<std::string, 4> reserved{
@@ -187,4 +173,4 @@ bool ParameterBuilder::IsReservedName(const std::string& name) {
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 
-}  // namespace litr::Config
+}  // namespace litr::config

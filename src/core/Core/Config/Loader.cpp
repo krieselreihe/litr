@@ -14,27 +14,25 @@
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::Config {
+namespace litr::config {
 
-Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
+Loader::Loader(const Path& file_path) : m_file_path(file_path) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
 
   try {
-    config = toml::parse<toml::discard_comments, tsl::ordered_map>(m_FilePath.ToString());
+    config = toml::parse<toml::discard_comments, tsl::ordered_map>(m_file_path.to_string());
   } catch (const toml::syntax_error& err) {
-    Error::Handler::Push(Error::MalformedFileError(
+    error::Handler::push(error::MalformedFileError(
         "There is a syntax error inside the configuration file.",
-        err
-    ));
+        err));
     return;
   }
 
   if (!config.is_table()) {
-    Error::Handler::Push(Error::MalformedFileError(
-        "Configuration is not a TOML table."
-    ));
+    error::Handler::push(error::MalformedFileError(
+        "Configuration is not a TOML table."));
     return;
   }
 
@@ -44,7 +42,7 @@ Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
         toml::discard_comments,
         tsl::ordered_map>(config, "commands")
     };
-    CollectCommands(commands);
+    collect_commands(commands);
   }
 
   if (config.contains("params")) {
@@ -53,36 +51,35 @@ Loader::Loader(const Path& filePath) : m_FilePath(filePath) {
         toml::discard_comments,
         tsl::ordered_map>(config, "params")
     };
-    CollectParams(params);
+    collect_params(params);
   }
 }
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name) {
+Ref<Command> Loader::create_command(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{commands, definition, name};
 
   // Simple string form
   if (definition.is_string()) {
-    builder.AddScriptLine(definition.as_string(), definition);
-    return builder.GetResult();
+    builder.add_script_line(definition.as_string(), definition);
+    return builder.get_result();
   }
 
   // Simple string array form
   if (definition.is_array()) {
-    builder.AddScript(definition);
-    return builder.GetResult();
+    builder.add_script(definition);
+    return builder.get_result();
   }
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    Error::Handler::Push(Error::MalformedCommandError(
+    error::Handler::push(error::MalformedCommandError(
         "A command can be a string or table.",
-        commands.at(name)
-    ));
-    return builder.GetResult();
+        commands.at(name)));
+    return builder.get_result();
   }
 
   // Collect command property names
@@ -92,21 +89,20 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
   }
 
   while (!properties.empty()) {
-    LITR_PROFILE_SCOPE("Config::Loader::CreateCommand::CollectCommandProperties(while)");
+    LITR_PROFILE_SCOPE("Config::Loader::create_command::CollectCommandProperties(while)");
     const std::string property{properties.top()};
 
     if (property == "script") {
       const toml::value& scripts{toml::find(definition, "script")};
 
       if (scripts.is_string()) {
-        builder.AddScriptLine(scripts.as_string(), scripts);
+        builder.add_script_line(scripts.as_string(), scripts);
       } else if (scripts.is_array()) {
-        builder.AddScript(scripts);
+        builder.add_script(scripts);
       } else {
-        Error::Handler::Push(Error::MalformedScriptError(
+        error::Handler::push(error::MalformedScriptError(
             "A command script can be either a string or array of strings.",
-            definition.at(property)
-        ));
+            definition.at(property)));
       }
 
       properties.pop();
@@ -114,25 +110,25 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     }
 
     if (property == "description") {
-      builder.AddDescription();
+      builder.add_description();
       properties.pop();
       continue;
     }
 
     if (property == "example") {
-      builder.AddExample();
+      builder.add_example();
       properties.pop();
       continue;
     }
 
     if (property == "dir") {
-      builder.AddDirectory(m_FilePath.WithoutFilename());
+      builder.add_directory(m_file_path.without_filename());
       properties.pop();
       continue;
     }
 
     if (property == "output") {
-      builder.AddOutput();
+      builder.add_output();
       properties.pop();
       continue;
     }
@@ -140,69 +136,65 @@ Ref<Command> Loader::CreateCommand(const toml::table& commands, const toml::valu
     // Collect properties that cannot directly be resolved.
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
-      Error::Handler::Push(Error::UnknownCommandPropertyError(
-          fmt::format(
-              R"(The command property "{}" does not exist. Please refer to the docs.)", property),
-          definition.at(property)
-      ));
+      error::Handler::push(error::UnknownCommandPropertyError(
+          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+          definition.at(property)));
       properties.pop();
       continue;
     }
 
     // Ignore recursion warning.
     // NOLINTNEXTLINE
-    builder.AddChildCommand(CreateCommand(definition.as_table(), value, property));
+    builder.add_child_command(create_command(definition.as_table(), value, property));
     properties.pop();
   }
 
-  return builder.GetResult();
+  return builder.get_result();
 }
 
-void Loader::CollectCommands(const toml::table& commands) {
+void Loader::collect_commands(const toml::table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : commands) {
-    m_Commands.emplace_back(CreateCommand(commands, definition, name));
+    m_commands.emplace_back(create_command(commands, definition, name));
   }
 }
 
-void Loader::CollectParams(const toml::table& params) {
+void Loader::collect_params(const toml::table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : params) {
     ParameterBuilder builder{params, definition, name};
 
-    if (ParameterBuilder::IsReservedName(name)) {
-      Error::Handler::Push(Error::ReservedParamError(
+    if (ParameterBuilder::is_reserved_name(name)) {
+      error::Handler::push(error::ReservedParamError(
           fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
-          params.at(name)
-      ));
+          params.at(name)));
       continue;
     }
 
     // Simple string form
     if (definition.is_string()) {
-      builder.AddDescription(definition.as_string());
-      m_Parameters.emplace_back(builder.GetResult());
+      builder.add_description(definition.as_string());
+      m_parameters.emplace_back(builder.get_result());
       continue;
     }
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      Error::Handler::Push(Error::MalformedParamError(
+      error::Handler::push(error::MalformedParamError(
           "A parameter needs to be a string or table.",
-          params.at(name)
-      ));
+          params.at(name)));
       continue;
     }
 
-    builder.AddDescription();
-    builder.AddShortcut(m_Parameters);
-    builder.AddType();
-    builder.AddDefault();
+    builder.add_description();
+    builder.add_shortcut(m_parameters);
+    builder.add_type();
+    builder.add_default();
 
-    m_Parameters.emplace_back(builder.GetResult());
+    m_parameters.emplace_back(builder.get_result());
   }
 }
 
-}  // namespace litr::Config
+}  // namespace litr::config
