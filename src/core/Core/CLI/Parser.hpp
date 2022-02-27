@@ -37,7 +37,7 @@ class Parser {
   void Comma();
   void EndOfString();
 
-  [[nodiscard]] inline bool HasErrors() const { return m_HasError; };
+  [[nodiscard]] inline bool HasErrors() const { return m_HasError; }
 
  private:
   void Error(const std::string& message);
