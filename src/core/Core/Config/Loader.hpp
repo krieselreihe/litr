@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <deque>
-#include <toml.hpp>
 #include <utility>
 #include <vector>
+#include <string>
+
+#include <toml.hpp>
 
 #include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"
@@ -20,9 +26,9 @@ class Loader {
   explicit Loader(const Path& filePath);
   ~Loader() = default;
 
-  [[nodiscard]] inline Commands GetCommands() const { return m_Commands; };
-  [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; };
-  [[nodiscard]] inline Path GetFilePath() const { return m_FilePath; };
+  [[nodiscard]] inline Commands GetCommands() const { return m_Commands; }
+  [[nodiscard]] inline Parameters GetParameters() const { return m_Parameters; }
+  [[nodiscard]] inline Path GetFilePath() const { return m_FilePath; }
 
  private:
   Ref<Command> CreateCommand(const toml::table& commands, const toml::value& definition, const std::string& name);

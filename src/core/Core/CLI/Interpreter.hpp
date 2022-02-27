@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <functional>
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/CLI/Variable.hpp"

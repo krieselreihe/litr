@@ -1,6 +1,11 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "Core/Error/BaseError.hpp"
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Scanner.hpp"
 
 #include "Core/Debug/Instrumentor.hpp"
@@ -94,13 +98,13 @@ Token Scanner::ScanToken() {
 std::string Scanner::GetTokenValue(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
-  return std::string(token.Start, token.Length);
+  return {token.Start, token.Length};
 }
 
 std::string Scanner::GetTokenValue(Token* token) {
   LITR_PROFILE_FUNCTION();
 
-  return std::string(token->Start, token->Length);
+  return {token->Start, token->Length};
 }
 
 Token Scanner::MakeToken(TokenType type) const {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <algorithm>
@@ -151,7 +155,7 @@ class InstrumentationTimer {
   const std::chrono::time_point<std::chrono::steady_clock> m_StartTimePoint;
 };
 
-}  // namespace Litr
+}  // namespace Litr::Debug
 
 #if LITR_PROFILE
 // Resolve which function signature macro will be used. Note that this only

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "TOML.hpp"
 
 #include <fmt/format.h>

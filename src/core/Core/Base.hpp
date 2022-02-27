@@ -1,6 +1,11 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <memory>
+#include <utility>
 
 namespace Litr {
 

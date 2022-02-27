@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
-#include <toml.hpp>
+#include <string>
 #include <vector>
+
+#include <toml.hpp>
 
 #include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"

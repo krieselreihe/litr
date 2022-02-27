@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <string>
@@ -24,9 +28,7 @@ struct Variable {
   Variable(std::string name, std::string value)
       : Type(Type::STRING), Name(std::move(name)), Value(std::move(value)) {
   }
-  explicit Variable(const Config::Parameter& parameter) {
-    Name = parameter.Name;
-
+  explicit Variable(const Config::Parameter& parameter) : Name(parameter.Name) {
     switch (parameter.Type) {
       case Config::Parameter::Type::STRING:
       case Config::Parameter::Type::ARRAY:

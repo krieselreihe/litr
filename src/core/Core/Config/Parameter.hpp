@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #pragma once
 
 #include <fmt/format.h>
 
 #include <string>
 #include <vector>
+#include <utility>
 
 namespace Litr::Config {
 

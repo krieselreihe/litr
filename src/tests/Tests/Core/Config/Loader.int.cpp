@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Core/Config/Loader.hpp"
 
 #include <doctest/doctest.h>
@@ -11,7 +15,7 @@ TEST_SUITE("Config::Loader") {
     const Litr::Path path{"../../Fixtures/Config/empty.toml"};
     const Litr::Config::Loader config{path};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
     Litr::Error::Handler::Flush();
   }
 
@@ -20,9 +24,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "There is a syntax error inside the configuration file.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "There is a syntax error inside the configuration file.");
     Litr::Error::Handler::Flush();
   }
 
@@ -31,9 +35,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "A command can be a string or table.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "A command can be a string or table.");
     Litr::Error::Handler::Flush();
   }
 
@@ -42,9 +46,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
     Litr::Error::Handler::Flush();
   }
 
@@ -53,9 +57,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == R"(The command property "unknown" does not exist. Please refer to the docs.)");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, R"(The command property "unknown" does not exist. Please refer to the docs.)");
     Litr::Error::Handler::Flush();
   }
 
@@ -64,9 +68,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
     Litr::Error::Handler::Flush();
   }
 
@@ -75,9 +79,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "A command script can be either a string or array of strings.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "A command script can be either a string or array of strings.");
     Litr::Error::Handler::Flush();
   }
 
@@ -86,10 +90,10 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 2);
-    CHECK(errors[0].Message == R"(The "description" can only be a string.)");
-    CHECK(errors[1].Message == R"(The "output" can either be "unchanged" or "silent".)");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 2);
+    CHECK_EQ(errors[0].Message, R"(The "description" can only be a string.)");
+    CHECK_EQ(errors[1].Message, R"(The "output" can either be "unchanged" or "silent".)");
     Litr::Error::Handler::Flush();
   }
 
@@ -97,9 +101,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Path path{"../../Fixtures/Config/empty-commands-params.toml"};
     const Litr::Config::Loader config{path};
 
-    CHECK(Litr::Error::Handler::HasErrors() == false);
-    CHECK(config.GetCommands().size() == 0);
-    CHECK(config.GetParameters().size() == 0);
+    CHECK_FALSE(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(config.GetCommands().size(), 0);
+    CHECK_EQ(config.GetParameters().size(), 0);
     Litr::Error::Handler::Flush();
   }
 
@@ -108,35 +112,35 @@ TEST_SUITE("Config::Loader") {
     const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
-      CHECK(Litr::Error::Handler::HasErrors() == false);
-      CHECK(config->GetCommands().size() == 3);
+      CHECK_FALSE(Litr::Error::Handler::HasErrors());
+      CHECK_EQ(config->GetCommands().size(), 3);
     }
 
     SUBCASE("Resolves all fields on a command") {
       const Litr::Config::Query query{config};
       const auto command{query.GetCommand("run")};
 
-      CHECK(command->Name == "run");
-      CHECK(command->Script.size() == 1);
-      CHECK(command->Script[0] == "Script");
-      CHECK(command->Description == "Description");
-      CHECK(command->Example == "Example");
-      CHECK(command->Output == Litr::Config::Command::Output::SILENT);
-      CHECK(command->Directory.size() == 1);
-      CHECK(command->Directory[0] == "../../Fixtures/Config/Directory");
-      CHECK(command->ChildCommands.size() == 4);
+      CHECK_EQ(command->Name, "run");
+      CHECK_EQ(command->Script.size(), 1);
+      CHECK_EQ(command->Script[0], "Script");
+      CHECK_EQ(command->Description, "Description");
+      CHECK_EQ(command->Example, "Example");
+      CHECK_EQ(command->Output, Litr::Config::Command::Output::SILENT);
+      CHECK_EQ(command->Directory.size(), 1);
+      CHECK_EQ(command->Directory[0], "../../Fixtures/Config/Directory");
+      CHECK_EQ(command->ChildCommands.size(), 4);
     }
 
     SUBCASE("Resolves all fields on a command without sub commands") {
       const Litr::Config::Query query{config};
       const auto command{query.GetCommand("update")};
 
-      CHECK(command->Name == "update");
-      CHECK(command->Script.size() == 1);
-      CHECK(command->Script[0] == "git pull && git submodule update --init");
+      CHECK_EQ(command->Name, "update");
+      CHECK_EQ(command->Script.size(), 1);
+      CHECK_EQ(command->Script[0], "git pull && git submodule update --init");
       CHECK(command->Description.empty());
       CHECK(command->Example.empty());
-      CHECK(command->Output == Litr::Config::Command::Output::UNCHANGED);
+      CHECK_EQ(command->Output, Litr::Config::Command::Output::UNCHANGED);
       CHECK(command->Directory.empty());
       CHECK(command->ChildCommands.empty());
     }
@@ -148,40 +152,40 @@ TEST_SUITE("Config::Loader") {
       const auto command3{query.GetCommand("run.third")};
       const auto command4{query.GetCommand("run.fourth")};
 
-      CHECK(command1 != nullptr);
-      CHECK(command2 != nullptr);
-      CHECK(command3 != nullptr);
-      CHECK(command4 != nullptr);
+      CHECK_NE(command1, nullptr);
+      CHECK_NE(command2, nullptr);
+      CHECK_NE(command3, nullptr);
+      CHECK_NE(command4, nullptr);
 
-      CHECK(command1->Name == "first");
-      CHECK(command2->Name == "second");
-      CHECK(command3->Name == "third");
-      CHECK(command4->Name == "fourth");
+      CHECK_EQ(command1->Name, "first");
+      CHECK_EQ(command2->Name, "second");
+      CHECK_EQ(command3->Name, "third");
+      CHECK_EQ(command4->Name, "fourth");
 
-      CHECK(command1->Script.size() == 1);
-      CHECK(command1->Script[0] == "run first");
-      CHECK(command2->Script.size() == 1);
-      CHECK(command2->Script[0] == "run second");
-      CHECK(command3->Script.size() == 2);
-      CHECK(command3->Script[0] == "Script1");
-      CHECK(command3->Script[1] == "Script2");
-      CHECK(command4->Script.size() == 1);
-      CHECK(command4->Script[0] == "run fourth");
+      CHECK_EQ(command1->Script.size(), 1);
+      CHECK_EQ(command1->Script[0], "run first");
+      CHECK_EQ(command2->Script.size(), 1);
+      CHECK_EQ(command2->Script[0], "run second");
+      CHECK_EQ(command3->Script.size(), 2);
+      CHECK_EQ(command3->Script[0], "Script1");
+      CHECK_EQ(command3->Script[1], "Script2");
+      CHECK_EQ(command4->Script.size(), 1);
+      CHECK_EQ(command4->Script[0], "run fourth");
 
-      CHECK(command3->Description == "Description");
-      CHECK(command3->Directory.size() == 2);
-      CHECK(command3->Directory[0] == "../../Fixtures/Config/Directory1");
-      CHECK(command3->Directory[1] == "../../Fixtures/Config/Directory2");
+      CHECK_EQ(command3->Description, "Description");
+      CHECK_EQ(command3->Directory.size(), 2);
+      CHECK_EQ(command3->Directory[0], "../../Fixtures/Config/Directory1");
+      CHECK_EQ(command3->Directory[1], "../../Fixtures/Config/Directory2");
     }
 
     SUBCASE("Resolves a very deep nested script") {
       const Litr::Config::Query query{config};
       const auto command{query.GetCommand("run.fourth.l1.l2.l3")};
 
-      CHECK(command != nullptr);
-      CHECK(command->Name == "l3");
-      CHECK(command->Script.size() == 1);
-      CHECK(command->Script[0] == "Deep Script");
+      CHECK_NE(command, nullptr);
+      CHECK_EQ(command->Name, "l3");
+      CHECK_EQ(command->Script.size(), 1);
+      CHECK_EQ(command->Script[0], "Deep Script");
     }
   }
 
@@ -190,10 +194,10 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 2);
-    CHECK(errors[0].Message == R"(The parameter name "h" is reserved by Litr.)");
-    CHECK(errors[1].Message == R"(The parameter name "help" is reserved by Litr.)");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 2);
+    CHECK_EQ(errors[0].Message, R"(The parameter name "h" is reserved by Litr.)");
+    CHECK_EQ(errors[1].Message, R"(The parameter name "help" is reserved by Litr.)");
     Litr::Error::Handler::Flush();
   }
 
@@ -202,9 +206,9 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 1);
-    CHECK(errors[0].Message == "A parameter needs to be a string or table.");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 1);
+    CHECK_EQ(errors[0].Message, "A parameter needs to be a string or table.");
     Litr::Error::Handler::Flush();
   }
 
@@ -213,10 +217,10 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
     const auto errors{Litr::Error::Handler::GetErrors()};
 
-    CHECK(Litr::Error::Handler::HasErrors() == true);
-    CHECK(errors.size() == 2);
-    CHECK(errors[0].Message == R"(The "description" can only be a string.)");
-    CHECK(errors[1].Message == R"(A "type" can only be "string" or an array of options as strings.)");
+    CHECK(Litr::Error::Handler::HasErrors());
+    CHECK_EQ(errors.size(), 2);
+    CHECK_EQ(errors[0].Message, R"(The "description" can only be a string.)");
+    CHECK_EQ(errors[1].Message, R"(A "type" can only be "string" or an array of options as strings.)");
     Litr::Error::Handler::Flush();
   }
 
@@ -225,22 +229,22 @@ TEST_SUITE("Config::Loader") {
     const auto config{Litr::CreateRef<Litr::Config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
-      CHECK(Litr::Error::Handler::HasErrors() == false);
-      CHECK(config->GetParameters().size() == 2);
+      CHECK_FALSE(Litr::Error::Handler::HasErrors());
+      CHECK_EQ(config->GetParameters().size(), 2);
     }
 
     SUBCASE("Resolves all fields on a parameter") {
       const Litr::Config::Query query{config};
       const auto param{query.GetParameter("target")};
 
-      CHECK(param->Name == "target");
-      CHECK(param->Description == "Description");
-      CHECK(param->Shortcut == "t");
-      CHECK(param->Default == "debug");
-      CHECK(param->Type == Litr::Config::Parameter::Type::ARRAY);
-      CHECK(param->TypeArguments.size() == 2);
-      CHECK(param->TypeArguments[0] == "debug");
-      CHECK(param->TypeArguments[1] == "release");
+      CHECK_EQ(param->Name, "target");
+      CHECK_EQ(param->Description, "Description");
+      CHECK_EQ(param->Shortcut, "t");
+      CHECK_EQ(param->Default, "debug");
+      CHECK_EQ(param->Type, Litr::Config::Parameter::Type::ARRAY);
+      CHECK_EQ(param->TypeArguments.size(), 2);
+      CHECK_EQ(param->TypeArguments[0], "debug");
+      CHECK_EQ(param->TypeArguments[1], "release");
     }
   }
 }

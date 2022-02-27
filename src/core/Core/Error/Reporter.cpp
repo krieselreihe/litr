@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
+
 #include "Reporter.hpp"
 
-#include <string>
 #include <fmt/color.h>
 // Defined to build on g++
 #include <fmt/format.h>
+
+#include <string>
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Utils.hpp"
@@ -39,9 +44,9 @@ void Reporter::PrintError(const BaseError& error) {
         fmt::print(fg(fmt::color::crimson), " ...\n");
       } else {
         // Title
-        fmt::print(fg(fmt::color::crimson),"Error: {}\n", error.Description);
+        fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Description);
         // File
-        fmt::print(fg(fmt::color::dark_gray),"  → {}\n", m_FilePath);
+        fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_FilePath);
       }
 
       // Line view
@@ -60,7 +65,7 @@ void Reporter::PrintError(const BaseError& error) {
       // Message
       fmt::print(fg(fmt::color::crimson), "Error: {}\n", error.Message);
       // File
-      fmt::print(fg(fmt::color::dark_gray),"  → {}\n", m_FilePath);
+      fmt::print(fg(fmt::color::dark_gray), "  → {}\n", m_FilePath);
       break;
     }
   }
