@@ -10,6 +10,7 @@
 #include "Core/CLI/Shell.hpp"
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
+#include "Core/ExitStatus.hpp"
 
 namespace litr::cli {
 
@@ -20,7 +21,7 @@ static void CommandPathToHumanReadable(std::string& path) {
   std::replace(path.begin(), path.end(), '.', ' ');
 }
 
-Interpreter::Interpreter(const Ref<Instruction>& instruction, const Ref<config::Loader>& config)
+Interpreter::Interpreter(const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config)
     : m_instruction(instruction), m_query(config) {
   define_default_variables(config);
 }
@@ -57,7 +58,7 @@ Interpreter::Variables Interpreter::get_scope_variables() const {
   return variables;
 }
 
-void Interpreter::define_default_variables(const Ref<config::Loader>& config) {
+void Interpreter::define_default_variables(const std::shared_ptr<config::Loader>& config) {
   LITR_PROFILE_FUNCTION();
 
   const auto params{config->get_parameters()};
@@ -117,7 +118,7 @@ void Interpreter::define_variable() {
   LITR_PROFILE_FUNCTION();
 
   const Instruction::Value name{read_current_value()};
-  const Ref<config::Parameter>& param{m_query.get_parameter(name)};
+  const std::shared_ptr<config::Parameter>& param{m_query.get_parameter(name)};
 
   if (param == nullptr) {
     handle_error(
@@ -204,7 +205,7 @@ void Interpreter::call_instruction() {
   LITR_PROFILE_FUNCTION();
 
   const Instruction::Value name{read_current_value()};
-  const Ref<config::Command> command{m_query.get_command(name)};
+  const std::shared_ptr<config::Command> command{m_query.get_command(name)};
 
   if (command == nullptr) {
     handle_error(error::CommandNotFoundError(
@@ -219,7 +220,7 @@ void Interpreter::call_instruction() {
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::call_command(const Ref<config::Command>& command, const std::string& scope) {
+void Interpreter::call_command(const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   std::string command_path{scope + command->name};
@@ -248,7 +249,7 @@ void Interpreter::call_command(const Ref<config::Command>& command, const std::s
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::call_child_commands(const Ref<config::Command>& command, const std::string& scope) {
+void Interpreter::call_child_commands(const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   if (!command->child_commands.empty()) {
@@ -276,7 +277,7 @@ void Interpreter::run_scripts(const Scripts& scripts, const std::string& command
   }
 }
 
-Interpreter::Scripts Interpreter::parse_scripts(const Ref<config::Command>& command) {
+Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   size_t location{0};
@@ -305,7 +306,7 @@ std::string Interpreter::parse_script(const std::string& script, const config::L
   return parser.get_script();
 }
 
-enum Variable::Type Interpreter::get_variable_type(const Ref<config::Parameter>& param) {
+enum Variable::Type Interpreter::get_variable_type(const std::shared_ptr<config::Parameter>& param) {
   LITR_PROFILE_FUNCTION();
 
   switch (param->type) {
@@ -321,7 +322,7 @@ enum Variable::Type Interpreter::get_variable_type(const Ref<config::Parameter>&
   return {};
 }
 
-void Interpreter::validate_required_parameters(const Ref<config::Command>& command) {
+void Interpreter::validate_required_parameters(const std::shared_ptr<config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   const auto params{m_query.get_parameters(command->name)};

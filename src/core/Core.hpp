@@ -8,7 +8,7 @@
 
 #include "Version.hpp"
 #include "Core/Assert.hpp"
-#include "Core/Base.hpp"
+#include "Core/ExitStatus.hpp"
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
 

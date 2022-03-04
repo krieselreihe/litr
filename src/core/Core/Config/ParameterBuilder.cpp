@@ -11,7 +11,7 @@
 namespace litr::config {
 
 ParameterBuilder::ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_file(file), m_table(data), m_parameter(create_ref<Parameter>(name)) {
+    : m_file(file), m_table(data), m_parameter(std::make_shared<Parameter>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_parameter);
 }
 
@@ -49,7 +49,7 @@ void ParameterBuilder::add_shortcut() {
   add_shortcut({});
 }
 
-void ParameterBuilder::add_shortcut(const std::vector<Ref<Parameter>>& params) {
+void ParameterBuilder::add_shortcut(const std::vector<std::shared_ptr<Parameter>>& params) {
   LITR_PROFILE_FUNCTION();
 
   const std::string name{"shortcut"};

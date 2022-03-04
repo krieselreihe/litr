@@ -8,10 +8,10 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <toml.hpp>
 
-#include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"
 #include "Core/Config/Parameter.hpp"
 #include "Core/FileSystem.hpp"
@@ -20,8 +20,8 @@ namespace litr::config {
 
 class Loader {
  public:
-  using Commands = std::vector<Ref<Command>>;
-  using Parameters = std::vector<Ref<Parameter>>;
+  using Commands = std::vector<std::shared_ptr<Command>>;
+  using Parameters = std::vector<std::shared_ptr<Parameter>>;
 
   explicit Loader(const Path& file_path);
   ~Loader() = default;
@@ -31,7 +31,7 @@ class Loader {
   [[nodiscard]] inline Path get_file_path() const { return m_file_path; }
 
  private:
-  Ref<Command> create_command(const toml::table& commands, const toml::value& definition, const std::string& name);
+  std::shared_ptr<Command> create_command(const toml::table& commands, const toml::value& definition, const std::string& name);
   void collect_commands(const toml::table& commands);
   void collect_params(const toml::table& params);
 

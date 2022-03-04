@@ -7,7 +7,7 @@
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
 
-#include "Core/Base.hpp"
+#include <memory>
 
 namespace litr {
 
@@ -16,11 +16,11 @@ class Log {
   Log(const Log&) = delete;
   Log& operator=(const Log&) = delete;
 
-  static Ref<spdlog::logger>& get_core_logger() {
+  static std::shared_ptr<spdlog::logger>& get_core_logger() {
     return get().s_core_logger;
   }
 
-  static Ref<spdlog::logger>& get_client_logger() {
+  static std::shared_ptr<spdlog::logger>& get_client_logger() {
     return get().s_client_logger;
   }
 
@@ -35,8 +35,8 @@ class Log {
     return instance;
   }
 
-  Ref<spdlog::logger> s_core_logger;
-  Ref<spdlog::logger> s_client_logger;
+  std::shared_ptr<spdlog::logger> s_core_logger;
+  std::shared_ptr<spdlog::logger> s_client_logger;
 };
 
 }  // namespace litr

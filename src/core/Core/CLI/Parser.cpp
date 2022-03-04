@@ -12,7 +12,7 @@
 
 namespace litr::cli {
 
-Parser::Parser(const Ref<Instruction>& instruction, const std::string& source)
+Parser::Parser(const std::shared_ptr<Instruction>& instruction, const std::string& source)
     : m_source(source), m_scanner(source.c_str()), m_instruction(instruction) {
   LITR_PROFILE_FUNCTION();
 

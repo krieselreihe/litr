@@ -4,12 +4,14 @@
 
 #include <doctest/doctest.h>
 
+#include <memory>
+
 #include "Core/Config/Query.hpp"
 
 TEST_SUITE("Config::Query") {
   TEST_CASE("get_command()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
     const litr::config::Query query{config};
 
     SUBCASE("Get top level command") {
@@ -35,7 +37,7 @@ TEST_SUITE("Config::Query") {
 
   TEST_CASE("get_commands()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
     const litr::config::Query query{config};
 
     SUBCASE("Get all defined commands") {
@@ -53,7 +55,7 @@ TEST_SUITE("Config::Query") {
 
   TEST_CASE("get_parameter()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
     const litr::config::Query query{config};
 
     SUBCASE("Get parameter by name") {
@@ -71,7 +73,7 @@ TEST_SUITE("Config::Query") {
 
   TEST_CASE("get_parameters()") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
     const litr::config::Query query{config};
 
     SUBCASE("Get all defined parameters") {

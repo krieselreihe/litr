@@ -57,7 +57,7 @@ Loader::Loader(const Path& file_path) : m_file_path(file_path) {
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Loader::create_command(const toml::table& commands, const toml::value& definition, const std::string& name) {
+std::shared_ptr<Command> Loader::create_command(const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{commands, definition, name};

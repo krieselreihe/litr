@@ -6,13 +6,14 @@
 
 #include <vector>
 #include <utility>
+#include <memory>
 
 #include "Core.hpp"
 
 namespace litr::hook {
 
 class Handler {
-  using HookCallback = std::function<void(const Ref<cli::Instruction>& instruction)>;
+  using HookCallback = std::function<void(const std::shared_ptr<cli::Instruction>& instruction)>;
   using Code = cli::Instruction::Code;
   using Value = cli::Instruction::Value;
 
@@ -26,13 +27,13 @@ class Handler {
   };
 
  public:
-  explicit Handler(const Ref<cli::Instruction>& instruction);
+  explicit Handler(const std::shared_ptr<cli::Instruction>& instruction);
 
   void add(Code code, const std::vector<Value>& values, const HookCallback& callback);
   [[nodiscard]] bool execute() const;
 
  private:
-  const Ref<cli::Instruction>& m_instruction;
+  const std::shared_ptr<cli::Instruction>& m_instruction;
   std::vector<Hook> m_hooks{};
 };
 

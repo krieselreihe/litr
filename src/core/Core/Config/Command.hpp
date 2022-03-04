@@ -9,8 +9,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <memory>
 
-#include "Core/Base.hpp"
 #include "Core/Config/Location.hpp"
 
 namespace litr::config {
@@ -24,7 +24,7 @@ struct Command {
   const std::string name;
   std::string description{};
   std::string example{};
-  std::vector<Ref<Command>> child_commands{};
+  std::vector<std::shared_ptr<Command>> child_commands{};
 
   Output output{Output::UNCHANGED};
   std::vector<Location> Locations{};

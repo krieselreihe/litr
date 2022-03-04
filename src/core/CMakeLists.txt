@@ -5,7 +5,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 add_library(${NAME} STATIC
   Version.hpp Core.hpp
   Core/Debug/Instrumentor.hpp Core/Debug/Disassembler.cpp Core/Debug/Disassembler.hpp
-  Core/Base.hpp Core/Log.cpp Core/Log.hpp Core/Assert.hpp
+  Core/Log.cpp Core/Log.hpp Core/Assert.hpp Core/ExitStatus.hpp
   Core/FileSystem.cpp Core/FileSystem.hpp Core/Environment.hpp
   Core/Utils.cpp Core/Utils.hpp
   Core/Error/Reporter.cpp Core/Error/Reporter.hpp Core/Error/BaseError.hpp

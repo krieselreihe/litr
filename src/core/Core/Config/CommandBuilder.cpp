@@ -11,7 +11,7 @@
 namespace litr::config {
 
 CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_file(file), m_table(data), m_command(create_ref<Command>(name)) {
+    : m_file(file), m_table(data), m_command(std::make_shared<Command>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_command);
 }
 
@@ -149,7 +149,7 @@ void CommandBuilder::add_output() {
   }
 }
 
-void CommandBuilder::add_child_command(const Ref<Command>& command) {
+void CommandBuilder::add_child_command(const std::shared_ptr<Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   m_command->child_commands.emplace_back(command);

@@ -12,16 +12,16 @@
 
 namespace litr::config {
 
-Query::Query(const Ref<Loader>& config) : m_config(config) {}
+Query::Query(const std::shared_ptr<Loader>& config) : m_config(config) {}
 
-Ref<Command> Query::get_command(const std::string& name) const {
+std::shared_ptr<Command> Query::get_command(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
   Parts names{split_command_query(name)};
   return get_command_by_path(names, get_commands());
 }
 
-Ref<Parameter> Query::get_parameter(const std::string& name) const {
+std::shared_ptr<Parameter> Query::get_parameter(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& param : get_parameters()) {
@@ -42,7 +42,7 @@ Query::Commands Query::get_commands() const {
 Query::Commands Query::get_commands(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{get_command(name)};
+  const std::shared_ptr<Command>& command{get_command(name)};
 
   if (command == nullptr) {
     return {};
@@ -60,7 +60,7 @@ Query::Parameters Query::get_parameters() const {
 Query::Parameters Query::get_parameters(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{get_command(name)};
+  const std::shared_ptr<Command>& command{get_command(name)};
   Query::Parameters parameters{};
 
   if (command == nullptr) {
@@ -95,10 +95,10 @@ Query::Parts Query::split_command_query(const std::string& query) {
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-Ref<Command> Query::get_command_by_path(Parts& names, const Loader::Commands& commands) {
+std::shared_ptr<Command> Query::get_command_by_path(Parts& names, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
-  const Ref<Command>& command{get_command_by_name(names.front(), commands)};
+  const std::shared_ptr<Command>& command{get_command_by_name(names.front(), commands)};
 
   if (command == nullptr) {
     return nullptr;
@@ -124,10 +124,10 @@ Ref<Command> Query::get_command_by_path(Parts& names, const Loader::Commands& co
   return get_command_by_path(names, command->child_commands);
 }
 
-Ref<Command> Query::get_command_by_name(const std::string& name, const Loader::Commands& commands) {
+std::shared_ptr<Command> Query::get_command_by_name(const std::string& name, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
-  for (const Ref<Command>& command : commands) {
+  for (const std::shared_ptr<Command>& command : commands) {
     if (command->name == name) {
       return command;
     }
@@ -149,7 +149,7 @@ Query::Variables Query::get_parameters_as_variables() const {
   return variables;
 }
 
-std::vector<std::string> Query::get_used_parameter_names(const Ref<Command>& command) const {
+std::vector<std::string> Query::get_used_parameter_names(const std::shared_ptr<Command>& command) const {
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> names{};
