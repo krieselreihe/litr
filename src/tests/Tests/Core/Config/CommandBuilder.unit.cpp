@@ -14,7 +14,7 @@ TEST_SUITE("Config::CommandBuilder") {
     const auto [file, data] = CreateTOMLMock("test", "");
 
     litr::config::CommandBuilder builder{file, data, "test"};
-    litr::Ref<litr::config::Command> builderResult{builder.get_result()};
+    std::shared_ptr<litr::config::Command> builderResult{builder.get_result()};
     litr::config::Command compare{"test"};
 
     CHECK_EQ(litr::error::Handler::get_errors().size(), 0);

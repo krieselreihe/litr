@@ -6,8 +6,8 @@
 
 #include <string>
 #include <deque>
+#include <memory>
 
-#include "Core/Base.hpp"
 #include "Core/CLI/Token.hpp"
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Instruction.hpp"
@@ -16,7 +16,7 @@ namespace litr::cli {
 
 class Parser {
  public:
-  Parser(const Ref<Instruction>& instruction, const std::string& source);
+  Parser(const std::shared_ptr<Instruction>& instruction, const std::string& source);
 
   void advance();
   void consume(TokenType type, const char* message);
@@ -51,7 +51,7 @@ class Parser {
 
   std::string m_source;
   Scanner m_scanner;
-  const Ref<Instruction>& m_instruction;
+  const std::shared_ptr<Instruction>& m_instruction;
 
   Token m_current{};
   Token m_previous{};

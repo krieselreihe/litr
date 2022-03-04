@@ -5,14 +5,14 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
-#include "Core/Base.hpp"
 #include "Core/CLI/Instruction.hpp"
 
 namespace litr::debug {
 
-size_t disassemble_instruction(const Ref<cli::Instruction>& instruction, size_t offset);
-void disassemble(const Ref<cli::Instruction>& instruction, const std::string& name);
+size_t disassemble_instruction(const std::shared_ptr<cli::Instruction>& instruction, size_t offset);
+void disassemble(const std::shared_ptr<cli::Instruction>& instruction, const std::string& name);
 
 }  // namespace litr::debug
 

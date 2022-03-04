@@ -10,7 +10,7 @@
 
 namespace litr::hook {
 
-void Version::print([[maybe_unused]] const Ref<cli::Instruction>& instruction) {
+void Version::print([[maybe_unused]] const std::shared_ptr<cli::Instruction>& instruction) {
   fmt::print("{}.{}.{}\n", LITR_VERSION_MAJOR, LITR_VERSION_MINOR, LITR_VERSION_PATCH);
 }
 

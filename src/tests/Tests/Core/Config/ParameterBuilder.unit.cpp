@@ -14,7 +14,7 @@ TEST_SUITE("ParameterBuilder") {
     const auto [file, data] = CreateTOMLMock("test", "");
 
     litr::config::ParameterBuilder builder{file, data, "test"};
-    litr::Ref<litr::config::Parameter> builderResult{builder.get_result()};
+    std::shared_ptr<litr::config::Parameter> builderResult{builder.get_result()};
     litr::config::Parameter compare{"test"};
 
     CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -126,9 +126,9 @@ TEST_SUITE("ParameterBuilder") {
 
     SUBCASE("Emits an error if shortcut is already defined") {
       const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "x")");
-      auto param{litr::create_ref<litr::config::Parameter>("something")};
+      auto param{std::make_shared<litr::config::Parameter>("something")};
       param->shortcut = "x";
-      std::vector<litr::Ref<litr::config::Parameter>> params{{param}};
+      std::vector<std::shared_ptr<litr::config::Parameter>> params{{param}};
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut(params);
@@ -200,7 +200,7 @@ TEST_SUITE("ParameterBuilder") {
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
-      litr::Ref<litr::config::Parameter> result{builder.get_result()};
+      std::shared_ptr<litr::config::Parameter> result{builder.get_result()};
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
       CHECK_EQ(result->type, litr::config::Parameter::Type::ARRAY);

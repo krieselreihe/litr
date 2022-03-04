@@ -6,10 +6,10 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <toml.hpp>
 
-#include "Core/Base.hpp"
 #include "Core/Config/Command.hpp"
 #include "Core/FileSystem.hpp"
 
@@ -29,9 +29,9 @@ class CommandBuilder {
   void add_example();
   void add_directory(const Path& root);
   void add_output();
-  void add_child_command(const Ref<Command>& command);
+  void add_child_command(const std::shared_ptr<Command>& command);
 
-  [[nodiscard]] inline Ref<Command> get_result() const { return m_command; }
+  [[nodiscard]] inline std::shared_ptr<Command> get_result() const { return m_command; }
 
  private:
   void add_location(const toml::value& context);
@@ -39,7 +39,7 @@ class CommandBuilder {
  private:
   const toml::table& m_file;
   const toml::value& m_table;
-  const Ref<Command> m_command;
+  const std::shared_ptr<Command> m_command;
 };
 
 }  // namespace litr::config

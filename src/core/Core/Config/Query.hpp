@@ -7,9 +7,9 @@
 #include <deque>
 #include <string>
 #include <vector>
+#include <memory>
 #include <unordered_map>
 
-#include "Core/Base.hpp"
 #include "Core/Config/Loader.hpp"
 #include "Core/CLI/Variable.hpp"
 
@@ -20,13 +20,13 @@ class Query {
   using Variables = std::unordered_map<std::string, cli::Variable>;
 
  public:
-  using Commands = std::vector<Ref<Command>>;
-  using Parameters = std::vector<Ref<Parameter>>;
+  using Commands = std::vector<std::shared_ptr<Command>>;
+  using Parameters = std::vector<std::shared_ptr<Parameter>>;
 
-  explicit Query(const Ref<Loader>& config);
+  explicit Query(const std::shared_ptr<Loader>& config);
 
-  [[nodiscard]] Ref<Command> get_command(const std::string& name) const;
-  [[nodiscard]] Ref<Parameter> get_parameter(const std::string& name) const;
+  [[nodiscard]] std::shared_ptr<Command> get_command(const std::string& name) const;
+  [[nodiscard]] std::shared_ptr<Parameter> get_parameter(const std::string& name) const;
 
   [[nodiscard]] Commands get_commands() const;
   [[nodiscard]] Commands get_commands(const std::string& name) const;
@@ -35,13 +35,13 @@ class Query {
 
  private:
   [[nodiscard]] static Parts split_command_query(const std::string& query);
-  [[nodiscard]] static Ref<Command> get_command_by_path(Parts& names, const Loader::Commands& commands);
-  [[nodiscard]] static Ref<Command> get_command_by_name(const std::string& name, const Loader::Commands& commands);
+  [[nodiscard]] static std::shared_ptr<Command> get_command_by_path(Parts& names, const Loader::Commands& commands);
+  [[nodiscard]] static std::shared_ptr<Command> get_command_by_name(const std::string& name, const Loader::Commands& commands);
 
   [[nodiscard]] Variables get_parameters_as_variables() const;
-  [[nodiscard]] std::vector<std::string> get_used_parameter_names(const Ref<Command>& command) const;
+  [[nodiscard]] std::vector<std::string> get_used_parameter_names(const std::shared_ptr<Command>& command) const;
 
-  const Ref<Loader>& m_config;
+  const std::shared_ptr<Loader>& m_config;
 };
 
 }  // namespace litr::config

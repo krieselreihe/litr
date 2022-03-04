@@ -19,9 +19,9 @@ namespace litr::hook {
 // There will be a refactor for this making some improvements on the way as well:
 // https://github.com/krieselreihe/litr/issues/31
 
-Help::Help(const Ref<config::Loader>& config) : m_query(config), m_file_path(config->get_file_path()) {}
+Help::Help(const std::shared_ptr<config::Loader>& config) : m_query(config), m_file_path(config->get_file_path()) {}
 
-void Help::print(const Ref<cli::Instruction>& instruction) const {
+void Help::print(const std::shared_ptr<cli::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
 
   m_command_name = get_command_name(instruction);
@@ -67,7 +67,7 @@ void Help::print_commands() const {
   fmt::print("\n");
 }
 
-void Help::print_command(const Ref<config::Command>& command, const std::string& parent_name, size_t depth) const {
+void Help::print_command(const std::shared_ptr<config::Command>& command, const std::string& parent_name, size_t depth) const {
   size_t padding{get_command_padding()};
   std::string command_path{command->name};
 
@@ -94,7 +94,7 @@ void Help::print_command(const Ref<config::Command>& command, const std::string&
   }
 }
 
-void Help::print_example(const Ref<config::Command>& command) const {
+void Help::print_example(const std::shared_ptr<config::Command>& command) const {
   if (!command->example.empty()) {
     const size_t padding{get_parameter_padding()};
 
@@ -141,7 +141,7 @@ void Help::print_options() const {
   }
 }
 
-void Help::print_parameter_options(const Ref<config::Parameter>& param) const {
+void Help::print_parameter_options(const std::shared_ptr<config::Parameter>& param) const {
   LITR_PROFILE_FUNCTION();
 
   if (!param->type_arguments.empty()) {
@@ -158,7 +158,7 @@ void Help::print_parameter_options(const Ref<config::Parameter>& param) const {
   }
 }
 
-void Help::print_default_parameter_option(const Ref<config::Parameter>& param) const {
+void Help::print_default_parameter_option(const std::shared_ptr<config::Parameter>& param) const {
   LITR_PROFILE_FUNCTION();
 
   if (!param->default_value.empty()) {
@@ -193,7 +193,7 @@ void Help::print_with_description(const std::string& name, const std::string& de
   }
 }
 
-std::string Help::get_command_name(const Ref<cli::Instruction>& instruction) {
+std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& instruction) {
   LITR_PROFILE_FUNCTION();
 
   size_t offset{0};
@@ -319,10 +319,10 @@ size_t Help::get_parameter_padding() const {
   return padding_left + padding + padding_right;
 }
 
-bool Help::sort_parameter_by_required(const Ref<config::Parameter>& p1, const Ref<config::Parameter>& p2) {
+bool Help::sort_parameter_by_required(const std::shared_ptr<config::Parameter>& p1, const std::shared_ptr<config::Parameter>& p2) {
   LITR_PROFILE_FUNCTION();
 
-  auto rank_parameter_required{[](const Ref<config::Parameter>& param) -> int {
+  auto rank_parameter_required{[](const std::shared_ptr<config::Parameter>& param) -> int {
     switch (param->type) {
       case config::Parameter::Type::STRING:
       case config::Parameter::Type::ARRAY: {

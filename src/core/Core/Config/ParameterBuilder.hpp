@@ -6,10 +6,10 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <toml.hpp>
 
-#include "Core/Base.hpp"
 #include "Core/Config/Parameter.hpp"
 
 namespace litr::config {
@@ -21,18 +21,18 @@ class ParameterBuilder {
   void add_description();
   void add_description(const std::string& description);
   void add_shortcut();
-  void add_shortcut(const std::vector<Ref<Parameter>>& params);
+  void add_shortcut(const std::vector<std::shared_ptr<Parameter>>& params);
   void add_default();
   void add_type();
 
-  [[nodiscard]] inline Ref<Parameter> get_result() const { return m_parameter; }
+  [[nodiscard]] inline std::shared_ptr<Parameter> get_result() const { return m_parameter; }
 
   [[nodiscard]] static bool is_reserved_name(const std::string& name);
 
  private:
   const toml::table& m_file;
   const toml::value& m_table;
-  const Ref<Parameter> m_parameter;
+  const std::shared_ptr<Parameter> m_parameter;
 };
 
 }  // namespace litr::config

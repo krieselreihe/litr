@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <memory>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/CLI/Variable.hpp"
@@ -24,14 +25,14 @@ class Interpreter {
   using Scripts = std::vector<std::string>;
 
  public:
-  Interpreter(const Ref<Instruction>& instruction, const Ref<config::Loader>& config);
+  Interpreter(const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config);
 
   void execute();
 
  private:
   [[nodiscard]] Instruction::Value read_current_value() const;
   [[nodiscard]] Variables get_scope_variables() const;
-  void define_default_variables(const Ref<config::Loader>& config);
+  void define_default_variables(const std::shared_ptr<config::Loader>& config);
 
   void execute_instruction();
 
@@ -41,23 +42,23 @@ class Interpreter {
   void set_constant();
   void call_instruction();
 
-  void call_command(const Ref<config::Command>& command, const std::string& scope = "");
-  void call_child_commands(const Ref<config::Command>& command, const std::string& scope);
+  void call_command(const std::shared_ptr<config::Command>& command, const std::string& scope = "");
+  void call_child_commands(const std::shared_ptr<config::Command>& command, const std::string& scope);
   void run_scripts(const Scripts& scripts, const std::string& command_path, const std::string& dir, bool print_result);
 
-  [[nodiscard]] Scripts parse_scripts(const Ref<config::Command>& command);
+  [[nodiscard]] Scripts parse_scripts(const std::shared_ptr<config::Command>& command);
   [[nodiscard]] std::string parse_script(const std::string& script, const config::Location& location);
 
-  [[nodiscard]] static enum Variable::Type get_variable_type(const Ref<config::Parameter>& param);
+  [[nodiscard]] static enum Variable::Type get_variable_type(const std::shared_ptr<config::Parameter>& param);
 
-  void validate_required_parameters(const Ref<config::Command>& command);
+  void validate_required_parameters(const std::shared_ptr<config::Command>& command);
   [[nodiscard]] bool is_variable_defined(const std::string& name) const;
   void handle_error(const error::BaseError& error);
 
   static void print(const std::string& message);
 
  private:
-  const Ref<Instruction>& m_instruction;
+  const std::shared_ptr<Instruction>& m_instruction;
   const config::Query m_query;
 
   size_t m_offset{0};

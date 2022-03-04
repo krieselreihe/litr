@@ -7,6 +7,7 @@
 #include <fmt/color.h>
 #include <fmt/format.h>
 #include <vector>
+#include <memory>
 
 #include "Hooks/Handler.hpp"
 #include "Hooks/Help.hpp"
@@ -19,7 +20,7 @@ ExitStatus Application::run(int argc, char* argv[]) {
   LITR_PROFILE_FUNCTION();
 
   const std::string source{source_from_arguments(argc, argv)};
-  const auto instruction{create_ref<cli::Instruction>()};
+  const auto instruction{std::make_shared<cli::Instruction>()};
   const cli::Parser parser{instruction, source};
 
   // Litr called without any arguments:
@@ -47,10 +48,10 @@ ExitStatus Application::run(int argc, char* argv[]) {
     return ExitStatus::FAILURE;
   }
 
-  const auto config{create_ref<config::Loader>(config_path)};
-  const auto interpreter{create_ref<cli::Interpreter>(instruction, config)};
+  const auto config{std::make_shared<config::Loader>(config_path)};
+  const auto interpreter{std::make_shared<cli::Interpreter>(instruction, config)};
 
-  hooks.add(cli::Instruction::Code::DEFINE, {"help", "h"}, [&config](const Ref<cli::Instruction>& instruction) {
+  hooks.add(cli::Instruction::Code::DEFINE, {"help", "h"}, [&config](const std::shared_ptr<cli::Instruction>& instruction) {
     const hook::Help help{config};
     help.print(instruction);
   });

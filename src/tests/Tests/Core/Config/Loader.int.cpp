@@ -6,6 +6,8 @@
 
 #include <doctest/doctest.h>
 
+#include <memory>
+
 #include "Core/Config/Query.hpp"
 #include "Core/Error/Handler.hpp"
 #include "Core/FileSystem.hpp"
@@ -109,7 +111,7 @@ TEST_SUITE("Config::Loader") {
 
   TEST_CASE("Loads commands") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
       CHECK_FALSE(litr::error::Handler::has_errors());
@@ -226,7 +228,7 @@ TEST_SUITE("Config::Loader") {
 
   TEST_CASE("Loads Parameters") {
     const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{litr::create_ref<litr::config::Loader>(path)};
+    const auto config{std::make_shared<litr::config::Loader>(path)};
 
     SUBCASE("Successfully without errors") {
       CHECK_FALSE(litr::error::Handler::has_errors());

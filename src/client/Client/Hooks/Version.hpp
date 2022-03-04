@@ -4,13 +4,15 @@
 
 #pragma once
 
+#include <memory>
+
 #include "Core.hpp"
 
 namespace litr::hook {
 
 class Version {
  public:
-  static void print(const Ref<cli::Instruction>& instruction);
+  static void print(const std::shared_ptr<cli::Instruction>& instruction);
 };
 
 }  // namespace litr::hook

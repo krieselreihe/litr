@@ -7,8 +7,8 @@
 #include <string>
 #include <functional>
 
-#include "Core/Base.hpp"
 #include "Core/FileSystem.hpp"
+#include "Core/ExitStatus.hpp"
 
 namespace litr::cli {
 

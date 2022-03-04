@@ -20,18 +20,18 @@ Log::Log() {
   spdlog::level::level_enum level{spdlog::level::debug};
 #endif
 
-  log_sinks.emplace_back(create_ref<spdlog::sinks::stdout_color_sink_mt>());
-  log_sinks.emplace_back(create_ref<spdlog::sinks::basic_file_sink_mt>("litr.log", true));
+  log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+  log_sinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("litr.log", true));
 
   log_sinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
   log_sinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
 
-  s_core_logger = create_ref<spdlog::logger>("CORE", begin(log_sinks), end(log_sinks));
+  s_core_logger = std::make_shared<spdlog::logger>("CORE", begin(log_sinks), end(log_sinks));
   spdlog::register_logger(s_core_logger);
   s_core_logger->set_level(level);
   s_core_logger->flush_on(level);
 
-  s_client_logger = create_ref<spdlog::logger>("CLIENT", begin(log_sinks), end(log_sinks));
+  s_client_logger = std::make_shared<spdlog::logger>("CLIENT", begin(log_sinks), end(log_sinks));
   spdlog::register_logger(s_client_logger);
   spdlog::set_default_logger(s_client_logger);
   s_client_logger->set_level(level);

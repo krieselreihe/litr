@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 
 #include <array>
+#include <memory>
 
 #include "Core/Error/Handler.hpp"
 
@@ -51,7 +52,7 @@ struct InstructionDefinition {
 
 TEST_SUITE("CLI::Parser") {
   TEST_CASE("Single long parameter") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(--target="Some release")"};
 
     litr::cli::Parser parser{instruction, source};
@@ -66,7 +67,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Single short parameter") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug is nice")"};
 
     litr::cli::Parser parser{instruction, source};
@@ -81,7 +82,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Parameter with empty string") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="")"};
 
     litr::cli::Parser parser{instruction, source};
@@ -96,7 +97,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Single command") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build"};
 
     litr::cli::Parser parser{instruction, source};
@@ -111,7 +112,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Multiple commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build cpp"};
 
     litr::cli::Parser parser{instruction, source};
@@ -127,7 +128,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Multiple comma separated commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build,run"};
 
     litr::cli::Parser parser{instruction, source};
@@ -145,7 +146,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Long parameter with string values and commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(--target="release" build,run)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -165,7 +166,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Mixed parameters with mixed values") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="release" --debug)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -181,7 +182,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid comma operator") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{","};
 
     litr::cli::Parser parser{instruction, source};
@@ -195,7 +196,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid comma operators with parameter") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" ,)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -209,7 +210,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid comma operators with command") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"run ,,"};
 
     litr::cli::Parser parser{instruction, source};
@@ -223,7 +224,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid multiple comma operators") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{", ,"};
 
     litr::cli::Parser parser{instruction, source};
@@ -237,7 +238,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid multiple comma operators with commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build cpp , ,"};
 
     litr::cli::Parser parser{instruction, source};
@@ -251,7 +252,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Even more invalid multiple comma operators with commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build cpp ,,,,"};
 
     litr::cli::Parser parser{instruction, source};
@@ -265,7 +266,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Invalid multiple comma operators with closing command") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"build cpp , , run"};
 
     litr::cli::Parser parser{instruction, source};
@@ -279,7 +280,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Valid nested command execution") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" build cpp)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -297,7 +298,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Valid multiple nested command execution") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t="debug" build cpp, java)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -318,7 +319,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Unsupported characters") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"(9)"};
 
     litr::cli::Parser parser{instruction, source};
@@ -332,7 +333,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Unsupported string between commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(build "debug" project )"};
 
     litr::cli::Parser parser{instruction, source};
@@ -346,7 +347,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Unsupported number between commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(build 23 project )"};
 
     litr::cli::Parser parser{instruction, source};
@@ -360,7 +361,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Unsupported characters between commands") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(build ++ project )"};
 
     litr::cli::Parser parser{instruction, source};
@@ -374,7 +375,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Assignment missing parameter") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(= "value")"};
 
     litr::cli::Parser parser{instruction, source};
@@ -388,7 +389,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Duplicated assignment operator") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{R"(-t == "value")"};
 
     litr::cli::Parser parser{instruction, source};
@@ -402,7 +403,7 @@ TEST_SUITE("CLI::Parser") {
   }
 
   TEST_CASE("Duplicated parameter initializer") {
-    const auto instruction{litr::create_ref<litr::cli::Instruction>()};
+    const auto instruction{std::make_shared<litr::cli::Instruction>()};
     const std::string source{"---t"};
 
     litr::cli::Parser parser{instruction, source};
