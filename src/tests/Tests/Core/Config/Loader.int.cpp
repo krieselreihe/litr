@@ -124,7 +124,7 @@ TEST_SUITE("Config::Loader") {
 
       CHECK_EQ(command->name, "run");
       CHECK_EQ(command->script.size(), 1);
-      CHECK_EQ(command->script[0], "script");
+      CHECK_EQ(command->script[0], "Script");
       CHECK_EQ(command->description, "Description");
       CHECK_EQ(command->example, "Example");
       CHECK_EQ(command->output, litr::config::Command::Output::SILENT);
@@ -187,7 +187,7 @@ TEST_SUITE("Config::Loader") {
       CHECK_NE(command, nullptr);
       CHECK_EQ(command->name, "l3");
       CHECK_EQ(command->script.size(), 1);
-      CHECK_EQ(command->script[0], "Deep script");
+      CHECK_EQ(command->script[0], "Deep Script");
     }
   }
 

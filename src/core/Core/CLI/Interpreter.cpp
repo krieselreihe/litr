@@ -87,17 +87,23 @@ void Interpreter::execute_instruction() {
   const auto code{static_cast<Instruction::Code>(m_instruction->read(m_offset++))};
 
   switch (code) {
-    case Instruction::Code::CLEAR: clear_scope();
+    case Instruction::Code::CLEAR:
+      clear_scope();
       break;
-    case Instruction::Code::DEFINE: define_variable();
+    case Instruction::Code::DEFINE:
+      define_variable();
       break;
-    case Instruction::Code::CONSTANT: set_constant();
+    case Instruction::Code::CONSTANT:
+      set_constant();
       break;
-    case Instruction::Code::BEGIN_SCOPE: begin_scope();
+    case Instruction::Code::BEGIN_SCOPE:
+      begin_scope();
       break;
-    case Instruction::Code::EXECUTE: call_instruction();
+    case Instruction::Code::EXECUTE:
+      call_instruction();
       break;
-    default: m_offset++;
+    default:
+      m_offset++;
   }
 }
 
@@ -253,9 +259,9 @@ void Interpreter::call_child_commands(const std::shared_ptr<config::Command>& co
   LITR_PROFILE_FUNCTION();
 
   if (!command->child_commands.empty()) {
-    for (auto&& childCommand : command->child_commands) {
+    for (auto&& child_command : command->child_commands) {
       if (m_stop_execution) return;
-      call_command(childCommand, scope);
+      call_command(child_command, scope);
     }
   }
 }

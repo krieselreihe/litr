@@ -7,7 +7,7 @@ build = [
 ]
 
 [commands.run]
-script = "script"
+script = "Script"
 description = "Description"
 example = "Example"
 dir = "Directory"
@@ -30,7 +30,7 @@ script = "run fourth"
 [commands.run.fourth.l1]
 [commands.run.fourth.l1.l2]
 [commands.run.fourth.l1.l2.l3]
-script = "Deep script"
+script = "Deep Script"
 
 [params.target]
 shortcut = "t"
