@@ -46,18 +46,18 @@ struct fmt::formatter<litr::config::Command> {
 
   template <typename FormatContext>
   auto format(const litr::config::Command& c, FormatContext& ctx) {
-    std::string childView{};
+    std::string child_view{};
     if (!c.child_commands.empty()) {
       for (auto&& child : c.child_commands) {
-        childView.append(fmt::format("\n    - Child{}", *child));
+        child_view.append(fmt::format("\n    - Child{}", *child));
       }
     }
 
     if (!c.description.empty()) {
-      return format_to(ctx.out(), "Script: {} - {}{}", c.name, c.description, childView);
+      return format_to(ctx.out(), "Script: {} - {}{}", c.name, c.description, child_view);
     }
 
-    return format_to(ctx.out(), "Script: {}{}", c.name, childView);
+    return format_to(ctx.out(), "Script: {}{}", c.name, child_view);
   }
 };
 #endif

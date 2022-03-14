@@ -104,9 +104,11 @@ void Compiler::script() {
   advance();
 
   switch (m_previous.type) {
-    case TokenType::STRING: string();
+    case TokenType::STRING:
+      string();
       break;
-    case TokenType::IDENTIFIER: identifier();
+    case TokenType::IDENTIFIER:
+      identifier();
       break;
     case TokenType::LEFT_PAREN:
     case TokenType::RIGHT_PAREN:
@@ -116,7 +118,8 @@ void Compiler::script() {
     case TokenType::START_SEQ:
     case TokenType::END_SEQ:
     case TokenType::ERROR:
-    case TokenType::EOS: error("Unexpected character.");
+    case TokenType::EOS:
+      error("Unexpected character.");
       break;
   }
 
@@ -140,9 +143,11 @@ void Compiler::identifier() {
   collect_used_variable(variable->second);
 
   switch (variable->second.type) {
-    case cli::Variable::Type::STRING: string(variable->second);
+    case cli::Variable::Type::STRING:
+      string(variable->second);
       break;
-    case cli::Variable::Type::BOOLEAN: statement(variable->second);
+    case cli::Variable::Type::BOOLEAN:
+      statement(variable->second);
       break;
   }
 }

@@ -17,7 +17,7 @@ FileResolver::FileResolver(Path cwd) {
   LITR_PROFILE_FUNCTION();
 
   do {
-    LITR_PROFILE_SCOPE("Config::FileResolver::ResolvePath(do..while)");
+    LITR_PROFILE_SCOPE("Config::FileResolver > (do..while)");
 
     m_directory = cwd;
     LITR_CORE_TRACE("Searching configuration file in: {0}", m_directory);

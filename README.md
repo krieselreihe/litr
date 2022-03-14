@@ -32,13 +32,13 @@ type = ["debug", "release"]
 default = "debug"
 ```
 
-run them all:
+Run them all:
 
 ```shell
 litr --target=debug update,build,test
 ```
 
-To find out more go to the [wikis setup section](https://github.com/krieselreihe/litr/wiki/Quick-Setup).
+To find out more go to the [wiki setup section](https://github.com/krieselreihe/litr/wiki/Quick-Setup).
 
 ## Development
 
