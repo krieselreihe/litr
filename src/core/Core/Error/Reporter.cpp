@@ -50,11 +50,17 @@ void Reporter::print_error(const BaseError& error) {
       }
 
       // Line view
-      fmt::print(fg(fmt::color::crimson), "{:d} | {}\n", error.location.line, error.location.line_str);
+      fmt::print(
+          fg(fmt::color::crimson), "{:d} | {}\n", error.location.line, error.location.line_str);
 
       // Message
-      fmt::print(fg(fmt::color::crimson), "{:>{}} | {:>{}}{}\n",
-          " ", count_digits(error.location.line), "└─ ", error.location.column, error.message);
+      fmt::print(fg(fmt::color::crimson),
+          "{:>{}} | {:>{}}{}\n",
+          " ",
+          count_digits(error.location.line),
+          "└─ ",
+          error.location.column,
+          error.message);
       break;
     }
     case BaseError::ErrorType::COMMAND_NOT_FOUND: {
@@ -76,7 +82,9 @@ void Reporter::print_error(const BaseError& error) {
 uint32_t Reporter::count_digits(uint32_t number) {
   LITR_PROFILE_FUNCTION();
 
-  if (number < 10) return 1;
+  if (number < 10) {
+    return 1;
+  }
   uint32_t count{0};
   while (number > 0) {
     number /= 10;

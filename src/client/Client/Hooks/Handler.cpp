@@ -6,10 +6,11 @@
 
 namespace litr::hook {
 
-Handler::Handler(const std::shared_ptr<cli::Instruction>& instruction) : m_instruction(instruction) {}
+Handler::Handler(const std::shared_ptr<cli::Instruction>& instruction)
+    : m_instruction(instruction) {}
 
-void Handler::add(Code code, const std::vector<Value>& values,
-    const Handler::HookCallback& callback) {
+void Handler::add(
+    Code code, const std::vector<Value>& values, const Handler::HookCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& value : values) {
@@ -26,7 +27,9 @@ bool Handler::execute() const {
     const auto code{static_cast<Code>(m_instruction->read(offset++))};
 
     for (auto&& hook : m_hooks) {
-      if (code != hook.code) continue;
+      if (code != hook.code) {
+        continue;
+      }
       auto value{m_instruction->read_constant(m_instruction->read(offset))};
       if (value == hook.value) {
         hook.callback(m_instruction);

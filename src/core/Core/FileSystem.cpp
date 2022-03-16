@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
-*/
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
 
 #include "FileSystem.hpp"
 
@@ -12,8 +12,7 @@ namespace litr {
 
 // Path ------------------------------------------
 
-Path::Path(std::string path) : m_path(std::move(path)) {
-}
+Path::Path(std::string path) : m_path(std::move(path)) {}
 
 Path Path::parent_path() const {
   LITR_PROFILE_FUNCTION();

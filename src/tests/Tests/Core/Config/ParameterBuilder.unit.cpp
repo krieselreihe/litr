@@ -30,7 +30,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(You're missing the "description" field.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(You're missing the "description" field.)");
       litr::error::Handler::flush();
     }
 
@@ -41,7 +42,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "description" can only be a string.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The "description" can only be a string.)");
       litr::error::Handler::flush();
     }
 
@@ -87,7 +89,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_shortcut();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "shortcut" can only be a string.)");
+      CHECK_EQ(
+          litr::error::Handler::get_errors()[0].message, R"(A "shortcut" can only be a string.)");
       litr::error::Handler::flush();
     }
 
@@ -98,7 +101,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_shortcut();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "help" is reserved by Litr.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The shortcut name "help" is reserved by Litr.)");
       litr::error::Handler::flush();
     }
 
@@ -109,7 +113,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_shortcut();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "h" is reserved by Litr.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The shortcut name "h" is reserved by Litr.)");
       litr::error::Handler::flush();
     }
 
@@ -134,7 +139,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_shortcut(params);
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The shortcut name "x" is already used for parameter "something".)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The shortcut name "x" is already used for parameter "something".)");
       litr::error::Handler::flush();
     }
   }
@@ -158,7 +164,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_type();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
       litr::error::Handler::flush();
     }
 
@@ -191,7 +198,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_type();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The options provided in "type" are not all strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The options provided in "type" are not all strings.)");
       litr::error::Handler::flush();
     }
 
@@ -216,7 +224,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_type();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "type" can only be "string" or an array of options as strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(A "type" can only be "string" or an array of options as strings.)");
       litr::error::Handler::flush();
     }
   }
@@ -240,7 +249,8 @@ TEST_SUITE("ParameterBuilder") {
       builder.add_default();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The field "default" needs to be a string.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The field "default" needs to be a string.)");
       litr::error::Handler::flush();
     }
 
@@ -253,7 +263,8 @@ default = "Default")");
       builder.add_default();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
       litr::error::Handler::flush();
     }
 

@@ -10,8 +10,11 @@
 
 namespace litr::config {
 
-ParameterBuilder::ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_file(file), m_table(data), m_parameter(std::make_shared<Parameter>(name)) {
+ParameterBuilder::ParameterBuilder(
+    const toml::table& file, const toml::value& data, const std::string& name)
+    : m_file(file),
+      m_table(data),
+      m_parameter(std::make_shared<Parameter>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_parameter);
 }
 
@@ -21,18 +24,16 @@ void ParameterBuilder::add_description() {
   const std::string name{"description"};
 
   if (!m_table.contains(name)) {
-    error::Handler::push(
-        error::MalformedParamError(
-            R"(You're missing the "description" field.)", m_file.at(m_parameter->name)));
+    error::Handler::push(error::MalformedParamError(
+        R"(You're missing the "description" field.)", m_file.at(m_parameter->name)));
     return;
   }
 
   const toml::value& description{toml::find(m_table, name)};
 
   if (!description.is_string()) {
-    error::Handler::push(
-        error::MalformedParamError(
-            fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
+    error::Handler::push(error::MalformedParamError(
+        fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
     return;
   }
 
@@ -70,8 +71,9 @@ void ParameterBuilder::add_shortcut(const std::vector<std::shared_ptr<Parameter>
       for (auto&& param : params) {
         if (param->shortcut == shortcut_str) {
           error::Handler::push(error::ValueAlreadyInUseError(
-              fmt::format(
-                  R"(The shortcut name "{}" is already used for parameter "{}".)", shortcut_str, param->name),
+              fmt::format(R"(The shortcut name "{}" is already used for parameter "{}".)",
+                  shortcut_str,
+                  param->name),
               m_table.at(name)));
           return;
         }
@@ -81,9 +83,8 @@ void ParameterBuilder::add_shortcut(const std::vector<std::shared_ptr<Parameter>
       return;
     }
 
-    error::Handler::push(
-        error::MalformedParamError(fmt::format(R"(A "{}" can only be a string.)", name),
-            m_table.at(name)));
+    error::Handler::push(error::MalformedParamError(
+        fmt::format(R"(A "{}" can only be a string.)", name), m_table.at(name)));
   }
 }
 
@@ -104,7 +105,10 @@ void ParameterBuilder::add_type() {
         error::Handler::push(error::UnknownParamValueError(
             fmt::format(
                 R"(The "{}" option as string can only be "string" or "boolean". Provided value "{}" is not known.)",
-                name, static_cast<std::string>(type.as_string())),
+                name,
+                // @todo: Looking at this I'm confused why I have to do this. Needs some
+                // investigation.
+                static_cast<std::string>(type.as_string())),
             m_table.at(name)));
       }
       return;
@@ -146,7 +150,9 @@ void ParameterBuilder::add_default() {
         const std::vector<std::string>& args{m_parameter->type_arguments};
         if (std::find(args.begin(), args.end(), default_value) == args.end()) {
           error::Handler::push(error::MalformedParamError(
-              fmt::format(R"(Cannot find default value "{}" inside "type" list defined in line {}.)", default_value,
+              fmt::format(
+                  R"(Cannot find default value "{}" inside "type" list defined in line {}.)",
+                  default_value,
                   m_table.at("type").location().line()),
               m_table.at(name)));
           return;
@@ -157,19 +163,25 @@ void ParameterBuilder::add_default() {
       return;
     }
 
-    error::Handler::push(
-        error::MalformedParamError(fmt::format(R"(The field "{}" needs to be a string.)", name),
-            m_table.at(name)));
+    error::Handler::push(error::MalformedParamError(
+        fmt::format(R"(The field "{}" needs to be a string.)", name), m_table.at(name)));
   }
 }
 
 bool ParameterBuilder::is_reserved_name(const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
-  const std::array<std::string, 4> reserved{
-      "help", "h",
-      "or", "and"
-  };
+  // @todo: Could help and version be closer to the hooks?
+  const std::array<std::string, 6> reserved{
+      // Those are reserved to not collide with the built-in help
+      "help",
+      "h",
+      // Those are reserved to not collide with the built-in version
+      "version",
+      "v",
+      // Those are reserved for script functionality
+      "or",
+      "and"};
   return std::find(reserved.begin(), reserved.end(), name) != reserved.end();
 }
 

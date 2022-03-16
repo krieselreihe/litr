@@ -5,13 +5,13 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "Core/CLI/Variable.hpp"
 #include "Core/Config/Location.hpp"
-#include "Core/Script/Token.hpp"
 #include "Core/Script/Scanner.hpp"
+#include "Core/Script/Token.hpp"
 
 namespace litr::script {
 

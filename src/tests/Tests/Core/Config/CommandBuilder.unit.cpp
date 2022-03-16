@@ -62,7 +62,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_script(toml::find(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, "A command script can be either a string or array of strings.");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          "A command script can be either a string or array of strings.");
       litr::error::Handler::flush();
     }
 
@@ -73,12 +74,14 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_script(toml::find(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, "A command script can be either a string or array of strings.");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          "A command script can be either a string or array of strings.");
       litr::error::Handler::flush();
     }
 
     SUBCASE("Writes scripts from TOML data successfully") {
-      const auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
+      const auto [file, data] =
+          CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
 
       litr::config::CommandBuilder builder{file, data, "test"};
       builder.add_script(toml::find(data, "scripts"));
@@ -92,7 +95,8 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Retains locations information") {
-      const auto [file, data] = CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
+      const auto [file, data] =
+          CreateTOMLMock("test", R"(scripts = ["first line", "second line"])");
 
       litr::config::CommandBuilder builder{file, data, "test"};
       builder.add_script(toml::find(data, "scripts"));
@@ -129,7 +133,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "description" can only be a string.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The "description" can only be a string.)");
       litr::error::Handler::flush();
     }
 
@@ -164,7 +169,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_example();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "example" can only be a string.)");
+      CHECK_EQ(
+          litr::error::Handler::get_errors()[0].message, R"(The "example" can only be a string.)");
       litr::error::Handler::flush();
     }
 
@@ -199,7 +205,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "dir" can either be a string or array of strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(A "dir" can either be a string or array of strings.)");
       litr::error::Handler::flush();
     }
 
@@ -210,7 +217,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "dir" can either be a string or array of strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(A "dir" can either be a string or array of strings.)");
       litr::error::Handler::flush();
     }
 
@@ -221,8 +229,10 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 2);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(A "dir" can either be a string or array of strings.)");
-      CHECK_EQ(litr::error::Handler::get_errors()[1].message, R"(A "dir" can either be a string or array of strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(A "dir" can either be a string or array of strings.)");
+      CHECK_EQ(litr::error::Handler::get_errors()[1].message,
+          R"(A "dir" can either be a string or array of strings.)");
       litr::error::Handler::flush();
     }
 
@@ -269,7 +279,8 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_output();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
-      CHECK_EQ(litr::error::Handler::get_errors()[0].message, R"(The "output" can either be "unchanged" or "silent".)");
+      CHECK_EQ(litr::error::Handler::get_errors()[0].message,
+          R"(The "output" can either be "unchanged" or "silent".)");
       litr::error::Handler::flush();
     }
 

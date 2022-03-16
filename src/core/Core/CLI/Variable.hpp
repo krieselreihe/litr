@@ -5,8 +5,8 @@
 #pragma once
 
 #include <string>
-#include <variant>
 #include <utility>
+#include <variant>
 
 #include "Core/Config/Parameter.hpp"
 
@@ -21,13 +21,18 @@ struct Variable {
   // are always handled explicit.
   std::variant<std::string, bool> value{};
 
-  Variable(enum Type type, std::string name) : type(type), name(std::move(name)) {
-  }
-  Variable(std::string name, bool value) : type(Type::BOOLEAN), name(std::move(name)), value(value) {
-  }
+  Variable(enum Type type, std::string name) : type(type), name(std::move(name)) {}
+
+  Variable(std::string name, bool value)
+      : type(Type::BOOLEAN),
+        name(std::move(name)),
+        value(value) {}
+
   Variable(std::string name, std::string value)
-      : type(Type::STRING), name(std::move(name)), value(std::move(value)) {
-  }
+      : type(Type::STRING),
+        name(std::move(name)),
+        value(std::move(value)) {}
+
   explicit Variable(const config::Parameter& parameter) : name(parameter.name) {
     switch (parameter.type) {
       case config::Parameter::Type::STRING:

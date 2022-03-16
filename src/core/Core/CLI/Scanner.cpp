@@ -8,8 +8,7 @@
 
 namespace litr::cli {
 
-Scanner::Scanner(const char* source) : m_start(source), m_current(source) {
-}
+Scanner::Scanner(const char* source) : m_start(source), m_current(source) {}
 
 void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
@@ -83,15 +82,25 @@ Token Scanner::scan_token() {
 
   char c{advance()};
 
-  if (is_digit(c)) return number();
-  if (is_alpha(c)) return command();
+  if (is_digit(c)) {
+    return number();
+  }
+
+  if (is_alpha(c)) {
+    return command();
+  }
 
   switch (c) {
-    case ',': return make_token(TokenType::COMMA);
-    case '=': return make_token(TokenType::EQUAL);
-    case '-': return match('-') ? long_parameter() : short_parameter();
-    case '"': return string();
-    default: return error_token("Unexpected character.");
+    case ',':
+      return make_token(TokenType::COMMA);
+    case '=':
+      return make_token(TokenType::EQUAL);
+    case '-':
+      return match('-') ? long_parameter() : short_parameter();
+    case '"':
+      return string();
+    default:
+      return error_token("Unexpected character.");
   }
 }
 

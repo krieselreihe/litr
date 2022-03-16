@@ -4,8 +4,8 @@
 
 #include <cstdlib>
 
-#include "Core/Environment.hpp"
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Environment.hpp"
 
 namespace litr {
 

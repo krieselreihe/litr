@@ -1,12 +1,12 @@
 /*
-* Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
-*/
+ * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
+ */
 
 #include "Help.hpp"
 
-#include <fmt/printf.h>
-#include <fmt/format.h>
 #include <fmt/color.h>
+#include <fmt/format.h>
+#include <fmt/printf.h>
 
 #include <algorithm>
 #include <vector>
@@ -19,7 +19,9 @@ namespace litr::hook {
 // There will be a refactor for this making some improvements on the way as well:
 // https://github.com/krieselreihe/litr/issues/31
 
-Help::Help(const std::shared_ptr<config::Loader>& config) : m_query(config), m_file_path(config->get_file_path()) {}
+Help::Help(const std::shared_ptr<config::Loader>& config)
+    : m_query(config),
+      m_file_path(config->get_file_path()) {}
 
 void Help::print(const std::shared_ptr<cli::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
@@ -35,9 +37,10 @@ void Help::print(const std::shared_ptr<cli::Instruction>& instruction) const {
 void Help::print_welcome_message() const {
   LITR_PROFILE_FUNCTION();
 
-  fmt::print(
-      "Litr - Language Independent Task Runner [version {}.{}.{}]\n",
-      LITR_VERSION_MAJOR, LITR_VERSION_MINOR, LITR_VERSION_PATCH);
+  fmt::print("Litr - Language Independent Task Runner [version {}.{}.{}]\n",
+      LITR_VERSION_MAJOR,
+      LITR_VERSION_MINOR,
+      LITR_VERSION_PATCH);
   fmt::print(fg(fmt::color::dark_gray), "  Configuration file found under: {}\n\n", m_file_path);
 }
 
@@ -60,14 +63,20 @@ void Help::print_commands() const {
   const config::Query::Commands commands{
       m_command_name.empty() ? m_query.get_commands() : m_query.get_commands(m_command_name)};
 
-  if (commands.empty()) return;
+  if (commands.empty()) {
+    return;
+  }
 
   fmt::print("Commands:\n");
-  for (auto&& command : commands) print_command(command, m_command_name);
+  for (auto&& command : commands) {
+    print_command(command, m_command_name);
+  }
   fmt::print("\n");
 }
 
-void Help::print_command(const std::shared_ptr<config::Command>& command, const std::string& parent_name, size_t depth) const {
+void Help::print_command(const std::shared_ptr<config::Command>& command,
+    const std::string& parent_name,
+    size_t depth) const {
   size_t padding{get_command_padding()};
   std::string command_path{command->name};
 
@@ -78,8 +87,11 @@ void Help::print_command(const std::shared_ptr<config::Command>& command, const 
 
   const std::string arguments{get_command_arguments(command_path)};
   const std::string name{fmt::format("{: ^{}}{:<{}} {}",
-      "", depth * 2,  // Left side padding
-      command->name, padding, arguments)};
+      "",
+      depth * 2,  // Left side padding
+      command->name,
+      padding,
+      arguments)};
 
   if (command->description.empty()) {
     fmt::print("{}\n", name);
@@ -153,8 +165,7 @@ void Help::print_parameter_options(const std::shared_ptr<config::Parameter>& par
     }
 
     fmt::print(
-        fg(fmt::color::dark_gray),
-        "  {:<{}} {}\n", " ", padding, utils::trim_right(args, ','));
+        fg(fmt::color::dark_gray), "  {:<{}} {}\n", " ", padding, utils::trim_right(args, ','));
   }
 }
 
@@ -163,13 +174,17 @@ void Help::print_default_parameter_option(const std::shared_ptr<config::Paramete
 
   if (!param->default_value.empty()) {
     const size_t padding{get_parameter_padding()};
-    fmt::print(
-        fg(fmt::color::dark_gray),
-        "  {:<{}} {} \"{}\"\n", " ", padding, "Default option is:", param->default_value);
+    fmt::print(fg(fmt::color::dark_gray),
+        "  {:<{}} {} \"{}\"\n",
+        " ",
+        padding,
+        "Default option is:",
+        param->default_value);
   }
 }
 
-void Help::print_with_description(const std::string& name, const std::string& description, size_t extra_padding) const {
+void Help::print_with_description(
+    const std::string& name, const std::string& description, size_t extra_padding) const {
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> lines{};
@@ -181,7 +196,9 @@ void Help::print_with_description(const std::string& name, const std::string& de
 
   for (size_t i{0}; i < lines.size(); ++i) {
     if (use_max_padding) {
-      if (i == 0) fmt::print("{}\n", name);
+      if (i == 0) {
+        fmt::print("{}\n", name);
+      }
       fmt::print("{:<{}} {}\n", " ", padding, lines[i]);
     } else {
       if (i == 0) {
@@ -216,7 +233,9 @@ std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& inst
         const std::string value{instruction->read_constant(instruction->read(offset))};
         if (value == "h" || value == "help") {
           std::string command_name{};
-          for (auto&& part : scope) command_name.append(".").append(part);
+          for (auto&& part : scope) {
+            command_name.append(".").append(part);
+          }
           return utils::trim_left(command_name, '.');
         }
         offset++;
@@ -247,10 +266,11 @@ std::string Help::get_command_arguments(const std::string& name) const {
       case config::Parameter::Type::ARRAY: {
         const bool is_optional{!param->default_value.empty()};
         const std::string pattern{is_optional ? " [--{}{}]" : " --{}{}"};
-        arguments.append(fmt::format(is_optional
-           ? fg(fmt::color::dark_gray)
-           : fg(fmt::color::white),
-            pattern, param->name, m_argument_placeholder));
+        arguments.append(
+            fmt::format(is_optional ? fg(fmt::color::dark_gray) : fg(fmt::color::white),
+                pattern,
+                param->name,
+                m_argument_placeholder));
         break;
       }
       case config::Parameter::Type::BOOLEAN: {
@@ -301,7 +321,7 @@ size_t Help::get_parameter_padding() const {
       m_command_name.empty() ? m_query.get_parameters() : m_query.get_parameters(m_command_name)};
   size_t padding{0};
 
-  constexpr size_t min_padding{7};  // Min padding based on text "version"
+  constexpr size_t min_padding{7};   // Min padding based on text "version"
   constexpr size_t padding_left{4};  // Includes space for short parameter
   constexpr size_t padding_right{2};
 
@@ -314,12 +334,15 @@ size_t Help::get_parameter_padding() const {
     }
   }
 
-  if (padding < min_padding) padding = min_padding;
+  if (padding < min_padding) {
+    padding = min_padding;
+  }
 
   return padding_left + padding + padding_right;
 }
 
-bool Help::sort_parameter_by_required(const std::shared_ptr<config::Parameter>& p1, const std::shared_ptr<config::Parameter>& p2) {
+bool Help::sort_parameter_by_required(
+    const std::shared_ptr<config::Parameter>& p1, const std::shared_ptr<config::Parameter>& p2) {
   LITR_PROFILE_FUNCTION();
 
   auto rank_parameter_required{[](const std::shared_ptr<config::Parameter>& param) -> int {

@@ -16,8 +16,9 @@ struct Location {
 
   Location() = default;
   Location(uint32_t line, uint32_t column, std::string lineStr)
-      : line(line), column(column), line_str(std::move(lineStr)) {
-  }
+      : line(line),
+        column(column),
+        line_str(std::move(lineStr)) {}
 };
 
 }  // namespace litr::config

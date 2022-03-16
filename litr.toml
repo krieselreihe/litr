@@ -25,6 +25,10 @@ description = "Run all unit tests defined under src/tests"
 script = "./scripts/release.sh"
 description = "Build a production release for Homebrew on macOS."
 
+[commands.format]
+script = "find src -iname *.hpp -o -iname *.cpp | xargs clang-format -i"
+description = "Format project sources via clang-format."
+
 [params.target]
 shortcut = "t"
 description = "Define the application build target."

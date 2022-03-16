@@ -5,6 +5,7 @@
 #include "Loader.hpp"
 
 #include <tsl/ordered_map.h>
+
 #include <stack>
 
 #include "Core/Config/CommandBuilder.hpp"
@@ -24,40 +25,33 @@ Loader::Loader(const Path& file_path) : m_file_path(file_path) {
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(m_file_path.to_string());
   } catch (const toml::syntax_error& err) {
-    error::Handler::push(error::MalformedFileError(
-        "There is a syntax error inside the configuration file.",
-        err));
+    error::Handler::push(
+        error::MalformedFileError("There is a syntax error inside the configuration file.", err));
     return;
   }
 
   if (!config.is_table()) {
-    error::Handler::push(error::MalformedFileError(
-        "Configuration is not a TOML table."));
+    error::Handler::push(error::MalformedFileError("Configuration is not a TOML table."));
     return;
   }
 
   if (config.contains("commands")) {
     const toml::table& commands{
-        toml::find<toml::table,
-        toml::discard_comments,
-        tsl::ordered_map>(config, "commands")
-    };
+        toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "commands")};
     collect_commands(commands);
   }
 
   if (config.contains("params")) {
     const toml::table& params{
-        toml::find<toml::table,
-        toml::discard_comments,
-        tsl::ordered_map>(config, "params")
-    };
+        toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "params")};
     collect_params(params);
   }
 }
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-std::shared_ptr<Command> Loader::create_command(const toml::table& commands, const toml::value& definition, const std::string& name) {
+std::shared_ptr<Command> Loader::create_command(
+    const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{commands, definition, name};
@@ -76,9 +70,8 @@ std::shared_ptr<Command> Loader::create_command(const toml::table& commands, con
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    error::Handler::push(error::MalformedCommandError(
-        "A command can be a string or table.",
-        commands.at(name)));
+    error::Handler::push(
+        error::MalformedCommandError("A command can be a string or table.", commands.at(name)));
     return builder.get_result();
   }
 
@@ -137,7 +130,8 @@ std::shared_ptr<Command> Loader::create_command(const toml::table& commands, con
     const toml::value& value{toml::find(definition, property)};
     if (!value.is_table()) {
       error::Handler::push(error::UnknownCommandPropertyError(
-          fmt::format(R"(The command property "{}" does not exist. Please refer to the docs.)", property),
+          fmt::format(
+              R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property)));
       properties.pop();
       continue;
@@ -168,8 +162,7 @@ void Loader::collect_params(const toml::table& params) {
 
     if (ParameterBuilder::is_reserved_name(name)) {
       error::Handler::push(error::ReservedParamError(
-          fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name),
-          params.at(name)));
+          fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name), params.at(name)));
       continue;
     }
 
@@ -183,8 +176,7 @@ void Loader::collect_params(const toml::table& params) {
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
       error::Handler::push(error::MalformedParamError(
-          "A parameter needs to be a string or table.",
-          params.at(name)));
+          "A parameter needs to be a string or table.", params.at(name)));
       continue;
     }
 

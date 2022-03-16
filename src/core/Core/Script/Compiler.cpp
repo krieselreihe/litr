@@ -6,8 +6,8 @@
 
 #include <fmt/format.h>
 
-#include <utility>
 #include <algorithm>
+#include <utility>
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
@@ -16,7 +16,9 @@
 namespace litr::script {
 
 Compiler::Compiler(const std::string& source, config::Location location, Variables variables)
-    : m_scanner(source.c_str()), m_location(std::move(location)), m_variables(std::move(variables)) {
+    : m_scanner(source.c_str()),
+      m_location(std::move(location)),
+      m_variables(std::move(variables)) {
   LITR_PROFILE_FUNCTION();
 
   advance();
@@ -48,7 +50,7 @@ void Compiler::advance() {
   }
 }
 
-void Compiler::consume(TokenType type, const char *message) {
+void Compiler::consume(TokenType type, const char* message) {
   LITR_PROFILE_FUNCTION();
 
   if (m_current.type == type) {
@@ -240,7 +242,8 @@ void Compiler::end_of_script() {
 
 void Compiler::collect_used_variable(const cli::Variable& variable) {
   // If name is not already collected:
-  if (std::find(m_used_variables.begin(), m_used_variables.end(), variable.name) == m_used_variables.end()) {
+  if (std::find(m_used_variables.begin(), m_used_variables.end(), variable.name) ==
+      m_used_variables.end()) {
     m_used_variables.push_back(variable.name);
   }
 }
@@ -257,10 +260,12 @@ void Compiler::error_at_current(const std::string& message) {
   error_at(&m_current, message);
 }
 
-void Compiler::error_at(Token *token, const std::string& message) {
+void Compiler::error_at(Token* token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_panic_mode) return;
+  if (m_panic_mode) {
+    return;
+  }
   m_panic_mode = true;
 
   std::string out_message{"Cannot parse"};

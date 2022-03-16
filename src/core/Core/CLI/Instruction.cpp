@@ -10,8 +10,7 @@
 
 namespace litr::cli {
 
-Instruction::Instruction(std::vector<std::byte> data) : m_byte_code(std::move(data)) {
-}
+Instruction::Instruction(std::vector<std::byte> data) : m_byte_code(std::move(data)) {}
 
 void Instruction::write(Instruction::Code code) {
   write(static_cast<std::byte>(code));

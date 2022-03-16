@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
 #include <memory>
-
+#include <string>
 #include <toml.hpp>
+#include <vector>
 
 #include "Core/Config/Command.hpp"
 #include "Core/FileSystem.hpp"
@@ -31,7 +30,9 @@ class CommandBuilder {
   void add_output();
   void add_child_command(const std::shared_ptr<Command>& command);
 
-  [[nodiscard]] inline std::shared_ptr<Command> get_result() const { return m_command; }
+  [[nodiscard]] inline std::shared_ptr<Command> get_result() const {
+    return m_command;
+  }
 
  private:
   void add_location(const toml::value& context);

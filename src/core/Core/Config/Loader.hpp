@@ -5,12 +5,11 @@
 #pragma once
 
 #include <deque>
+#include <memory>
+#include <string>
+#include <toml.hpp>
 #include <utility>
 #include <vector>
-#include <string>
-#include <memory>
-
-#include <toml.hpp>
 
 #include "Core/Config/Command.hpp"
 #include "Core/Config/Parameter.hpp"
@@ -26,12 +25,19 @@ class Loader {
   explicit Loader(const Path& file_path);
   ~Loader() = default;
 
-  [[nodiscard]] inline Commands get_commands() const { return m_commands; }
-  [[nodiscard]] inline Parameters get_parameters() const { return m_parameters; }
-  [[nodiscard]] inline Path get_file_path() const { return m_file_path; }
+  [[nodiscard]] inline Commands get_commands() const {
+    return m_commands;
+  }
+  [[nodiscard]] inline Parameters get_parameters() const {
+    return m_parameters;
+  }
+  [[nodiscard]] inline Path get_file_path() const {
+    return m_file_path;
+  }
 
  private:
-  std::shared_ptr<Command> create_command(const toml::table& commands, const toml::value& definition, const std::string& name);
+  std::shared_ptr<Command> create_command(
+      const toml::table& commands, const toml::value& definition, const std::string& name);
   void collect_commands(const toml::table& commands);
   void collect_params(const toml::table& params);
 

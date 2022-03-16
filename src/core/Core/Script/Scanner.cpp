@@ -10,8 +10,7 @@
 
 namespace litr::script {
 
-Scanner::Scanner(const char* source) : m_start(source), m_current(source) {
-}
+Scanner::Scanner(const char* source) : m_start(source), m_current(source) {}
 
 void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
@@ -81,8 +80,10 @@ Token Scanner::scan_token() {
   LITR_PROFILE_FUNCTION();
 
   switch (m_modes.top()) {
-    case Mode::UNTOUCHED:  return scan_untouched_token();
-    case Mode::EXPRESSION: return scan_expression_token();
+    case Mode::UNTOUCHED:
+      return scan_untouched_token();
+    case Mode::EXPRESSION:
+      return scan_expression_token();
   }
 
   return {};
@@ -119,15 +120,23 @@ Token Scanner::scan_expression_token() {
 
   char c{advance()};
 
-  if (is_alpha(c)) return identifier();
+  if (is_alpha(c)) {
+    return identifier();
+  }
 
   switch (c) {
-    case ',': return make_token(TokenType::COMMA);
-    case '(': return make_token(TokenType::LEFT_PAREN);
-    case ')': return make_token(TokenType::RIGHT_PAREN);
-    case '}': return end_sequence();
-    case '\'': return string();
-    default: return error_token("Unexpected character.");
+    case ',':
+      return make_token(TokenType::COMMA);
+    case '(':
+      return make_token(TokenType::LEFT_PAREN);
+    case ')':
+      return make_token(TokenType::RIGHT_PAREN);
+    case '}':
+      return end_sequence();
+    case '\'':
+      return string();
+    default:
+      return error_token("Unexpected character.");
   }
 }
 
@@ -193,9 +202,7 @@ Token Scanner::untouched() {
   LITR_PROFILE_FUNCTION();
 
   // @todo: Refactor this condition for the check `m_Current[-1] != '\\'` of the escape sequence.
-  while (
-      !(peek() == '%' && peek_next() == '{' && m_current[-1] != '\\')
-      && !is_at_end()) {
+  while (!(peek() == '%' && peek_next() == '{' && m_current[-1] != '\\') && !is_at_end()) {
     advance();
   }
 
@@ -233,17 +240,19 @@ TokenType Scanner::identifier_type() const {
 
   switch (m_start[0]) {
     // case 'a': return CheckKeyword(1, 2, "nd", TokenType::AND);
-    case 'o': return check_keyword(1, 1, "r", TokenType::OR);
+    case 'o':
+      return check_keyword(1, 1, "r", TokenType::OR);
   }
 
   return TokenType::IDENTIFIER;
 }
 
-TokenType Scanner::check_keyword(size_t start, size_t length, const char* rest, TokenType type) const {
+TokenType Scanner::check_keyword(
+    size_t start, size_t length, const char* rest, TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
-  if (m_current - m_start == static_cast<int16_t>(start + length)
-      && std::memcmp(m_start + start, rest, length) == 0) {
+  if (m_current - m_start == static_cast<int16_t>(start + length) &&
+      std::memcmp(m_start + start, rest, length) == 0) {
     return type;
   }
 

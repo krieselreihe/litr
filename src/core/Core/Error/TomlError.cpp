@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "Core/Utils.hpp"
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Utils.hpp"
 
 namespace litr::error {
 
@@ -50,10 +50,14 @@ std::string TomlError::extract_duplicated_value_error(const std::string& error) 
       continue;
     }
 
-    if (is_file_reference(lines[i])) continue;
+    if (is_file_reference(lines[i])) {
+      continue;
+    }
 
     // Ignore last 3 lines
-    if (lines.size() - 3 <= i) break;
+    if (lines.size() - 3 <= i) {
+      break;
+    }
 
     lines[i].erase(0, 1);
     output.append(lines[i]).append("\n");
@@ -85,10 +89,14 @@ std::string TomlError::extract_duplicated_table_error(const std::string& error) 
       continue;
     }
 
-    if (is_file_reference(lines[i])) continue;
+    if (is_file_reference(lines[i])) {
+      continue;
+    }
 
     // Ignore last 3 lines
-    if (lines.size() - 3 <= i) break;
+    if (lines.size() - 3 <= i) {
+      break;
+    }
 
     lines[i].erase(0, 1);
     output.append(lines[i]).append("\n");

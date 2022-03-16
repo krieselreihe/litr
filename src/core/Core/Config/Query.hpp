@@ -5,13 +5,13 @@
 #pragma once
 
 #include <deque>
-#include <string>
-#include <vector>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
-#include "Core/Config/Loader.hpp"
 #include "Core/CLI/Variable.hpp"
+#include "Core/Config/Loader.hpp"
 
 namespace litr::config {
 
@@ -35,11 +35,14 @@ class Query {
 
  private:
   [[nodiscard]] static Parts split_command_query(const std::string& query);
-  [[nodiscard]] static std::shared_ptr<Command> get_command_by_path(Parts& names, const Loader::Commands& commands);
-  [[nodiscard]] static std::shared_ptr<Command> get_command_by_name(const std::string& name, const Loader::Commands& commands);
+  [[nodiscard]] static std::shared_ptr<Command> get_command_by_path(
+      Parts& names, const Loader::Commands& commands);
+  [[nodiscard]] static std::shared_ptr<Command> get_command_by_name(
+      const std::string& name, const Loader::Commands& commands);
 
   [[nodiscard]] Variables get_parameters_as_variables() const;
-  [[nodiscard]] std::vector<std::string> get_used_parameter_names(const std::shared_ptr<Command>& command) const;
+  [[nodiscard]] std::vector<std::string> get_used_parameter_names(
+      const std::shared_ptr<Command>& command) const;
 
   const std::shared_ptr<Loader>& m_config;
 };

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "Core/CLI/Instruction.hpp"
 
@@ -17,7 +17,8 @@ void disassemble(const std::shared_ptr<cli::Instruction>& instruction, const std
 }  // namespace litr::debug
 
 #if LITR_ENABLE_DISASSEMBLE == 1
-#define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset) ::litr::debug::disassemble_instruction(instruction, offset)
+#define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset) \
+  ::litr::debug::disassemble_instruction(instruction, offset)
 #define LITR_DISASSEMBLE(instruction, name) ::litr::debug::disassemble(instruction, name)
 #else
 #define LITR_DISASSEMBLE_INSTRUCTION(instruction, offset)
