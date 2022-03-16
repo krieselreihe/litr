@@ -2,9 +2,9 @@
  * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
  */
 
-#include <doctest/doctest.h>
-
 #include "Core/Config/FileResolver.hpp"
+
+#include <doctest/doctest.h>
 
 TEST_SUITE("Config::FileResolver") {
   TEST_CASE("File not found" * doctest::skip()) {

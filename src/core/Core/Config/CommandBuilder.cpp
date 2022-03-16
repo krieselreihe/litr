@@ -10,8 +10,11 @@
 
 namespace litr::config {
 
-CommandBuilder::CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name)
-    : m_file(file), m_table(data), m_command(std::make_shared<Command>(name)) {
+CommandBuilder::CommandBuilder(
+    const toml::table& file, const toml::value& data, const std::string& name)
+    : m_file(file),
+      m_table(data),
+      m_command(std::make_shared<Command>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_command);
 }
 
@@ -32,9 +35,12 @@ void CommandBuilder::add_script(const std::vector<std::string>& scripts) {
   m_command->script = scripts;
 }
 
-void CommandBuilder::add_script(const std::vector<std::string>& scripts, const toml::value& context) {
+void CommandBuilder::add_script(
+    const std::vector<std::string>& scripts, const toml::value& context) {
   add_script(scripts);
-  for (auto&& entry : context.as_array()) add_location(entry);
+  for (auto&& entry : context.as_array()) {
+    add_location(entry);
+  }
 }
 
 void CommandBuilder::add_script(const toml::value& scripts) {
@@ -66,9 +72,8 @@ void CommandBuilder::add_description() {
       return;
     }
 
-    error::Handler::push(
-        error::MalformedCommandError(fmt::format(R"(The "{}" can only be a string.)", name),
-            m_table.at(name)));
+    error::Handler::push(error::MalformedCommandError(
+        fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
   }
 }
 
@@ -84,9 +89,8 @@ void CommandBuilder::add_example() {
       return;
     }
 
-    error::Handler::push(
-        error::MalformedCommandError(fmt::format(R"(The "{}" can only be a string.)", name),
-            m_table.at(name)));
+    error::Handler::push(error::MalformedCommandError(
+        fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
   }
 }
 
@@ -144,8 +148,7 @@ void CommandBuilder::add_output() {
     }
 
     error::Handler::push(error::MalformedCommandError(
-        fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name),
-        m_table.at(name)));
+        fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name), m_table.at(name)));
   }
 }
 
@@ -159,10 +162,7 @@ void CommandBuilder::add_location(const toml::value& context) {
   LITR_PROFILE_FUNCTION();
 
   m_command->Locations.emplace_back(
-      context.location().line(),
-      context.location().column(),
-      context.location().line_str()
-  );
+      context.location().line(), context.location().column(), context.location().line_str());
 }
 
 }  // namespace litr::config

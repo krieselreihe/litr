@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <string>
 #include <functional>
+#include <string>
 
-#include "Core/FileSystem.hpp"
 #include "Core/ExitStatus.hpp"
+#include "Core/FileSystem.hpp"
 
 namespace litr::cli {
 
@@ -24,11 +24,13 @@ class Shell {
   static Result exec(const std::string& command);
   static Result exec(const std::string& command, const Path& path);
   static Result exec(const std::string& command, const Shell::ExecCallback& callback);
-  static Result exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback);
+  static Result exec(
+      const std::string& command, const Path& path, const Shell::ExecCallback& callback);
 
  private:
   [[nodiscard]] static ExitStatus get_status_code(int stream_status);
-  [[nodiscard]] static std::string create_command_string(const std::string& command, const Path& path);
+  [[nodiscard]] static std::string create_command_string(
+      const std::string& command, const Path& path);
   [[nodiscard]] static std::string create_cd_command(const Path& path);
 };
 

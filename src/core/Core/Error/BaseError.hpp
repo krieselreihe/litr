@@ -5,12 +5,11 @@
 #pragma once
 
 #include <string>
+#include <toml.hpp>
 #include <utility>
 
-#include <toml.hpp>
-
-#include "Core/Debug/Instrumentor.hpp"
 #include "Core/Config/Location.hpp"
+#include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/TomlError.hpp"
 
 namespace litr::error {
@@ -39,15 +38,19 @@ class BaseError {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
-      : type(type), message(std::move(message)), location(line, column, std::move(lineStr)) {
+  BaseError(
+      ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
+      : type(type),
+        message(std::move(message)),
+        location(line, column, std::move(lineStr)) {
     LITR_PROFILE_FUNCTION();
   }
 
   BaseError(ErrorType type, std::string message, const toml::value& context)
       : type(type),
         message(std::move(message)),
-        location(context.location().line(), context.location().column(), context.location().line_str()) {
+        location(
+            context.location().line(), context.location().column(), context.location().line_str()) {
     LITR_PROFILE_FUNCTION();
   }
 
@@ -79,8 +82,7 @@ class ReservedParamError : public BaseError {
 class MalformedFileError : public BaseError {
  public:
   explicit MalformedFileError(const std::string& message)
-      : BaseError(ErrorType::MALFORMED_FILE, message) {
-  }
+      : BaseError(ErrorType::MALFORMED_FILE, message) {}
   MalformedFileError(const std::string& message, const toml::exception& err)
       : BaseError(ErrorType::MALFORMED_FILE, TomlError::extract_message(message, err.what()), err) {
     BaseError::description = "Invalid file format!";
@@ -137,7 +139,8 @@ class ValueAlreadyInUseError : public BaseError {
 
 class CLIParserError : public BaseError {
  public:
-  CLIParserError(const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
+  CLIParserError(
+      const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
       : BaseError(ErrorType::CLI_PARSER, message, line, column, lineStr) {
     BaseError::description = "Problem parsing command line arguments!";
   }
@@ -145,7 +148,8 @@ class CLIParserError : public BaseError {
 
 class ScriptParserError : public BaseError {
  public:
-  ScriptParserError(const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
+  ScriptParserError(
+      const std::string& message, uint32_t line, uint32_t column, const std::string& lineStr)
       : BaseError(ErrorType::CLI_PARSER, message, line, column, lineStr) {
     BaseError::description = "Problem parsing script!";
   }

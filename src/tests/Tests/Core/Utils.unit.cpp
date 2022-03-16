@@ -2,13 +2,13 @@
  * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
  */
 
+#include "Core/Utils.hpp"
+
 #include <doctest/doctest.h>
 
-#include <vector>
 #include <deque>
 #include <string>
-
-#include "Core/Utils.hpp"
+#include <vector>
 
 TEST_SUITE("Utils") {
   TEST_CASE("trim_left") {
@@ -69,17 +69,13 @@ TEST_SUITE("Utils") {
 
   TEST_CASE("deduplicate") {
     SUBCASE("Removes duplicates") {
-      std::vector<std::string> items{{
-          "Cobra", "Python", "DBX", "Python", "DBX", "DBX", "Clipper"
-      }};
+      std::vector<std::string> items{{"Cobra", "Python", "DBX", "Python", "DBX", "DBX", "Clipper"}};
       litr::utils::deduplicate(items);
       CHECK_EQ(items.size(), 4);
     }
 
     SUBCASE("Does nothing if no duplicates found") {
-      std::vector<std::string> items{{
-          "Cobra", "Python", "DBX", "Clipper"
-      }};
+      std::vector<std::string> items{{"Cobra", "Python", "DBX", "Clipper"}};
       litr::utils::deduplicate(items);
       CHECK_EQ(items.size(), 4);
     }

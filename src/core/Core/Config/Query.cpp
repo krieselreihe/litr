@@ -6,9 +6,9 @@
 
 #include <algorithm>
 
-#include "Core/Utils.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Script/Compiler.hpp"
+#include "Core/Utils.hpp"
 
 namespace litr::config {
 
@@ -95,7 +95,8 @@ Query::Parts Query::split_command_query(const std::string& query) {
 
 // Ignore recursion warning.
 // NOLINTNEXTLINE
-std::shared_ptr<Command> Query::get_command_by_path(Parts& names, const Loader::Commands& commands) {
+std::shared_ptr<Command> Query::get_command_by_path(
+    Parts& names, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
   const std::shared_ptr<Command>& command{get_command_by_name(names.front(), commands)};
@@ -124,7 +125,8 @@ std::shared_ptr<Command> Query::get_command_by_path(Parts& names, const Loader::
   return get_command_by_path(names, command->child_commands);
 }
 
-std::shared_ptr<Command> Query::get_command_by_name(const std::string& name, const Loader::Commands& commands) {
+std::shared_ptr<Command> Query::get_command_by_name(
+    const std::string& name, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (const std::shared_ptr<Command>& command : commands) {
@@ -149,7 +151,8 @@ Query::Variables Query::get_parameters_as_variables() const {
   return variables;
 }
 
-std::vector<std::string> Query::get_used_parameter_names(const std::shared_ptr<Command>& command) const {
+std::vector<std::string> Query::get_used_parameter_names(
+    const std::shared_ptr<Command>& command) const {
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> names{};

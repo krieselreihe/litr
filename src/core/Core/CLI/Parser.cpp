@@ -13,7 +13,9 @@
 namespace litr::cli {
 
 Parser::Parser(const std::shared_ptr<Instruction>& instruction, const std::string& source)
-    : m_source(source), m_scanner(source.c_str()), m_instruction(instruction) {
+    : m_source(source),
+      m_scanner(source.c_str()),
+      m_instruction(instruction) {
   LITR_PROFILE_FUNCTION();
 
   advance();
@@ -199,7 +201,10 @@ void Parser::comma() {
 void Parser::end_of_string() {
   LITR_PROFILE_FUNCTION();
 
-  if (!m_scope.empty()) emit_execution();
+  if (!m_scope.empty()) {
+    emit_execution();
+  }
+
   consume(TokenType::EOS, "Expected end.");
 }
 
@@ -218,7 +223,9 @@ void Parser::error(const std::string& message) {
 void Parser::error_at(Token* token, const std::string& message) {
   LITR_PROFILE_FUNCTION();
 
-  if (m_panic_mode) return;
+  if (m_panic_mode) {
+    return;
+  }
   m_panic_mode = true;
 
   std::string out_message{"Cannot parse"};
@@ -233,10 +240,8 @@ void Parser::error_at(Token* token, const std::string& message) {
 
   out_message.append(fmt::format(": {}", message));
 
-  error::Handler::push(error::CLIParserError(out_message,
-      1,
-      token->column, utils::trim(m_source, ' ')
-  ));
+  error::Handler::push(
+      error::CLIParserError(out_message, 1, token->column, utils::trim(m_source, ' ')));
 
   m_has_error = true;
 }

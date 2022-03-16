@@ -56,10 +56,9 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(--target="Some release")"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 2> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "target"},
-        {litr::cli::Instruction::Code::CONSTANT, "Some release"}
-    }};
+    const std::array<InstructionDefinition, 2> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "target"},
+            {litr::cli::Instruction::Code::CONSTANT, "Some release"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -71,10 +70,9 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(-t="debug is nice")"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 2> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "t"},
-        {litr::cli::Instruction::Code::CONSTANT, "debug is nice"}
-    }};
+    const std::array<InstructionDefinition, 2> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "t"},
+            {litr::cli::Instruction::Code::CONSTANT, "debug is nice"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -86,10 +84,9 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(-t="")"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 2> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "t"},
-        {litr::cli::Instruction::Code::CONSTANT, ""}
-    }};
+    const std::array<InstructionDefinition, 2> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "t"},
+            {litr::cli::Instruction::Code::CONSTANT, ""}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -101,10 +98,9 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{"build"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 2> definition{{
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::EXECUTE, "build"}
-    }};
+    const std::array<InstructionDefinition, 2> definition{
+        {{litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::EXECUTE, "build"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -116,11 +112,10 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{"build cpp"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 3> definition{{
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}
-    }};
+    const std::array<InstructionDefinition, 3> definition{
+        {{litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+            {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -132,13 +127,12 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{"build,run"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 5> definition{{
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::EXECUTE, "build"},
-        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
-        {litr::cli::Instruction::Code::EXECUTE, "run"}
-    }};
+    const std::array<InstructionDefinition, 5> definition{
+        {{litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::EXECUTE, "build"},
+            {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
+            {litr::cli::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -150,15 +144,14 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(--target="release" build,run)"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 7> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "target"},
-        {litr::cli::Instruction::Code::CONSTANT, "release"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::EXECUTE, "build"},
-        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
-        {litr::cli::Instruction::Code::EXECUTE, "run"}
-    }};
+    const std::array<InstructionDefinition, 7> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "target"},
+            {litr::cli::Instruction::Code::CONSTANT, "release"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::EXECUTE, "build"},
+            {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "run"},
+            {litr::cli::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -170,11 +163,10 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(-t="release" --debug)"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 3> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "t"},
-        {litr::cli::Instruction::Code::CONSTANT, "release"},
-        {litr::cli::Instruction::Code::DEFINE, "debug"}
-    }};
+    const std::array<InstructionDefinition, 3> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "t"},
+            {litr::cli::Instruction::Code::CONSTANT, "release"},
+            {litr::cli::Instruction::Code::DEFINE, "debug"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -284,13 +276,12 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(-t="debug" build cpp)"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 5> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "t"},
-        {litr::cli::Instruction::Code::CONSTANT, "debug"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}
-    }};
+    const std::array<InstructionDefinition, 5> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "t"},
+            {litr::cli::Instruction::Code::CONSTANT, "debug"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+            {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -302,16 +293,15 @@ TEST_SUITE("CLI::Parser") {
     const std::string source{R"(-t="debug" build cpp, java)"};
 
     litr::cli::Parser parser{instruction, source};
-    const std::array<InstructionDefinition, 8> definition{{
-        {litr::cli::Instruction::Code::DEFINE, "t"},
-        {litr::cli::Instruction::Code::CONSTANT, "debug"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
-        {litr::cli::Instruction::Code::EXECUTE, "build.cpp"},
-        {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
-        {litr::cli::Instruction::Code::BEGIN_SCOPE, "java"},
-        {litr::cli::Instruction::Code::EXECUTE, "build.java"}
-    }};
+    const std::array<InstructionDefinition, 8> definition{
+        {{litr::cli::Instruction::Code::DEFINE, "t"},
+            {litr::cli::Instruction::Code::CONSTANT, "debug"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "build"},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "cpp"},
+            {litr::cli::Instruction::Code::EXECUTE, "build.cpp"},
+            {litr::cli::Instruction::Code::CLEAR, NO_VALUE},
+            {litr::cli::Instruction::Code::BEGIN_SCOPE, "java"},
+            {litr::cli::Instruction::Code::EXECUTE, "build.java"}}};
 
     CHECK_FALSE(parser.has_errors());
     CHECK_DEFINITION(instruction, definition);
@@ -384,7 +374,8 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].message, "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
+    CHECK_EQ(errors[0].message,
+        "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
     litr::error::Handler::flush();
   }
 
@@ -412,7 +403,8 @@ TEST_SUITE("CLI::Parser") {
 
     const auto errors{litr::error::Handler::get_errors()};
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].message, "Cannot parse: A parameter can only start with the characters A-Za-z.");
+    CHECK_EQ(
+        errors[0].message, "Cannot parse: A parameter can only start with the characters A-Za-z.");
     litr::error::Handler::flush();
   }
 }

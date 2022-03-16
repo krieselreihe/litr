@@ -3,8 +3,14 @@ Language: Cpp
 BasedOnStyle: Google
 AlignAfterOpenBracket: DontAlign
 AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: Never
-ColumnLimit: 80
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+AllowAllConstructorInitializersOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+ColumnLimit: 100
 
 ...

@@ -7,8 +7,8 @@
 #include <fmt/format.h>
 
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace litr::config {
 
@@ -24,8 +24,7 @@ struct Parameter {
 
   Type type{Type::STRING};
 
-  explicit Parameter(std::string name) : name(std::move(name)) {
-  }
+  explicit Parameter(std::string name) : name(std::move(name)) {}
 };
 
 }  // namespace litr::config

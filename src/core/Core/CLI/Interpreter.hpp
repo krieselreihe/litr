@@ -5,11 +5,11 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <memory>
 
 #include "Core/CLI/Instruction.hpp"
 #include "Core/CLI/Variable.hpp"
@@ -25,7 +25,8 @@ class Interpreter {
   using Scripts = std::vector<std::string>;
 
  public:
-  Interpreter(const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config);
+  Interpreter(const std::shared_ptr<Instruction>& instruction,
+      const std::shared_ptr<config::Loader>& config);
 
   void execute();
 
@@ -43,13 +44,19 @@ class Interpreter {
   void call_instruction();
 
   void call_command(const std::shared_ptr<config::Command>& command, const std::string& scope = "");
-  void call_child_commands(const std::shared_ptr<config::Command>& command, const std::string& scope);
-  void run_scripts(const Scripts& scripts, const std::string& command_path, const std::string& dir, bool print_result);
+  void call_child_commands(
+      const std::shared_ptr<config::Command>& command, const std::string& scope);
+  void run_scripts(const Scripts& scripts,
+      const std::string& command_path,
+      const std::string& dir,
+      bool print_result);
 
   [[nodiscard]] Scripts parse_scripts(const std::shared_ptr<config::Command>& command);
-  [[nodiscard]] std::string parse_script(const std::string& script, const config::Location& location);
+  [[nodiscard]] std::string parse_script(
+      const std::string& script, const config::Location& location);
 
-  [[nodiscard]] static enum Variable::Type get_variable_type(const std::shared_ptr<config::Parameter>& param);
+  [[nodiscard]] static enum Variable::Type get_variable_type(
+      const std::shared_ptr<config::Parameter>& param);
 
   void validate_required_parameters(const std::shared_ptr<config::Command>& command);
   [[nodiscard]] bool is_variable_defined(const std::string& name) const;

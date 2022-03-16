@@ -33,17 +33,35 @@ class Path {
 
   [[nodiscard]] size_t count() const;
 
-  explicit operator std::string() const { return to_string(); }
+  explicit operator std::string() const {
+    return to_string();
+  }
 
-  bool operator!=(const Path& other) const { return other.m_path != m_path; }
-  bool operator==(const Path& other) const { return other.m_path == m_path; }
-  bool operator!=(const std::string& other) const { return other != m_path; }
-  bool operator==(const std::string& other) const { return other == m_path; }
+  bool operator!=(const Path& other) const {
+    return other.m_path != m_path;
+  }
+  bool operator==(const Path& other) const {
+    return other.m_path == m_path;
+  }
+  bool operator!=(const std::string& other) const {
+    return other != m_path;
+  }
+  bool operator==(const std::string& other) const {
+    return other == m_path;
+  }
 
-  Iterator begin() { return m_path.begin(); }
-  Iterator end() { return m_path.end(); }
-  [[nodiscard]] ConstIterator begin() const { return m_path.begin(); }
-  [[nodiscard]] ConstIterator end() const { return m_path.end(); }
+  Iterator begin() {
+    return m_path.begin();
+  }
+  Iterator end() {
+    return m_path.end();
+  }
+  [[nodiscard]] ConstIterator begin() const {
+    return m_path.begin();
+  }
+  [[nodiscard]] ConstIterator end() const {
+    return m_path.end();
+  }
 
   template <typename OStream>
   friend OStream& operator<<(OStream& os, const Path& path) {

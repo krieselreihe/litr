@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
-#include "Core/Debug/Instrumentor.hpp"
 #include "Core/CLI/Shell.hpp"
+#include "Core/Debug/Instrumentor.hpp"
+#include "Core/ExitStatus.hpp"
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
-#include "Core/ExitStatus.hpp"
 
 namespace litr::cli {
 
@@ -21,8 +21,10 @@ static void CommandPathToHumanReadable(std::string& path) {
   std::replace(path.begin(), path.end(), '.', ' ');
 }
 
-Interpreter::Interpreter(const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config)
-    : m_instruction(instruction), m_query(config) {
+Interpreter::Interpreter(
+    const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config)
+    : m_instruction(instruction),
+      m_query(config) {
   define_default_variables(config);
 }
 
@@ -32,7 +34,9 @@ void Interpreter::execute() {
   m_offset = 0;
 
   while (m_offset < m_instruction->count()) {
-    if (m_stop_execution) return;
+    if (m_stop_execution) {
+      return;
+    }
     execute_instruction();
   }
 }
@@ -127,10 +131,9 @@ void Interpreter::define_variable() {
   const std::shared_ptr<config::Parameter>& param{m_query.get_parameter(name)};
 
   if (param == nullptr) {
-    handle_error(
-        error::CommandNotFoundError(fmt::format(
-            "Parameter with the name \"{}\" is not defined."
-            "\n  Run `litr --help` to see a list available options.",
+    handle_error(error::CommandNotFoundError(
+        fmt::format("Parameter with the name \"{}\" is not defined."
+                    "\n  Run `litr --help` to see a list available options.",
             name)));
     return;
   }
@@ -177,10 +180,11 @@ void Interpreter::set_constant() {
           options.append(fmt::format(" \"{}\",", option));
         }
 
-        handle_error(
-            error::CommandNotFoundError(fmt::format(
-                "Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
-                value, param->name, utils::trim_right(options, ','))));
+        handle_error(error::CommandNotFoundError(
+            fmt::format("Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
+                value,
+                param->name,
+                utils::trim_right(options, ','))));
         return;
       }
       variable.value = value;
@@ -192,11 +196,11 @@ void Interpreter::set_constant() {
       } else if (value == "true") {
         variable.value = true;
       } else {
-        handle_error(
-            error::CommandNotFoundError(fmt::format(
-                "Parameter value \"{}\" is not valid for boolean option \"{}\"."
-                "\n  Please use \"false\", \"true\" or no value for true as well.",
-                value, param->name)));
+        handle_error(error::CommandNotFoundError(
+            fmt::format("Parameter value \"{}\" is not valid for boolean option \"{}\"."
+                        "\n  Please use \"false\", \"true\" or no value for true as well.",
+                value,
+                param->name)));
         return;
       }
       break;
@@ -214,9 +218,9 @@ void Interpreter::call_instruction() {
   const std::shared_ptr<config::Command> command{m_query.get_command(name)};
 
   if (command == nullptr) {
-    handle_error(error::CommandNotFoundError(
-        fmt::format(
-            "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.", name)));
+    handle_error(error::CommandNotFoundError(fmt::format(
+        "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.",
+        name)));
     return;
   }
 
@@ -226,17 +230,22 @@ void Interpreter::call_instruction() {
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::call_command(const std::shared_ptr<config::Command>& command, const std::string& scope) {
+void Interpreter::call_command(
+    const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   std::string command_path{scope + command->name};
 
   validate_required_parameters(command);
-  if (m_stop_execution) return;
+  if (m_stop_execution) {
+    return;
+  }
 
   const bool print_result{command->output == config::Command::Output::SILENT};
   const Scripts scripts{parse_scripts(command)};
-  if (m_stop_execution) return;
+  if (m_stop_execution) {
+    return;
+  }
 
   CommandPathToHumanReadable(command_path);
 
@@ -248,36 +257,44 @@ void Interpreter::call_command(const std::shared_ptr<config::Command>& command, 
     }
   }
 
-  if (m_stop_execution) return;
+  if (m_stop_execution) {
+    return;
+  }
 
   call_child_commands(command, command_path.append(" "));
 }
 
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE
-void Interpreter::call_child_commands(const std::shared_ptr<config::Command>& command, const std::string& scope) {
+void Interpreter::call_child_commands(
+    const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   if (!command->child_commands.empty()) {
     for (auto&& child_command : command->child_commands) {
-      if (m_stop_execution) return;
+      if (m_stop_execution) {
+        return;
+      }
       call_command(child_command, scope);
     }
   }
 }
 
-void Interpreter::run_scripts(const Scripts& scripts, const std::string& command_path, const std::string& dir, bool print_result) {
+void Interpreter::run_scripts(const Scripts& scripts,
+    const std::string& command_path,
+    const std::string& dir,
+    bool print_result) {
   LITR_PROFILE_FUNCTION();
 
   Path path{dir};
 
   for (auto&& script : scripts) {
-    Shell::Result result{print_result ? Shell::exec(script, path) : Shell::exec(script, path, print)};
+    Shell::Result result{
+        print_result ? Shell::exec(script, path) : Shell::exec(script, path, print)};
 
     if (result.status == ExitStatus::FAILURE) {
-      handle_error(
-          error::ExecutionFailureError(fmt::format(
-              "Problem executing the command defined in \"{}\".", command_path)));
+      handle_error(error::ExecutionFailureError(
+          fmt::format("Problem executing the command defined in \"{}\".", command_path)));
       return;
     }
   }
@@ -291,7 +308,9 @@ Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<config::Co
 
   for (auto&& script : command->script) {
     const std::string parsed_script{parse_script(script, command->Locations[location])};
-    if (m_stop_execution) break;
+    if (m_stop_execution) {
+      break;
+    }
     scripts.push_back(parsed_script);
     location++;
   }
@@ -312,7 +331,8 @@ std::string Interpreter::parse_script(const std::string& script, const config::L
   return parser.get_script();
 }
 
-enum Variable::Type Interpreter::get_variable_type(const std::shared_ptr<config::Parameter>& param) {
+enum Variable::Type Interpreter::get_variable_type(
+    const std::shared_ptr<config::Parameter>& param) {
   LITR_PROFILE_FUNCTION();
 
   switch (param->type) {
@@ -335,10 +355,9 @@ void Interpreter::validate_required_parameters(const std::shared_ptr<config::Com
 
   for (auto&& param : params) {
     if (!is_variable_defined(param->name)) {
-      handle_error(
-          error::ExecutionFailureError(fmt::format(
-              "The parameter --{} is required. "
-              "You should run the command again with the required parameter.",
+      handle_error(error::ExecutionFailureError(
+          fmt::format("The parameter --{} is required. "
+                      "You should run the command again with the required parameter.",
               param->name)));
       m_stop_execution = true;
     }
@@ -349,13 +368,14 @@ bool Interpreter::is_variable_defined(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
   const Variables variables{get_scope_variables()};
-  return std::any_of(variables.begin(), variables.end(), [&name](std::pair<std::string, cli::Variable>&& var) {
-    if (var.second.type == cli::Variable::Type::STRING) {
-      return name == var.second.name && !std::get<std::string>(var.second.value).empty();
-    }
+  return std::any_of(
+      variables.begin(), variables.end(), [&name](std::pair<std::string, cli::Variable>&& var) {
+        if (var.second.type == cli::Variable::Type::STRING) {
+          return name == var.second.name && !std::get<std::string>(var.second.value).empty();
+        }
 
-    return name == var.second.name;
-  });
+        return name == var.second.name;
+      });
 }
 
 void Interpreter::handle_error(const error::BaseError& error) {

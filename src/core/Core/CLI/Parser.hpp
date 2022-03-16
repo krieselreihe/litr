@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <string>
 #include <deque>
 #include <memory>
+#include <string>
 
-#include "Core/CLI/Token.hpp"
-#include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Instruction.hpp"
+#include "Core/CLI/Scanner.hpp"
+#include "Core/CLI/Token.hpp"
 
 namespace litr::cli {
 
@@ -40,7 +40,9 @@ class Parser {
   void comma();
   void end_of_string();
 
-  [[nodiscard]] inline bool has_errors() const { return m_has_error; }
+  [[nodiscard]] inline bool has_errors() const {
+    return m_has_error;
+  }
 
  private:
   void error(const std::string& message);

@@ -6,9 +6,6 @@
 
 namespace litr {
 
-enum class ExitStatus : int {
-  SUCCESS = 0,
-  FAILURE = 1
-};
+enum class ExitStatus : int { SUCCESS = 0, FAILURE = 1 };
 
 }  // namespace litr

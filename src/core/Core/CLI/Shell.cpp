@@ -6,8 +6,8 @@
 
 #include <cstdio>
 
-#include "Core/Log.hpp"
 #include "Core/Debug/Instrumentor.hpp"
+#include "Core/Log.hpp"
 
 namespace litr::cli {
 
@@ -29,7 +29,8 @@ Shell::Result Shell::exec(const std::string& command, const Shell::ExecCallback&
   return Shell::exec(command, Path(), callback);
 }
 
-Shell::Result Shell::exec(const std::string& command, const Path& path, const Shell::ExecCallback& callback) {
+Shell::Result Shell::exec(
+    const std::string& command, const Path& path, const Shell::ExecCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
   Result result{};

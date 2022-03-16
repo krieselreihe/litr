@@ -2,11 +2,11 @@
  * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
  */
 
+#include "Core/Config/Query.hpp"
+
 #include <doctest/doctest.h>
 
 #include <memory>
-
-#include "Core/Config/Query.hpp"
 
 TEST_SUITE("Config::Query") {
   TEST_CASE("get_command()") {
@@ -89,11 +89,11 @@ TEST_SUITE("Config::Query") {
     // version of gcc.
     // "ERROR: test case THREW exception: Unexpected index"
     // https://github.com/krieselreihe/litr/issues/42
-//    SUBCASE("Get parameters used by command") {
-//      auto params{query.GetParameters("build")};
-//      CHECK_EQ(params.size(), 1);
-//      CHECK_EQ(params[0]->Name, "target");
-//    }
+    //    SUBCASE("Get parameters used by command") {
+    //      auto params{query.GetParameters("build")};
+    //      CHECK_EQ(params.size(), 1);
+    //      CHECK_EQ(params[0]->Name, "target");
+    //    }
 
     SUBCASE("Get no parameters if none are used by command") {
       auto params{query.get_parameters("update")};

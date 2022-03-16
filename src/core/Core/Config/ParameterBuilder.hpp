@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
 #include <memory>
-
+#include <string>
 #include <toml.hpp>
+#include <vector>
 
 #include "Core/Config/Parameter.hpp"
 
@@ -25,7 +24,9 @@ class ParameterBuilder {
   void add_default();
   void add_type();
 
-  [[nodiscard]] inline std::shared_ptr<Parameter> get_result() const { return m_parameter; }
+  [[nodiscard]] inline std::shared_ptr<Parameter> get_result() const {
+    return m_parameter;
+  }
 
   [[nodiscard]] static bool is_reserved_name(const std::string& name);
 

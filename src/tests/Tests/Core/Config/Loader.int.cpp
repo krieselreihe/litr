@@ -61,7 +61,8 @@ TEST_SUITE("Config::Loader") {
 
     CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
-    CHECK_EQ(errors[0].message, R"(The command property "unknown" does not exist. Please refer to the docs.)");
+    CHECK_EQ(errors[0].message,
+        R"(The command property "unknown" does not exist. Please refer to the docs.)");
     litr::error::Handler::flush();
   }
 
@@ -222,7 +223,8 @@ TEST_SUITE("Config::Loader") {
     CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
     CHECK_EQ(errors[0].message, R"(The "description" can only be a string.)");
-    CHECK_EQ(errors[1].message, R"(A "type" can only be "string" or an array of options as strings.)");
+    CHECK_EQ(
+        errors[1].message, R"(A "type" can only be "string" or an array of options as strings.)");
     litr::error::Handler::flush();
   }
 

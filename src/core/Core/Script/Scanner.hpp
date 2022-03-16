@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <string>
 #include <stack>
+#include <string>
 
 #include "Core/Script/Token.hpp"
 
@@ -45,7 +45,8 @@ class Scanner {
   [[nodiscard]] Token identifier();
 
   [[nodiscard]] TokenType identifier_type() const;
-  [[nodiscard]] TokenType check_keyword(size_t start, size_t length, const char* rest, TokenType type) const;
+  [[nodiscard]] TokenType check_keyword(
+      size_t start, size_t length, const char* rest, TokenType type) const;
 
  private:
   const char* m_start;

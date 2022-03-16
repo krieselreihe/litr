@@ -6,9 +6,12 @@
 
 #include <fmt/format.h>
 
-std::pair<toml::table, toml::value> CreateTOMLMock(const std::string& name, const std::string& toml) {
+std::pair<toml::table, toml::value> CreateTOMLMock(
+    const std::string& name, const std::string& toml) {
   std::string rFile{fmt::format(R"([{}]
-{})", name, toml)};
+{})",
+      name,
+      toml)};
 
   std::istringstream isFile(rFile, std::ios_base::binary | std::ios_base::in);
   const auto file = toml::parse(isFile, "std::string");

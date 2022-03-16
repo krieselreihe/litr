@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <vector>
-#include <utility>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "Core.hpp"
 
@@ -23,7 +23,9 @@ class Handler {
     HookCallback callback;
 
     Hook(cli::Instruction::Code code, cli::Instruction::Value value, HookCallback callback)
-        : code(code), value(std::move(value)), callback(std::move(callback)) {}
+        : code(code),
+          value(std::move(value)),
+          callback(std::move(callback)) {}
   };
 
  public:

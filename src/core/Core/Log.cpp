@@ -38,5 +38,4 @@ Log::Log() {
   s_client_logger->flush_on(level);
 }
 
-
 }  // namespace litr

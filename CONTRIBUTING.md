@@ -14,6 +14,7 @@ You want to contribute to this repo? Nice! And of course: **you are the best!** 
 - [Build](#build)
 - [Tests](#tests)
 - [Profiling](#profiling)
+- [Formatting code](#formatting-code)
 - [Usage without Litr](#usage-without-litr)
 - [Run](#run)
 - [Files and Directories](#files-and-directories)
@@ -148,6 +149,14 @@ Running the executable directly will generate a `litr-profile.json` file that ca
 
 ```shell
 ./build/release/src/client/Client
+```
+
+## Formatting code
+
+[Using clang-format](#llvm) you can run Litr to format all project files:
+
+```shell
+litr format
 ```
 
 ## Usage without Litr

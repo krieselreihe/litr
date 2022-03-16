@@ -6,10 +6,10 @@
 
 #include <fmt/format.h>
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <memory>
 
 #include "Core/Config/Location.hpp"
 
@@ -29,8 +29,7 @@ struct Command {
   Output output{Output::UNCHANGED};
   std::vector<Location> Locations{};
 
-  explicit Command(std::string name) : name(std::move(name)) {
-  }
+  explicit Command(std::string name) : name(std::move(name)) {}
 };
 
 }  // namespace litr::config

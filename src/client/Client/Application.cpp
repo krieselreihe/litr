@@ -6,8 +6,9 @@
 
 #include <fmt/color.h>
 #include <fmt/format.h>
-#include <vector>
+
 #include <memory>
+#include <vector>
 
 #include "Hooks/Handler.hpp"
 #include "Hooks/Help.hpp"
@@ -51,10 +52,12 @@ ExitStatus Application::run(int argc, char* argv[]) {
   const auto config{std::make_shared<config::Loader>(config_path)};
   const auto interpreter{std::make_shared<cli::Interpreter>(instruction, config)};
 
-  hooks.add(cli::Instruction::Code::DEFINE, {"help", "h"}, [&config](const std::shared_ptr<cli::Instruction>& instruction) {
-    const hook::Help help{config};
-    help.print(instruction);
-  });
+  hooks.add(cli::Instruction::Code::DEFINE,
+      {"help", "h"},
+      [&config](const std::shared_ptr<cli::Instruction>& instruction) {
+        const hook::Help help{config};
+        help.print(instruction);
+      });
   if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
@@ -82,8 +85,7 @@ Path Application::get_config_path() {
       break;
     }
     case config::FileResolver::Status::DUPLICATE: {
-      fmt::print(
-          fg(fmt::color::gold),
+      fmt::print(fg(fmt::color::gold),
           "You defined both, litr.toml and .litr.toml in {}. "
           "This is probably an error and you only want one of them.\n",
           config_path.get_file_directory());
