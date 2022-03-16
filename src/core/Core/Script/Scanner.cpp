@@ -221,7 +221,8 @@ Token Scanner::string() {
 Token Scanner::identifier() {
   LITR_PROFILE_FUNCTION();
 
-  while (is_alpha(peek()) || is_digit(peek())) { advance();
+  while (is_alpha(peek()) || is_digit(peek())) {
+    advance();
   }
 
   return make_token(identifier_type());

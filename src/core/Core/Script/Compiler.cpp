@@ -178,7 +178,8 @@ void Compiler::or_statement(const cli::Variable& variable) {
     advance();
   } else {
     // Skip over true branch
-    while (!peak(TokenType::OR) && !peak(TokenType::EOS)) { advance();
+    while (!peak(TokenType::OR) && !peak(TokenType::EOS)) {
+      advance();
     }
 
     consume(TokenType::OR, R"(Expected `or` after expression.)");
@@ -192,7 +193,8 @@ void Compiler::or_statement(const cli::Variable& variable) {
 void Compiler::if_statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
-  if (std::get<bool>(variable.value)) { expression();
+  if (std::get<bool>(variable.value)) {
+    expression();
   }
 }
 
