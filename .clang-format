@@ -3,8 +3,8 @@ Language: Cpp
 BasedOnStyle: Google
 AlignAfterOpenBracket: DontAlign
 AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: WithoutElse
-ColumnLimit: 120
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
+ColumnLimit: 80
 
 ...
