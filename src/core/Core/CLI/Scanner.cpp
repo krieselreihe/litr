@@ -140,7 +140,8 @@ bool Scanner::is_at_end() const {
 Token Scanner::string() {
   LITR_PROFILE_FUNCTION();
 
-  while (peek() != '"' && !is_at_end()) { advance();
+  while (peek() != '"' && !is_at_end()) {
+    advance();
   }
 
   if (is_at_end()) {
@@ -155,7 +156,8 @@ Token Scanner::string() {
 Token Scanner::number() {
   LITR_PROFILE_FUNCTION();
 
-  while (is_digit(peek())) { advance();
+  while (is_digit(peek())) {
+    advance();
   }
 
   // Look for a fractional part.
@@ -163,7 +165,8 @@ Token Scanner::number() {
     // Consume the ".".
     advance();
 
-    while (is_digit(peek())) { advance();
+    while (is_digit(peek())) {
+      advance();
     }
   }
 
@@ -173,7 +176,8 @@ Token Scanner::number() {
 Token Scanner::command() {
   LITR_PROFILE_FUNCTION();
 
-  while (is_alpha(peek()) || is_digit(peek())) { advance();
+  while (is_alpha(peek()) || is_digit(peek())) {
+    advance();
   }
 
   return make_token(TokenType::COMMAND);
@@ -189,7 +193,8 @@ Token Scanner::long_parameter() {
     hasError = true;
   }
 
-  while (is_alpha(peek()) || is_digit(peek())) { advance();
+  while (is_alpha(peek()) || is_digit(peek())) {
+    advance();
   }
 
   if (hasError) {
