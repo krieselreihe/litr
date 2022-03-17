@@ -17,7 +17,7 @@ Path::Path(std::string path) : m_path(std::move(path)) {}
 Path Path::parent_path() const {
   LITR_PROFILE_FUNCTION();
 
-  return static_cast<Path>(m_path.parent_path());
+  return Path(m_path.parent_path().string());
 }
 
 bool Path::empty() const {
@@ -43,7 +43,7 @@ Path Path::append(const Path& path) const {
 Path Path::append(const std::string& path) const {
   LITR_PROFILE_FUNCTION();
 
-  return static_cast<Path>(m_path / path);
+  return Path(m_path / path);
 }
 
 Path Path::without_filename() const {
@@ -52,6 +52,7 @@ Path Path::without_filename() const {
 }
 
 size_t Path::count() const {
+  // @todo: This could probably use std::distance
   size_t count{0};
   for ([[maybe_unused]] auto&& _ : m_path) {
     count++;

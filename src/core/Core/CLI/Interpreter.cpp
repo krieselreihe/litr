@@ -88,7 +88,7 @@ void Interpreter::define_default_variables(const std::shared_ptr<config::Loader>
 void Interpreter::execute_instruction() {
   LITR_PROFILE_FUNCTION();
 
-  const auto code{static_cast<Instruction::Code>(m_instruction->read(m_offset++))};
+  const Instruction::Code code{m_instruction->read(m_offset++)};
 
   switch (code) {
     case Instruction::Code::CLEAR:

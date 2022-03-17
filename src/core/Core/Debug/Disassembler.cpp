@@ -15,8 +15,9 @@ static size_t simple_instruction(const std::string& name, const size_t offset) {
 }
 
 /** @private */
-static size_t constant_instruction(
-    const std::string& name, const std::shared_ptr<cli::Instruction>& instruction, const size_t offset) {
+static size_t constant_instruction(const std::string& name,
+    const std::shared_ptr<cli::Instruction>& instruction,
+    const size_t offset) {
   const std::byte index{instruction->read(offset)};
   const cli::Instruction::Value constant{instruction->read_constant(index)};
 
@@ -28,7 +29,7 @@ size_t disassemble_instruction(
     const std::shared_ptr<cli::Instruction>& instruction, size_t offset) {
   fmt::print("{:04d} ", offset);
 
-  const auto code{static_cast<cli::Instruction::Code>(instruction->read(offset++))};
+  const cli::Instruction::Code code{instruction->read(offset++)};
 
   switch (code) {
     case cli::Instruction::Code::CONSTANT:
