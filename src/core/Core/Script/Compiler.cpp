@@ -50,7 +50,7 @@ void Compiler::advance() {
   }
 }
 
-void Compiler::consume(TokenType type, const char* message) {
+void Compiler::consume(const TokenType type, const char* message) {
   LITR_PROFILE_FUNCTION();
 
   if (m_current.type == type) {
@@ -61,13 +61,13 @@ void Compiler::consume(TokenType type, const char* message) {
   error_at_current(message);
 }
 
-bool Compiler::match(TokenType type) const {
+bool Compiler::match(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   return m_previous.type == type;
 }
 
-bool Compiler::peak(TokenType type) const {
+bool Compiler::peak(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   return m_current.type == type;

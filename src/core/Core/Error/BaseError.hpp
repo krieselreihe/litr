@@ -34,19 +34,19 @@ class BaseError {
     EXECUTION_FAILURE          // Issue executing a command
   };
 
-  BaseError(ErrorType type, std::string message) : type(type), message(std::move(message)) {
+  BaseError(const ErrorType type, std::string message) : type(type), message(std::move(message)) {
     LITR_PROFILE_FUNCTION();
   }
 
   BaseError(
-      ErrorType type, std::string message, uint32_t line, uint32_t column, std::string lineStr)
+      const ErrorType type, std::string message, const uint32_t line, const uint32_t column, std::string lineStr)
       : type(type),
         message(std::move(message)),
         location(line, column, std::move(lineStr)) {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(ErrorType type, std::string message, const toml::value& context)
+  BaseError(const ErrorType type, std::string message, const toml::value& context)
       : type(type),
         message(std::move(message)),
         location(
@@ -54,7 +54,7 @@ class BaseError {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(ErrorType type, std::string message, const toml::exception& err)
+  BaseError(const ErrorType type, std::string message, const toml::exception& err)
       : type(type),
         message(std::move(message)),
         location(err.location().line(), err.location().column(), err.location().line_str()) {

@@ -57,7 +57,7 @@ Shell::Result Shell::exec(
   return result;
 }
 
-ExitStatus Shell::get_status_code(int stream_status) {
+ExitStatus Shell::get_status_code(const int stream_status) {
   return static_cast<ExitStatus>(stream_status / 256);
 }
 

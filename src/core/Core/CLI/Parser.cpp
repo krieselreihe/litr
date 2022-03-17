@@ -41,7 +41,7 @@ void Parser::advance() {
   }
 }
 
-void Parser::consume(TokenType type, const char* message) {
+void Parser::consume(const TokenType type, const char* message) {
   LITR_PROFILE_FUNCTION();
 
   if (m_current.type == type) {
@@ -52,13 +52,13 @@ void Parser::consume(TokenType type, const char* message) {
   error_at_current(message);
 }
 
-bool Parser::match(TokenType type) const {
+bool Parser::match(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   return m_previous.type == type;
 }
 
-bool Parser::match(std::initializer_list<TokenType> types) const {
+bool Parser::match(const std::initializer_list<TokenType> types) const {
   LITR_PROFILE_FUNCTION();
 
   return std::any_of(types.begin(), types.end(), [&](TokenType type) {
@@ -66,25 +66,25 @@ bool Parser::match(std::initializer_list<TokenType> types) const {
   });
 }
 
-bool Parser::peak(TokenType type) const {
+bool Parser::peak(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   return m_current.type == type;
 }
 
-void Parser::emit_byte(std::byte byte) {
+void Parser::emit_byte(const std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
   m_instruction->write(byte);
 }
 
-void Parser::emit_byte(Instruction::Code code) {
+void Parser::emit_byte(const Instruction::Code code) {
   LITR_PROFILE_FUNCTION();
 
   m_instruction->write(code);
 }
 
-void Parser::emit_bytes(Instruction::Code code, std::byte byte) {
+void Parser::emit_bytes(const Instruction::Code code, const std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
   emit_byte(code);

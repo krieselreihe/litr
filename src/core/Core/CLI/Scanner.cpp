@@ -53,7 +53,7 @@ char Scanner::advance() {
   return m_current[-1];
 }
 
-bool Scanner::match(char expected) {
+bool Scanner::match(const char expected) {
   LITR_PROFILE_FUNCTION();
 
   if (is_at_end()) {
@@ -116,7 +116,7 @@ std::string Scanner::get_token_value(Token* token) {
   return {token->start, token->length};
 }
 
-Token Scanner::make_token(TokenType type) const {
+Token Scanner::make_token(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   Token token{type, m_start, static_cast<size_t>(m_current - m_start), m_column};
@@ -130,15 +130,15 @@ Token Scanner::error_token(const char* message) const {
   return token;
 }
 
-bool Scanner::is_digit(char c) {
+bool Scanner::is_digit(const char c) {
   return c >= '0' && c <= '9';
 }
 
-bool Scanner::is_alpha(char c) {
+bool Scanner::is_alpha(const char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool Scanner::is_short_alpha(char c) {
+bool Scanner::is_short_alpha(const char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 

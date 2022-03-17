@@ -10,7 +10,7 @@ Handler::Handler(const std::shared_ptr<cli::Instruction>& instruction)
     : m_instruction(instruction) {}
 
 void Handler::add(
-    Code code, const std::vector<Value>& values, const Handler::HookCallback& callback) {
+    const Code code, const std::vector<Value>& values, const Handler::HookCallback& callback) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& value : values) {
