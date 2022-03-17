@@ -217,7 +217,8 @@ std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& inst
   std::vector<std::string> scope{};
 
   while (offset < instruction->count()) {
-    const auto code{static_cast<cli::Instruction::Code>(instruction->read(offset++))};
+    const cli::Instruction::Code code{instruction->read(offset++)};
+
     switch (code) {
       case cli::Instruction::Code::BEGIN_SCOPE: {
         const std::string value{instruction->read_constant(instruction->read(offset))};

@@ -13,36 +13,36 @@
 #include "Core/Error/Handler.hpp"
 
 #define NO_VALUE ""
-#define CHECK_DEFINITION(instruction, definition)                                                \
-  {                                                                                              \
-    size_t iteration{0};                                                                         \
-    size_t offset{0};                                                                            \
-    while (offset < (instruction)->count()) {                                                    \
-      const auto test{(definition)[iteration]};                                                  \
-      const auto code{static_cast<litr::cli::Instruction::Code>((instruction)->read(offset++))}; \
-      switch (code) {                                                                            \
-        case litr::cli::Instruction::Code::CONSTANT:                                             \
-        case litr::cli::Instruction::Code::DEFINE:                                               \
-        case litr::cli::Instruction::Code::BEGIN_SCOPE:                                          \
-        case litr::cli::Instruction::Code::EXECUTE: {                                            \
-          const std::byte index{(instruction)->read(offset)};                                    \
-          const litr::cli::Instruction::Value constant{(instruction)->read_constant(index)};     \
-          offset += 1;                                                                           \
-          CHECK_EQ(test.code, code);                                                             \
-          CHECK_EQ(test.value, constant);                                                        \
-          break;                                                                                 \
-        }                                                                                        \
-        case litr::cli::Instruction::Code::CLEAR: {                                              \
-          CHECK_EQ(test.code, code);                                                             \
-          break;                                                                                 \
-        }                                                                                        \
-        default:                                                                                 \
-          CHECK_MESSAGE(false, fmt::format("Unknown Instruction::Code {:d}", code));             \
-          offset += 1;                                                                           \
-      }                                                                                          \
-      iteration++;                                                                               \
-    }                                                                                            \
-    CHECK_EQ(iteration, (definition).size());                                                    \
+#define CHECK_DEFINITION(instruction, definition)                                            \
+  {                                                                                          \
+    size_t iteration{0};                                                                     \
+    size_t offset{0};                                                                        \
+    while (offset < (instruction)->count()) {                                                \
+      const auto test{(definition)[iteration]};                                              \
+      const litr::cli::Instruction::Code code{(instruction)->read(offset++)};                \
+      switch (code) {                                                                        \
+        case litr::cli::Instruction::Code::CONSTANT:                                         \
+        case litr::cli::Instruction::Code::DEFINE:                                           \
+        case litr::cli::Instruction::Code::BEGIN_SCOPE:                                      \
+        case litr::cli::Instruction::Code::EXECUTE: {                                        \
+          const std::byte index{(instruction)->read(offset)};                                \
+          const litr::cli::Instruction::Value constant{(instruction)->read_constant(index)}; \
+          offset += 1;                                                                       \
+          CHECK_EQ(test.code, code);                                                         \
+          CHECK_EQ(test.value, constant);                                                    \
+          break;                                                                             \
+        }                                                                                    \
+        case litr::cli::Instruction::Code::CLEAR: {                                          \
+          CHECK_EQ(test.code, code);                                                         \
+          break;                                                                             \
+        }                                                                                    \
+        default:                                                                             \
+          CHECK_MESSAGE(false, fmt::format("Unknown Instruction::Code {:d}", code));         \
+          offset += 1;                                                                       \
+      }                                                                                      \
+      iteration++;                                                                           \
+    }                                                                                        \
+    CHECK_EQ(iteration, (definition).size());                                                \
   }
 
 struct InstructionDefinition {

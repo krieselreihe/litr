@@ -38,8 +38,11 @@ class BaseError {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(
-      const ErrorType type, std::string message, const uint32_t line, const uint32_t column, std::string lineStr)
+  BaseError(const ErrorType type,
+      std::string message,
+      const uint32_t line,
+      const uint32_t column,
+      std::string lineStr)
       : type(type),
         message(std::move(message)),
         location(line, column, std::move(lineStr)) {

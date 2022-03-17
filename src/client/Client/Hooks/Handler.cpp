@@ -24,7 +24,7 @@ bool Handler::execute() const {
   size_t offset{0};
 
   while (offset < m_instruction->count()) {
-    const auto code{static_cast<Code>(m_instruction->read(offset++))};
+    const Code code{m_instruction->read(offset++)};
 
     for (auto&& hook : m_hooks) {
       if (code != hook.code) {
