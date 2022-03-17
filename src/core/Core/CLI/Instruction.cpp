@@ -16,13 +16,13 @@ void Instruction::write(Instruction::Code code) {
   write(static_cast<std::byte>(code));
 }
 
-void Instruction::write(std::byte byte) {
+void Instruction::write(const std::byte byte) {
   LITR_PROFILE_FUNCTION();
 
   m_byte_code.push_back(byte);
 }
 
-std::byte Instruction::read(size_t offset) const {
+std::byte Instruction::read(const size_t offset) const {
   LITR_PROFILE_FUNCTION();
 
   return m_byte_code[offset];
@@ -41,7 +41,7 @@ std::byte Instruction::write_constant(const Instruction::Value& value) {
   return static_cast<std::byte>(m_constants.size() - 1);
 }
 
-Instruction::Value Instruction::read_constant(std::byte index) const {
+Instruction::Value Instruction::read_constant(const std::byte index) const {
   LITR_PROFILE_FUNCTION();
 
   return m_constants[static_cast<size_t>(index)];

@@ -60,7 +60,7 @@ char Scanner::advance() {
   return m_current[-1];
 }
 
-bool Scanner::match(char expected) {
+bool Scanner::match(const char expected) {
   LITR_PROFILE_FUNCTION();
 
   if (is_at_end()) {
@@ -152,7 +152,7 @@ std::string Scanner::get_token_value(Token* token) {
   return {token->start, token->length};
 }
 
-Token Scanner::make_token(TokenType type) const {
+Token Scanner::make_token(const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   Token token{type, m_start, static_cast<size_t>(m_current - m_start), m_line, m_column};
@@ -248,7 +248,7 @@ TokenType Scanner::identifier_type() const {
 }
 
 TokenType Scanner::check_keyword(
-    size_t start, size_t length, const char* rest, TokenType type) const {
+    const size_t start, const size_t length, const char* rest, const TokenType type) const {
   LITR_PROFILE_FUNCTION();
 
   if (m_current - m_start == static_cast<int16_t>(start + length) &&

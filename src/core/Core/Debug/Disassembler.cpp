@@ -9,14 +9,14 @@
 namespace litr::debug {
 
 /** @private */
-static size_t simple_instruction(const std::string& name, size_t offset) {
+static size_t simple_instruction(const std::string& name, const size_t offset) {
   fmt::print("{}\n", name);
   return offset;
 }
 
 /** @private */
 static size_t constant_instruction(
-    const std::string& name, const std::shared_ptr<cli::Instruction>& instruction, size_t offset) {
+    const std::string& name, const std::shared_ptr<cli::Instruction>& instruction, const size_t offset) {
   const std::byte index{instruction->read(offset)};
   const cli::Instruction::Value constant{instruction->read_constant(index)};
 
