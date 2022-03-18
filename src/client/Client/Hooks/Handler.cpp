@@ -38,7 +38,7 @@ bool Handler::execute() const {
     }
 
     if (code != Code::CLEAR) {
-      offset++;
+      ++offset;
     }
   }
 

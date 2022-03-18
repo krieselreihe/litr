@@ -40,7 +40,7 @@
           CHECK_MESSAGE(false, fmt::format("Unknown Instruction::Code {:d}", code));         \
           offset += 1;                                                                       \
       }                                                                                      \
-      iteration++;                                                                           \
+      ++iteration;                                                                           \
     }                                                                                        \
     CHECK_EQ(iteration, (definition).size());                                                \
   }

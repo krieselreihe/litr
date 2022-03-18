@@ -19,7 +19,7 @@ void Scanner::skip_whitespace() {
     char c{peek()};
     switch (c) {
       case '\n':
-        m_line++;
+        ++m_line;
         m_column = 0;
         advance();
         break;
@@ -55,8 +55,8 @@ char Scanner::peek_next() const {
 char Scanner::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_current++;
-  m_column++;
+  ++m_current;
+  ++m_column;
   return m_current[-1];
 }
 
@@ -71,8 +71,8 @@ bool Scanner::match(const char expected) {
     return false;
   }
 
-  m_current++;
-  m_column++;
+  ++m_current;
+  ++m_column;
   return true;
 }
 

@@ -23,7 +23,7 @@ struct Variable {
 
   Variable(enum Type type, std::string name) : type(type), name(std::move(name)) {}
 
-  Variable(std::string name, bool value)
+  Variable(std::string name, const bool value)
       : type(Type::BOOLEAN),
         name(std::move(name)),
         value(value) {}

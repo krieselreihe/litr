@@ -223,7 +223,7 @@ std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& inst
       case cli::Instruction::Code::BEGIN_SCOPE: {
         const std::string value{instruction->read_constant(instruction->read(offset))};
         scope.push_back(value);
-        offset++;
+        ++offset;
         break;
       }
       case cli::Instruction::Code::CLEAR: {
@@ -239,12 +239,12 @@ std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& inst
           }
           return utils::trim_left(command_name, '.');
         }
-        offset++;
+        ++offset;
         break;
       }
       case cli::Instruction::Code::CONSTANT:
       case cli::Instruction::Code::EXECUTE: {
-        offset++;
+        ++offset;
         break;
       }
     }
