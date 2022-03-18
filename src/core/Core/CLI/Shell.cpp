@@ -11,12 +11,6 @@
 
 namespace litr::cli {
 
-Shell::Result Shell::exec(const std::string& command) {
-  LITR_PROFILE_FUNCTION();
-
-  return Shell::exec(command, []([[maybe_unused]] const std::string& _buffer) {});
-}
-
 Shell::Result Shell::exec(const std::string& command, const Path& path) {
   LITR_PROFILE_FUNCTION();
 

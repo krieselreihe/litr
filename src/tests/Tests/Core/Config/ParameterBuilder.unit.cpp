@@ -14,11 +14,11 @@ TEST_SUITE("ParameterBuilder") {
     const auto [file, data] = CreateTOMLMock("test", "");
 
     litr::config::ParameterBuilder builder{file, data, "test"};
-    std::shared_ptr<litr::config::Parameter> builderResult{builder.get_result()};
+    litr::config::Parameter builderResult{*builder.get_result()};
     litr::config::Parameter compare{"test"};
 
     CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
-    CHECK_EQ(sizeof(*builderResult), sizeof(compare));
+    CHECK_EQ(sizeof(builderResult), sizeof(compare));
     litr::error::Handler::flush();
   }
 

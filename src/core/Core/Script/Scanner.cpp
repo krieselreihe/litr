@@ -220,7 +220,7 @@ Token Scanner::string() {
     return error_token("Unterminated string.");
   }
 
-  // The closing quote.
+  // The closing quotation mark.
   advance();
   return make_token(TokenType::STRING);
 }
