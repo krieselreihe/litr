@@ -48,8 +48,8 @@ char Scanner::peek_next() const {
 char Scanner::advance() {
   LITR_PROFILE_FUNCTION();
 
-  m_current++;
-  m_column++;
+  ++m_current;
+  ++m_column;
   return m_current[-1];
 }
 
@@ -64,8 +64,8 @@ bool Scanner::match(const char expected) {
     return false;
   }
 
-  m_current++;
-  m_column++;
+  ++m_current;
+  ++m_column;
   return true;
 }
 
@@ -223,7 +223,7 @@ Token Scanner::short_parameter() {
   int length{1};
   while (is_alpha(peek())) {
     advance();
-    length++;
+    ++length;
   }
 
   if (length > 1) {

@@ -88,7 +88,7 @@ uint32_t Reporter::count_digits(uint32_t number) {
   uint32_t count{0};
   while (number > 0) {
     number /= 10;
-    count++;
+    ++count;
   }
   return count;
 }

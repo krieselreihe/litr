@@ -107,7 +107,7 @@ void Interpreter::execute_instruction() {
       call_instruction();
       break;
     default:
-      m_offset++;
+      ++m_offset;
   }
 }
 
@@ -115,7 +115,7 @@ void Interpreter::begin_scope() {
   LITR_PROFILE_FUNCTION();
 
   m_scope.emplace_back(Variables());
-  m_offset++;
+  ++m_offset;
 }
 
 void Interpreter::clear_scope() {
@@ -157,7 +157,7 @@ void Interpreter::define_variable() {
   m_current_variable_name = variable.name;
   m_scope.back().insert_or_assign(variable.name, variable);
 
-  m_offset++;
+  ++m_offset;
 }
 
 void Interpreter::set_constant() {
@@ -208,7 +208,7 @@ void Interpreter::set_constant() {
   }
 
   m_scope.back().insert_or_assign(variable.name, variable);
-  m_offset++;
+  ++m_offset;
 }
 
 void Interpreter::call_instruction() {
@@ -225,7 +225,7 @@ void Interpreter::call_instruction() {
   }
 
   call_command(command);
-  m_offset++;
+  ++m_offset;
 }
 
 // Ignore recursive call of child commands.
@@ -312,7 +312,7 @@ Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<config::Co
       break;
     }
     scripts.push_back(parsed_script);
-    location++;
+    ++location;
   }
 
   return scripts;

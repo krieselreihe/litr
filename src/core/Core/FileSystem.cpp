@@ -55,7 +55,7 @@ size_t Path::count() const {
   // @todo: This could probably use std::distance
   size_t count{0};
   for ([[maybe_unused]] auto&& _ : m_path) {
-    count++;
+    ++count;
   }
   return count;
 }
