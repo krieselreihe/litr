@@ -21,7 +21,6 @@ class CommandBuilder {
   void add_script_line(const std::string& line);
   void add_script_line(const std::string& line, const toml::value& context);
   void add_script(const std::vector<std::string>& scripts);
-  void add_script(const std::vector<std::string>& scripts, const toml::value& context);
   void add_script(const toml::value& scripts);
 
   void add_description();

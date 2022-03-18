@@ -35,14 +35,6 @@ void CommandBuilder::add_script(const std::vector<std::string>& scripts) {
   m_command->script = scripts;
 }
 
-void CommandBuilder::add_script(
-    const std::vector<std::string>& scripts, const toml::value& context) {
-  add_script(scripts);
-  for (auto&& entry : context.as_array()) {
-    add_location(entry);
-  }
-}
-
 void CommandBuilder::add_script(const toml::value& scripts) {
   LITR_PROFILE_FUNCTION();
 

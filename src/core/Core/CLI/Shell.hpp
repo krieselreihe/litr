@@ -21,7 +21,6 @@ class Shell {
 
   using ExecCallback = std::function<void(const std::string&)>;
 
-  static Result exec(const std::string& command);
   static Result exec(const std::string& command, const Path& path);
   static Result exec(const std::string& command, const Shell::ExecCallback& callback);
   static Result exec(
