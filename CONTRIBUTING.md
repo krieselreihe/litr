@@ -12,8 +12,10 @@ You want to contribute to this repo? Nice! And of course: **you are the best!** 
 - [Setup](#setup)
 - [Update](#update)
 - [Build](#build)
+  - [Debug](#debug)
+  - [Profiling](#profiling)
+  - [Release](#release)
 - [Tests](#tests)
-- [Profiling](#profiling)
 - [Formatting code](#formatting-code)
 - [Usage without Litr](#usage-without-litr)
 - [Run](#run)
@@ -76,7 +78,7 @@ brew install ninja
 
 ### Litr
 
-Of course this repo uses Litr itself for its tasks. So installing it will make things easier. To install Litr:
+This repo uses Litr itself for its tasks. So installing it will make things easier (though, it is optional). To install Litr:
 
 ```shell
 brew tap krieselreihe/litr
@@ -115,6 +117,20 @@ Run Litr with the following options if needed:
 * Disable any logging via `litr build --nolog`.
 * Set debug mode, even if build type differs (for debugging purposes) `litr build --debug`
 
+### Profiling
+
+A debug build will always also produce profiling information. Running the executable directly will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run the local build directly:
+
+```shell
+./build/release/src/client/Client
+```
+
+Nevertheless, you can generate profiling data on other build targets as well, e.g. "release":
+
+```shell
+litr build --target=release --profile
+```
+
 ### Release
 
 Build a release version:
@@ -135,20 +151,6 @@ litr test
 
 # Run all tests for release build
 litr test --target=release
-```
-
-## Profiling
-
-There is a profiling build you can generate (build target is up to you, for real world results use "release"):
-
-```shell
-litr build --target=release --profile
-```
-
-Running the executable directly will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run the local build directly:
-
-```shell
-./build/release/src/client/Client
 ```
 
 ## Formatting code

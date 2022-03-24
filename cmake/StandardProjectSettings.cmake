@@ -30,7 +30,7 @@ endif()
 
 option(DEBUG "Enable debug statements and asserts" OFF)
 if (DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS)
+  add_compile_definitions(DEBUG LITR_ENABLE_ASSERTS LITR_PROFILE)
 endif()
 
 option(DISASSEMBLE "Disassemble any parser statements on program execution" OFF)
