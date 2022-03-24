@@ -73,8 +73,7 @@ bool Compiler::peak(const TokenType type) const {
   return m_current.type == type;
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::source_token() {
   LITR_PROFILE_FUNCTION();
 
@@ -98,8 +97,7 @@ void Compiler::untouched() {
   m_script.append(Scanner::get_token_value(m_previous));
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::script() {
   LITR_PROFILE_FUNCTION();
 
@@ -129,8 +127,7 @@ void Compiler::script() {
   source_token();
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::identifier() {
   LITR_PROFILE_FUNCTION();
 
@@ -154,8 +151,7 @@ void Compiler::identifier() {
   }
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
@@ -168,8 +164,7 @@ void Compiler::statement(const cli::Variable& variable) {
   }
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::or_statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
@@ -190,8 +185,7 @@ void Compiler::or_statement(const cli::Variable& variable) {
   }
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::if_statement(const cli::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
@@ -200,8 +194,7 @@ void Compiler::if_statement(const cli::Variable& variable) {
   }
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Compiler::expression() {
   LITR_PROFILE_FUNCTION();
 

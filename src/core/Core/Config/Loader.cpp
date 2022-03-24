@@ -7,6 +7,7 @@
 #include <tsl/ordered_map.h>
 
 #include <stack>
+#include <utility>
 
 #include "Core/Config/CommandBuilder.hpp"
 #include "Core/Config/ParameterBuilder.hpp"
@@ -17,7 +18,7 @@
 
 namespace litr::config {
 
-Loader::Loader(const Path& file_path) : m_file_path(file_path) {
+Loader::Loader(Path file_path) : m_file_path(std::move(file_path)) {
   LITR_PROFILE_FUNCTION();
 
   toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
@@ -48,8 +49,7 @@ Loader::Loader(const Path& file_path) : m_file_path(file_path) {
   }
 }
 
-// Ignore recursion warning.
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 std::shared_ptr<Command> Loader::create_command(
     const toml::table& commands, const toml::value& definition, const std::string& name) {
   LITR_PROFILE_FUNCTION();
@@ -137,8 +137,7 @@ std::shared_ptr<Command> Loader::create_command(
       continue;
     }
 
-    // Ignore recursion warning.
-    // NOLINTNEXTLINE
+    // NOLINTNEXTLINE(misc-no-recursion)
     builder.add_child_command(create_command(definition.as_table(), value, property));
     properties.pop();
   }

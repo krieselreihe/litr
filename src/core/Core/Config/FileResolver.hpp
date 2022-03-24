@@ -18,6 +18,7 @@ class FileResolver {
     DUPLICATE,
   };
 
+  explicit FileResolver(const std::string& cwd);
   explicit FileResolver(Path cwd);
 
   [[nodiscard]] Status get_status() const;

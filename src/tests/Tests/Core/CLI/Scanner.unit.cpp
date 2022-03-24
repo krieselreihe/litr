@@ -110,12 +110,14 @@ TEST_SUITE("CLI::Scanner") {
   TEST_CASE("Long parameter with string values") {
     litr::cli::Scanner scanner{" --target=\"release value\" build,run"};
 
-    std::array<TokenDefinition, 6> definition{{{litr::cli::TokenType::LONG_PARAMETER, "--target"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::STRING, "\"release value\""},
-        {litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMAND, "run"}}};
+    constexpr int item_count{6};
+    std::array<TokenDefinition, item_count> definition{
+        {{litr::cli::TokenType::LONG_PARAMETER, "--target"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::STRING, "\"release value\""},
+            {litr::cli::TokenType::COMMAND, "build"},
+            {litr::cli::TokenType::COMMA, ","},
+            {litr::cli::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
@@ -124,12 +126,14 @@ TEST_SUITE("CLI::Scanner") {
   TEST_CASE("Long parameter with string values with whitespace") {
     litr::cli::Scanner scanner{"  --target  = \"release\"  build ,run  "};
 
-    std::array<TokenDefinition, 6> definition{{{litr::cli::TokenType::LONG_PARAMETER, "--target"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::STRING, "\"release\""},
-        {litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMAND, "run"}}};
+    constexpr int item_count{6};
+    std::array<TokenDefinition, item_count> definition{
+        {{litr::cli::TokenType::LONG_PARAMETER, "--target"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::STRING, "\"release\""},
+            {litr::cli::TokenType::COMMAND, "build"},
+            {litr::cli::TokenType::COMMA, ","},
+            {litr::cli::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
@@ -149,13 +153,15 @@ TEST_SUITE("CLI::Scanner") {
   TEST_CASE("Mixed parameters with mixed values and whitespace") {
     litr::cli::Scanner scanner{" -t=\"release\" --debug  -p = 2.45"};
 
-    std::array<TokenDefinition, 7> definition{{{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::STRING, "\"release\""},
-        {litr::cli::TokenType::LONG_PARAMETER, "--debug"},
-        {litr::cli::TokenType::SHORT_PARAMETER, "-p"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::NUMBER, "2.45"}}};
+    constexpr int item_count{7};
+    std::array<TokenDefinition, item_count> definition{
+        {{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::STRING, "\"release\""},
+            {litr::cli::TokenType::LONG_PARAMETER, "--debug"},
+            {litr::cli::TokenType::SHORT_PARAMETER, "-p"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::NUMBER, "2.45"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
@@ -164,15 +170,17 @@ TEST_SUITE("CLI::Scanner") {
   TEST_CASE("Mixed source string") {
     litr::cli::Scanner scanner{"-t=\"release\" build, run --peer = 1.23"};
 
-    std::array<TokenDefinition, 9> definition{{{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::STRING, "\"release\""},
-        {litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMAND, "run"},
-        {litr::cli::TokenType::LONG_PARAMETER, "--peer"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::NUMBER, "1.23"}}};
+    constexpr int item_count{9};
+    std::array<TokenDefinition, item_count> definition{
+        {{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::STRING, "\"release\""},
+            {litr::cli::TokenType::COMMAND, "build"},
+            {litr::cli::TokenType::COMMA, ","},
+            {litr::cli::TokenType::COMMAND, "run"},
+            {litr::cli::TokenType::LONG_PARAMETER, "--peer"},
+            {litr::cli::TokenType::EQUAL, "="},
+            {litr::cli::TokenType::NUMBER, "1.23"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);

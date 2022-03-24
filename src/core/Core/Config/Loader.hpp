@@ -22,8 +22,7 @@ class Loader {
   using Commands = std::vector<std::shared_ptr<Command>>;
   using Parameters = std::vector<std::shared_ptr<Parameter>>;
 
-  explicit Loader(const Path& file_path);
-  ~Loader() = default;
+  explicit Loader(Path file_path);
 
   [[nodiscard]] inline Commands get_commands() const {
     return m_commands;

@@ -26,16 +26,16 @@ Log::Log() {
   log_sinks[0]->set_pattern("%^[%T] %n(%l): %v%$");
   log_sinks[1]->set_pattern("[%T] [%l] %n(%l): %v");
 
-  s_core_logger = std::make_shared<spdlog::logger>("CORE", begin(log_sinks), end(log_sinks));
-  spdlog::register_logger(s_core_logger);
-  s_core_logger->set_level(level);
-  s_core_logger->flush_on(level);
+  m_core_logger = std::make_shared<spdlog::logger>("CORE", begin(log_sinks), end(log_sinks));
+  spdlog::register_logger(m_core_logger);
+  m_core_logger->set_level(level);
+  m_core_logger->flush_on(level);
 
-  s_client_logger = std::make_shared<spdlog::logger>("CLIENT", begin(log_sinks), end(log_sinks));
-  spdlog::register_logger(s_client_logger);
-  spdlog::set_default_logger(s_client_logger);
-  s_client_logger->set_level(level);
-  s_client_logger->flush_on(level);
+  m_client_logger = std::make_shared<spdlog::logger>("CLIENT", begin(log_sinks), end(log_sinks));
+  spdlog::register_logger(m_client_logger);
+  spdlog::set_default_logger(m_client_logger);
+  m_client_logger->set_level(level);
+  m_client_logger->flush_on(level);
 }
 
 }  // namespace litr

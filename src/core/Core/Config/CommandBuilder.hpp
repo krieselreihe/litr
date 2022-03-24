@@ -36,7 +36,6 @@ class CommandBuilder {
  private:
   void add_location(const toml::value& context);
 
- private:
   const toml::table& m_file;
   const toml::value& m_table;
   const std::shared_ptr<Command> m_command;

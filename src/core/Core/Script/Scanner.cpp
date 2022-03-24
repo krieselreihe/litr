@@ -16,8 +16,8 @@ void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char c{peek()};
-    switch (c) {
+    const char character{peek()};
+    switch (character) {
       case '\n':
         ++m_line;
         m_column = 0;
@@ -98,9 +98,9 @@ Token Scanner::scan_untouched_token() {
     return make_token(TokenType::EOS);
   }
 
-  char c{advance()};
+  const char character{advance()};
 
-  if (c == '%' && match('{')) {
+  if (character == '%' && match('{')) {
     return start_sequence();
   }
 
@@ -118,13 +118,13 @@ Token Scanner::scan_expression_token() {
     return make_token(TokenType::EOS);
   }
 
-  char c{advance()};
+  const char character{advance()};
 
-  if (is_alpha(c)) {
+  if (is_alpha(character)) {
     return identifier();
   }
 
-  switch (c) {
+  switch (character) {
     case ',':
       return make_token(TokenType::COMMA);
     case '(':
@@ -166,16 +166,17 @@ Token Scanner::error_token(const char* message) const {
   return token;
 }
 
-bool Scanner::is_digit(char c) {
+bool Scanner::is_digit(char character) {
   LITR_PROFILE_FUNCTION();
 
-  return c >= '0' && c <= '9';
+  return character >= '0' && character <= '9';
 }
 
-bool Scanner::is_alpha(char c) {
+bool Scanner::is_alpha(char character) {
   LITR_PROFILE_FUNCTION();
 
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+  return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') ||
+         character == '_';
 }
 
 bool Scanner::is_at_end() const {

@@ -32,16 +32,20 @@ Shell::Result Shell::exec(
 
   LITR_CORE_TRACE("Executing command \"{}\"", cmd);
 
+  // @todo: So, this whole part won't be linted, because everything is screaming, for
+  // very good reasons as well. So, this needs some love here and maybe a better way
+  // to execute a command on the default shell.
+  // NOLINTNEXTLINE
   FILE* stream{popen(cmd.c_str(), "r")};
 
-  if (stream) {
+  if (stream) {  // NOLINT
     constexpr int max_buffer{256};
-    char buffer[max_buffer];
+    char buffer[max_buffer];  // NOLINT
 
-    while (!feof(stream)) {
-      if (fgets(buffer, max_buffer, stream) != nullptr) {
-        result.message.append(buffer);
-        callback(std::string(buffer));
+    while (!feof(stream)) {                                // NOLINT
+      if (fgets(buffer, max_buffer, stream) != nullptr) {  // NOLINT
+        result.message.append(buffer);                     // NOLINT
+        callback(std::string(buffer));                     // NOLINT
       }
     }
 
@@ -52,7 +56,8 @@ Shell::Result Shell::exec(
 }
 
 ExitStatus Shell::get_status_code(const int stream_status) {
-  return static_cast<ExitStatus>(stream_status / 256);
+  constexpr int status_base{256};
+  return static_cast<ExitStatus>(stream_status / status_base);
 }
 
 std::string Shell::create_command_string(const std::string& command, const Path& path) {

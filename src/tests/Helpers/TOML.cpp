@@ -6,18 +6,18 @@
 
 #include <fmt/format.h>
 
-std::pair<toml::table, toml::value> CreateTOMLMock(
+std::pair<toml::table, toml::value> create_toml_mock(
     const std::string& name, const std::string& toml) {
-  std::string rFile{fmt::format(R"([{}]
+  std::string r_file{fmt::format(R"([{}]
 {})",
       name,
       toml)};
 
-  std::istringstream isFile(rFile, std::ios_base::binary | std::ios_base::in);
-  const auto file = toml::parse(isFile, "std::string");
+  std::istringstream is_file(r_file, std::ios_base::binary | std::ios_base::in);
+  const auto file = toml::parse(is_file, "std::string");
 
-  std::istringstream isData(toml, std::ios_base::binary | std::ios_base::in);
-  const auto data = toml::parse(isData, "std::string");
+  std::istringstream is_data(toml, std::ios_base::binary | std::ios_base::in);
+  const auto data = toml::parse(is_data, "std::string");
 
   return {file.as_table(), data};
 }

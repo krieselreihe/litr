@@ -9,13 +9,14 @@
 #include <fmt/format.h>
 
 #include <string>
+#include <utility>
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Utils.hpp"
 
 namespace litr::error {
 
-Reporter::Reporter(const Path& path) : m_file_path(path) {}
+Reporter::Reporter(Path path) : m_file_path(std::move(path)) {}
 
 void Reporter::print_errors(const std::vector<BaseError>& errors) {
   LITR_PROFILE_FUNCTION();
@@ -82,12 +83,13 @@ void Reporter::print_error(const BaseError& error) {
 uint32_t Reporter::count_digits(uint32_t number) {
   LITR_PROFILE_FUNCTION();
 
-  if (number < 10) {
+  constexpr uint32_t base{10};
+  if (number < base) {
     return 1;
   }
   uint32_t count{0};
   while (number > 0) {
-    number /= 10;
+    number /= base;
     ++count;
   }
   return count;

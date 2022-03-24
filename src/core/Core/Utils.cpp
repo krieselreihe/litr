@@ -10,26 +10,26 @@
 
 namespace litr::utils {
 
-std::string trim_left(const std::string& src, char c) {
+std::string trim_left(const std::string& src, char character) {
   LITR_PROFILE_FUNCTION();
 
   std::string out{src};
-  out.erase(0, out.find_first_not_of(c));
+  out.erase(0, out.find_first_not_of(character));
   return out;
 }
 
-std::string trim_right(const std::string& src, char c) {
+std::string trim_right(const std::string& src, char character) {
   LITR_PROFILE_FUNCTION();
 
   std::string out{src};
-  out.erase(out.find_last_not_of(c) + 1);
+  out.erase(out.find_last_not_of(character) + 1);
   return out;
 }
 
-std::string trim(const std::string& src, char c) {
+std::string trim(const std::string& src, char character) {
   LITR_PROFILE_FUNCTION();
 
-  return trim_left(trim_right(src, c), c);
+  return trim_left(trim_right(src, character), character);
 }
 
 void split_into(const std::string& source, const char& delimiter, std::vector<std::string>& out) {

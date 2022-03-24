@@ -8,5 +8,5 @@
 #include <toml.hpp>
 #include <utility>
 
-std::pair<toml::table, toml::value> CreateTOMLMock(
+std::pair<toml::table, toml::value> create_toml_mock(
     const std::string& name, const std::string& toml);

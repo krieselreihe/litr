@@ -14,14 +14,17 @@ namespace litr {
 class Log {
  public:
   Log(const Log&) = delete;
+  Log(const Log&&) = delete;
   Log& operator=(const Log&) = delete;
+  Log& operator=(const Log&&) = delete;
+  ~Log() = default;
 
   static std::shared_ptr<spdlog::logger>& get_core_logger() {
-    return get().s_core_logger;
+    return get().m_core_logger;
   }
 
   static std::shared_ptr<spdlog::logger>& get_client_logger() {
-    return get().s_client_logger;
+    return get().m_client_logger;
   }
 
  private:
@@ -35,8 +38,8 @@ class Log {
     return instance;
   }
 
-  std::shared_ptr<spdlog::logger> s_core_logger;
-  std::shared_ptr<spdlog::logger> s_client_logger;
+  std::shared_ptr<spdlog::logger> m_core_logger;
+  std::shared_ptr<spdlog::logger> m_client_logger;
 };
 
 }  // namespace litr

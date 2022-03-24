@@ -1,37 +1,39 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,-android-*,-bugprone-bool-pointer-implicit-conversion,-bugprone-exception-escape,-bugprone-infinite-loop,-bugprone-signed-char-misuse,-cert-dcl50-cpp,-cert-env33-c,-cert-mem57-cpp,-cert-oop57-cpp,-cert-oop58-cpp,-clang-analyzer-*,-clang-diagnostic-*,-cppcoreguidelines-avoid-goto,-cppcoreguidelines-avoid-non-const-global-variables,-cppcoreguidelines-init-variables,-cppcoreguidelines-macro-usage,-cppcoreguidelines-no-malloc,-cppcoreguidelines-owning-memory,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-const-cast,-cppcoreguidelines-pro-type-cstyle-cast,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-type-union-access,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-special-member-functions,-darwin-*,-fuchsia-*,-google-*,-hicpp-avoid-goto,-hicpp-no-assembler,-linuxkernel-*,-llvm-*,-llvmlibc-*,-misc-bool-pointer-implicit-conversion,-misc-definitions-in-headers,-misc-non-private-member-variables-in-classes,-misc-redundant-expression,-misc-static-assert,-misc-unused-alias-decls,-misc-unused-parameters,-misc-unused-using-decls,-modernize-avoid-c-arrays,-modernize-use-default-member-init,-modernize-use-trailing-return-type,-modernize-use-using,-objc-*,-openmp-exception-escape,-portability-restrict-system-includes,-readability-braces-around-statements,-readability-else-after-return,-readability-function-size,-readability-identifier-naming,-readability-implicit-bool-conversion,-readability-isolate-declaration,-readability-magic-numbers,-readability-named-parameter,-readability-qualified-auto,-readability-redundant-access-specifiers,-readability-redundant-member-init,-readability-redundant-preprocessor,-readability-simplify-boolean-expr,-readability-uppercase-literal-suffix,-zircon-*,-bugprone-narrowing-conversions,-cert-con36-c,-cert-con54-cpp,-cert-dcl03-c,-cert-dcl16-c,-cert-dcl37-c,-cert-dcl51-cpp,-cert-dcl54-cpp,-cert-dcl59-cpp,-cert-err09-cpp,-cert-err61-cpp,-cert-fio38-c,-cert-msc30-c,-cert-msc32-c,-cert-oop11-cpp,-cert-oop54-cpp,-cert-pos44-c,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-c-copy-assignment-signature,-cppcoreguidelines-explicit-virtual-functions,-cppcoreguidelines-non-private-member-variables-in-classes,-fuchsia-header-anon-namespaces,-google-readability-braces-around-statements,-google-readability-function-size,-google-readability-namespace-comments,-hicpp-avoid-c-arrays,-hicpp-braces-around-statements,-hicpp-deprecated-headers,-hicpp-explicit-conversions,-hicpp-function-size,-hicpp-invalid-access-moved,-hicpp-member-init,-hicpp-move-const-arg,-hicpp-named-parameter,-hicpp-new-delete-operators,-hicpp-no-array-decay,-hicpp-no-malloc,-hicpp-noexcept-move,-hicpp-special-member-functions,-hicpp-static-assert,-hicpp-undelegated-constructor,-hicpp-uppercase-literal-suffix,-hicpp-use-auto,-hicpp-use-emplace,-hicpp-use-equals-default,-hicpp-use-equals-delete,-hicpp-use-noexcept,-hicpp-use-nullptr,-hicpp-use-override,-hicpp-vararg,google-default-arguments,google-explicit-constructor,google-runtime-operator'
+Checks: >
+  *,
+  -android-*,
+  -abseil-*,
+  -altera-*,
+  -darwin-*,
+  -fuchsia-*,
+  -google-*,
+  -objc-*,
+  -zircon-*,
+  -llvm*,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-macro-usage,
+  -readability-function-cognitive-complexity,
+  -misc-non-private-member-variables-in-classes,
+  -misc-static-assert,
+  -modernize-use-trailing-return-type,
+  -bugprone-easily-swappable-parameters,
+  -cert-env33-c
+
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
-AnalyzeTemporaryDtors: false
-FormatStyle:     none
+FormatStyle: none
 
 CheckOptions:
-  - { key: readability-identifier-naming.NamespaceCase,       value: lower_case }
-  - { key: readability-identifier-naming.ClassCase,           value: CamelCase }
-  - { key: readability-identifier-naming.PrivateMemberPrefix, value: m_ }
-  - { key: readability-identifier-naming.StructCase,          value: CamelCase }
-  - { key: readability-identifier-naming.ClassMethodCase,     value: lower_case }
-  - { key: readability-identifier-naming.FunctionCase,        value: lower_case }
-  - { key: readability-identifier-naming.VariableCase,        value: lower_case }
-  - { key: readability-identifier-naming.GlobalConstantCase,  value: UPPER_CASE }
-  - { key: google-readability-braces-around-statements.ShortStatementLines, value: '1' }
-  - { key: google-readability-function-size.StatementThreshold,             value: '800' }
-  - { key: google-readability-namespace-comments.ShortNamespaceLines,       value: '10' }
-  - { key: google-readability-namespace-comments.SpacesBeforeComments,      value: '2' }
-  - { key: llvm-else-after-return.WarnOnConditionVariables, value: '0' }
-  - { key: llvm-else-after-return.WarnOnUnfixable,          value: '0' }
-  - { key: llvm-qualified-auto.AddConstToQualified,         value: '0' }
-  - { key: modernize-loop-convert.MaxCopySize,      value: '16' }
-  - { key: modernize-loop-convert.MinConfidence,    value: reasonable }
-  - { key: modernize-loop-convert.NamingStyle,      value: CamelCase }
-  - { key: modernize-pass-by-value.IncludeStyle,    value: llvm }
-  - { key: modernize-replace-auto-ptr.IncludeStyle, value: llvm }
-  - { key: modernize-use-nullptr.NullMacros,        value: 'NULL' }
-  - { key: llvm-include-order, value: 'NULL' }
-  - { key: cert-dcl16-c.NewSuffixes, value: 'L;LL;LU;LLU' }
-  - { key: cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField, value: '0' }
-  - { key: cert-str34-c.DiagnoseSignedUnsignedCharComparisons, value: '0' }
+  - { key: readability-identifier-naming.NamespaceCase,              value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,                  value: CamelCase }
+  - { key: readability-identifier-naming.PrivateMemberPrefix,        value: m_ }
+  - { key: readability-identifier-naming.StructCase,                 value: CamelCase }
+  - { key: readability-identifier-naming.ClassMethodCase,            value: lower_case }
+  - { key: readability-identifier-naming.ClassMemberCase,            value: lower_case }
+  - { key: readability-identifier-naming.FunctionCase,               value: lower_case }
+  - { key: readability-identifier-naming.VariableCase,               value: lower_case }
+  - { key: readability-identifier-naming.GlobalConstantCase,         value: UPPER_CASE }
+  - { key: readability-identifier-length.MinimumVariableNameLength,  value: 2 }
+  - { key: readability-identifier-length.MinimumParameterNameLength, value: 2 }
   - { key: cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors, value: '1' }
-  - { key: cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: '1' }
-...
-
