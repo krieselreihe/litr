@@ -52,7 +52,6 @@ class Compiler {
   void error_at_current(const std::string& message);
   void error_at(Token* token, const std::string& message);
 
- private:
   Scanner m_scanner;
   const config::Location m_location;
   Variables m_variables;

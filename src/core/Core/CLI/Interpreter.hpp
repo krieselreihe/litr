@@ -64,7 +64,6 @@ class Interpreter {
 
   static void print(const std::string& message);
 
- private:
   const std::shared_ptr<Instruction>& m_instruction;
   const config::Query m_query;
 

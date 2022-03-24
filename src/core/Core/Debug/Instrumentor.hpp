@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <utility>
 
 #include "Core/Log.hpp"
 
@@ -27,17 +28,20 @@ struct ProfileResult {
 
 struct InstrumentationSession {
   const std::string name;
+  explicit InstrumentationSession(std::string name) : name(std::move(name)) {}
 };
 
 class Instrumentor {
  public:
   Instrumentor(const Instrumentor&) = delete;
   Instrumentor(Instrumentor&&) = delete;
+  Instrumentor& operator=(Instrumentor other) = delete;
+  Instrumentor& operator=(Instrumentor&& other) = delete;
 
   void begin_session(const std::string& name, const std::string& filepath = "results.json") {
     std::lock_guard lock(m_mutex);
 
-    if (m_current_session) {
+    if (m_current_session != nullptr) {
       // If there is already a current session, then close it before beginning new one.
       // Subsequent profiling output meant for the original session will end up in the
       // newly opened session instead.  That's better than having badly formatted
@@ -50,7 +54,7 @@ class Instrumentor {
     m_output_stream.open(filepath);
 
     if (m_output_stream.is_open()) {
-      m_current_session = new InstrumentationSession({name});
+      m_current_session = std::make_unique<InstrumentationSession>(name);
       write_header();
     } else {
       LITR_CORE_ERROR("Instrumentor could not open results file '{0}'.", filepath);
@@ -80,7 +84,7 @@ class Instrumentor {
     json << "}";
 
     std::lock_guard lock(m_mutex);
-    if (m_current_session) {
+    if (m_current_session != nullptr) {
       m_output_stream << json.str();
       m_output_stream.flush();
     }
@@ -111,25 +115,27 @@ class Instrumentor {
   // Note: you must already own lock on m_Mutex before
   // calling InternalEndSession()
   void internal_end_session() {
-    if (m_current_session) {
+    if (m_current_session != nullptr) {
       write_footer();
       m_output_stream.close();
-      delete m_current_session;
-      m_current_session = nullptr;
     }
   }
 
   std::mutex m_mutex;
-  InstrumentationSession* m_current_session;
+  std::unique_ptr<InstrumentationSession> m_current_session;
   std::ofstream m_output_stream;
 };
 
 class InstrumentationTimer {
  public:
-  explicit InstrumentationTimer(const char* name)
-      : m_name(name),
-        m_stopped(false),
+  explicit InstrumentationTimer(std::string name)
+      : m_name(std::move(name)),
         m_start_time_point(std::chrono::steady_clock::now()) {}
+
+  InstrumentationTimer(const InstrumentationTimer&) = delete;
+  InstrumentationTimer(InstrumentationTimer&&) = delete;
+  InstrumentationTimer& operator=(InstrumentationTimer other) = delete;
+  InstrumentationTimer& operator=(InstrumentationTimer&& other) = delete;
 
   ~InstrumentationTimer() {
     if (!m_stopped) {
@@ -152,7 +158,7 @@ class InstrumentationTimer {
   }
 
  private:
-  const char* m_name;
+  const std::string m_name;
   bool m_stopped{false};
   const std::chrono::time_point<std::chrono::steady_clock> m_start_time_point;
 };
@@ -165,6 +171,8 @@ class InstrumentationTimer {
 // could mark the wrong one in your editor!
 #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || \
     (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
+// There is an implicit decay of an array into a pointer.
+// NOLINTNEXTLINE
 #define LITR_FUNC_SIG __PRETTY_FUNCTION__
 #elif defined(__DMC__) && (__DMC__ >= 0x810)
 #define LITR_FUNC_SIG __PRETTY_FUNCTION__

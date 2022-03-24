@@ -113,8 +113,8 @@ void Parser::emit_scope(const Instruction::Value& value) {
 void Parser::emit_execution() {
   LITR_PROFILE_FUNCTION();
 
-  const std::string scopePath{get_scope_path()};
-  emit_bytes(Instruction::Code::EXECUTE, make_constant(scopePath));
+  const std::string scope_path{get_scope_path()};
+  emit_bytes(Instruction::Code::EXECUTE, make_constant(scope_path));
 }
 
 void Parser::emit_clear() {
@@ -130,8 +130,7 @@ std::byte Parser::make_constant(const Instruction::Value& value) {
   return m_instruction->write_constant(value);
 }
 
-// Ignore recursive call action
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Parser::arguments() {
   LITR_PROFILE_FUNCTION();
 

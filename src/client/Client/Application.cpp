@@ -16,11 +16,10 @@
 
 namespace litr {
 
-// @todo: Error handling here is horrible. In need of refactoring!
-ExitStatus Application::run(int argc, char* argv[]) {
+ExitStatus Application::run(const std::vector<std::string>& arguments) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string source{source_from_arguments(argc, argv)};
+  const std::string source{source_from_arguments(arguments)};
   const auto instruction{std::make_shared<cli::Instruction>()};
   const cli::Parser parser{instruction, source};
 
@@ -101,16 +100,14 @@ Path Application::get_config_path() {
   return config_path.get_file_path();
 }
 
-std::string Application::source_from_arguments(int argc, char** argv) {
+std::string Application::source_from_arguments(const std::vector<std::string>& arguments) {
   LITR_PROFILE_FUNCTION();
 
   std::string source{};
 
-  // Start with 1 to skip the program name.
-  for (int i{1}; i < argc; ++i) {
-    // !!! HACK ALERT START !!!
-    // @todo: https://github.com/krieselreihe/litr/issues/20
-    std::string argument{argv[i]};
+  // !!! HACK ALERT START !!!
+  // @todo: https://github.com/krieselreihe/litr/issues/20
+  for (std::string argument : arguments) {
     std::size_t found{argument.find('=')};
 
     if (found != std::string::npos) {
@@ -118,10 +115,10 @@ std::string Application::source_from_arguments(int argc, char** argv) {
       utils::split_into(argument, '=', parts);
       argument = parts[0].append("=\"").append(parts[1]).append("\"");
     }
-    // !!! HACK ALERT END !!!
 
     source.append(" ").append(argument);
   }
+  // !!! HACK ALERT END !!!
 
   return source;
 }

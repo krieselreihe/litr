@@ -16,7 +16,11 @@ class Handler {
   using Errors = std::vector<BaseError>;
 
   Handler(const Handler&) = delete;
+  Handler(const Handler&&) = delete;
   Handler& operator=(const Handler&) = delete;
+  Handler& operator=(const Handler&&) = delete;
+
+  ~Handler() = default;
 
   static void push(const BaseError& err);
   static void flush();
@@ -32,7 +36,6 @@ class Handler {
     return instance;
   }
 
- private:
   Errors m_errors{};
 };
 

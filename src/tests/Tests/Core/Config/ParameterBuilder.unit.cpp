@@ -11,20 +11,20 @@
 
 TEST_SUITE("ParameterBuilder") {
   TEST_CASE("Initiates a Parameter on construction") {
-    const auto [file, data] = CreateTOMLMock("test", "");
+    const auto [file, data] = create_toml_mock("test", "");
 
     litr::config::ParameterBuilder builder{file, data, "test"};
-    litr::config::Parameter builderResult{*builder.get_result()};
+    litr::config::Parameter builder_result{*builder.get_result()};
     litr::config::Parameter compare{"test"};
 
     CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
-    CHECK_EQ(sizeof(builderResult), sizeof(compare));
+    CHECK_EQ(sizeof(builder_result), sizeof(compare));
     litr::error::Handler::flush();
   }
 
   TEST_CASE("ParameterBuilder::add_description") {
     SUBCASE("Emits an error if add_description called without description field") {
-      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
@@ -36,7 +36,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if description is not a string") {
-      const auto [file, data] = CreateTOMLMock("test", "description = 42");
+      const auto [file, data] = create_toml_mock("test", "description = 42");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
@@ -48,7 +48,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Extracts a description from toml data") {
-      const auto [file, data] = CreateTOMLMock("test", R"(description = "Text")");
+      const auto [file, data] = create_toml_mock("test", R"(description = "Text")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
@@ -59,7 +59,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Applies a description directly from a string") {
-      const auto [file, data] = CreateTOMLMock("test", "");
+      const auto [file, data] = create_toml_mock("test", "");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_description("Text");
@@ -72,7 +72,7 @@ TEST_SUITE("ParameterBuilder") {
 
   TEST_CASE("ParameterBuilder::add_shortcut") {
     SUBCASE("Does nothing if no shortcut is not set") {
-      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
@@ -83,7 +83,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if shortcut is not a string") {
-      const auto [file, data] = CreateTOMLMock("test", "shortcut = 42");
+      const auto [file, data] = create_toml_mock("test", "shortcut = 42");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
@@ -95,7 +95,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'help'") {
-      const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "help")");
+      const auto [file, data] = create_toml_mock("test", R"(shortcut = "help")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
@@ -107,7 +107,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if shortcut is reserved word 'h'") {
-      const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "h")");
+      const auto [file, data] = create_toml_mock("test", R"(shortcut = "h")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
@@ -119,7 +119,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Extracts the shortcut from toml data") {
-      const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "t")");
+      const auto [file, data] = create_toml_mock("test", R"(shortcut = "t")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
@@ -130,7 +130,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if shortcut is already defined") {
-      const auto [file, data] = CreateTOMLMock("test", R"(shortcut = "x")");
+      const auto [file, data] = create_toml_mock("test", R"(shortcut = "x")");
       auto param{std::make_shared<litr::config::Parameter>("something")};
       param->shortcut = "x";
       std::vector<std::shared_ptr<litr::config::Parameter>> params{{param}};
@@ -147,7 +147,7 @@ TEST_SUITE("ParameterBuilder") {
 
   TEST_CASE("ParameterBuilder::add_type") {
     SUBCASE("Does nothing if no type is not set") {
-      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -158,7 +158,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if string is set with an unknown option") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = "unknown")");
+      const auto [file, data] = create_toml_mock("test", R"(type = "unknown")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -170,7 +170,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Sets the type successfully to String if options is string") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = "string")");
+      const auto [file, data] = create_toml_mock("test", R"(type = "string")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -181,7 +181,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Sets the type to Array on empty arrays") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = [])");
+      const auto [file, data] = create_toml_mock("test", R"(type = [])");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -192,7 +192,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if a non string value is contained in the type array") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = ["1", 2, "3"])");
+      const auto [file, data] = create_toml_mock("test", R"(type = ["1", 2, "3"])");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -204,7 +204,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Sets the type to Array with and populates TypeArguments") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = ["test", "debug"])");
+      const auto [file, data] = create_toml_mock("test", R"(type = ["test", "debug"])");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -218,7 +218,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if type is neither a string nor an array") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = 32)");
+      const auto [file, data] = create_toml_mock("test", R"(type = 32)");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
@@ -232,7 +232,7 @@ TEST_SUITE("ParameterBuilder") {
 
   TEST_CASE("ParameterBuilder::add_default") {
     SUBCASE("Does nothing if default is not set") {
-      const auto [file, data] = CreateTOMLMock("test", R"(key = "value")");
+      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
@@ -243,7 +243,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if default is not a string") {
-      const auto [file, data] = CreateTOMLMock("test", R"(default = 1)");
+      const auto [file, data] = create_toml_mock("test", R"(default = 1)");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
@@ -255,7 +255,7 @@ TEST_SUITE("ParameterBuilder") {
     }
 
     SUBCASE("Emits an error if default value is not found inside type array") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = ["Not default"]
+      const auto [file, data] = create_toml_mock("test", R"(type = ["Not default"]
 default = "Default")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
@@ -269,7 +269,7 @@ default = "Default")");
     }
 
     SUBCASE("Sets default if defined as string") {
-      const auto [file, data] = CreateTOMLMock("test", R"(default = "something")");
+      const auto [file, data] = create_toml_mock("test", R"(default = "something")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
@@ -280,7 +280,7 @@ default = "Default")");
     }
 
     SUBCASE("Sets default if defined as string and type array contains value") {
-      const auto [file, data] = CreateTOMLMock("test", R"(type = ["something"]
+      const auto [file, data] = create_toml_mock("test", R"(type = ["something"]
 default = "something")");
 
       litr::config::ParameterBuilder builder{file, data, "test"};

@@ -34,8 +34,8 @@ class Scanner {
   [[nodiscard]] Token make_token(TokenType type) const;
   [[nodiscard]] Token error_token(const char* message) const;
 
-  [[nodiscard]] static bool is_alpha(char c);
-  [[nodiscard]] static bool is_digit(char c);
+  [[nodiscard]] static bool is_alpha(char character);
+  [[nodiscard]] static bool is_digit(char character);
   [[nodiscard]] bool is_at_end() const;
 
   [[nodiscard]] Token start_sequence();
@@ -48,7 +48,6 @@ class Scanner {
   [[nodiscard]] TokenType check_keyword(
       size_t start, size_t length, const char* rest, TokenType type) const;
 
- private:
   const char* m_start;
   const char* m_current;
 

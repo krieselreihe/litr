@@ -57,10 +57,10 @@ Query::Parameters Query::get_parameters() const {
   return m_config->get_parameters();
 }
 
-Query::Parameters Query::get_parameters(const std::string& name) const {
+Query::Parameters Query::get_parameters(const std::string& command_name) const {
   LITR_PROFILE_FUNCTION();
 
-  const std::shared_ptr<Command>& command{get_command(name)};
+  const std::shared_ptr<Command>& command{get_command(command_name)};
   Query::Parameters parameters{};
 
   if (command == nullptr) {
@@ -77,8 +77,8 @@ Query::Parameters Query::get_parameters(const std::string& name) const {
   utils::deduplicate(names);
 
   if (!names.empty()) {
-    for (auto&& n : names) {
-      parameters.push_back(get_parameter(n));
+    for (auto&& name : names) {
+      parameters.push_back(get_parameter(name));
     }
   }
 
@@ -93,8 +93,7 @@ Query::Parts Query::split_command_query(const std::string& query) {
   return parts;
 }
 
-// Ignore recursion warning.
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 std::shared_ptr<Command> Query::get_command_by_path(
     Parts& names, const Loader::Commands& commands) {
   LITR_PROFILE_FUNCTION();
@@ -120,8 +119,7 @@ std::shared_ptr<Command> Query::get_command_by_path(
     return nullptr;
   }
 
-  // Ignore recursion warning.
-  // NOLINTNEXTLINE
+  // NOLINTNEXTLINE(misc-no-recursion)
   return get_command_by_path(names, command->child_commands);
 }
 
@@ -161,8 +159,8 @@ std::vector<std::string> Query::get_used_parameter_names(
   for (auto&& script : command->script) {
     const Variables variables{get_parameters_as_variables()};
     const script::Compiler compiler{script, command->Locations[index++], variables};
-    const std::vector<std::string> usedNames{compiler.get_used_variables()};
-    names.insert(names.end(), usedNames.begin(), usedNames.end());
+    const std::vector<std::string> used_names{compiler.get_used_variables()};
+    names.insert(names.end(), used_names.begin(), used_names.end());
   }
 
   utils::deduplicate(names);

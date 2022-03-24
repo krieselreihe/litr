@@ -10,6 +10,8 @@
 
 namespace litr::config {
 
+FileResolver::FileResolver(const std::string& cwd) : FileResolver(Path(cwd)) {}
+
 FileResolver::FileResolver(Path cwd) {
   LITR_PROFILE_FUNCTION();
 

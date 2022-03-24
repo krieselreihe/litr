@@ -13,13 +13,12 @@ namespace litr {
 class Application {
  public:
   Application() = default;
-  ExitStatus run(int argc, char* argv[]);
+  ExitStatus run(const std::vector<std::string>& arguments);
 
  private:
   [[nodiscard]] Path get_config_path();
-  [[nodiscard]] static std::string source_from_arguments(int argc, char* argv[]);
+  [[nodiscard]] static std::string source_from_arguments(const std::vector<std::string>& arguments);
 
- private:
   ExitStatus m_exit_status{ExitStatus::SUCCESS};
 };
 

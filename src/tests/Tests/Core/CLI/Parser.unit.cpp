@@ -61,6 +61,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::CONSTANT, "Some release"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -75,6 +76,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::CONSTANT, "debug is nice"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -89,6 +91,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::CONSTANT, ""}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -103,6 +106,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "build"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -118,6 +122,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -135,6 +140,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -154,6 +160,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -169,6 +176,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::DEFINE, "debug"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -284,6 +292,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }
@@ -304,6 +313,7 @@ TEST_SUITE("CLI::Parser") {
             {litr::cli::Instruction::Code::EXECUTE, "build.java"}}};
 
     CHECK_FALSE(parser.has_errors());
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     CHECK_DEFINITION(instruction, definition);
     litr::error::Handler::flush();
   }

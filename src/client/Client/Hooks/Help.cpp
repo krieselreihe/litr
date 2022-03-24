@@ -74,6 +74,8 @@ void Help::print_commands() const {
   fmt::print("\n");
 }
 
+// Ignore recursion as this is needed to print nested commands.
+// NOLINTNEXTLINE(misc-no-recursion)
 void Help::print_command(const std::shared_ptr<config::Command>& command,
     const std::string& parent_name,
     size_t depth) const {
@@ -292,6 +294,8 @@ size_t Help::get_command_padding() const {
   return get_command_padding(commands);
 }
 
+// Ignore recursion as this is needed to get padding for nested commands.
+// NOLINTNEXTLINE(misc-no-recursion)
 size_t Help::get_command_padding(const config::Query::Commands& commands) const {
   LITR_PROFILE_FUNCTION();
 
@@ -342,8 +346,8 @@ size_t Help::get_parameter_padding() const {
   return padding_left + padding + padding_right;
 }
 
-bool Help::sort_parameter_by_required(
-    const std::shared_ptr<config::Parameter>& p1, const std::shared_ptr<config::Parameter>& p2) {
+bool Help::sort_parameter_by_required(const std::shared_ptr<config::Parameter>& param1,
+    const std::shared_ptr<config::Parameter>& param2) {
   LITR_PROFILE_FUNCTION();
 
   auto rank_parameter_required{[](const std::shared_ptr<config::Parameter>& param) -> int {
@@ -361,7 +365,7 @@ bool Help::sort_parameter_by_required(
     return -1;
   }};
 
-  return rank_parameter_required(p1) < rank_parameter_required(p2);
+  return rank_parameter_required(param1) < rank_parameter_required(param2);
 }
 
 }  // namespace litr::hook

@@ -11,9 +11,9 @@
 
 namespace litr::utils {
 
-[[nodiscard]] std::string trim_left(const std::string& src, char c);
-[[nodiscard]] std::string trim_right(const std::string& src, char c);
-[[nodiscard]] std::string trim(const std::string& src, char c);
+[[nodiscard]] std::string trim_left(const std::string& src, char character);
+[[nodiscard]] std::string trim_right(const std::string& src, char character);
+[[nodiscard]] std::string trim(const std::string& src, char character);
 
 void split_into(const std::string& source, const char& delimiter, std::vector<std::string>& out);
 void split_into(const std::string& source, const char& delimiter, std::deque<std::string>& out);

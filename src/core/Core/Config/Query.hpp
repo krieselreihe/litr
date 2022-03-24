@@ -31,7 +31,7 @@ class Query {
   [[nodiscard]] Commands get_commands() const;
   [[nodiscard]] Commands get_commands(const std::string& name) const;
   [[nodiscard]] Parameters get_parameters() const;
-  [[nodiscard]] Parameters get_parameters(const std::string& name) const;
+  [[nodiscard]] Parameters get_parameters(const std::string& command_name) const;
 
  private:
   [[nodiscard]] static Parts split_command_query(const std::string& query);

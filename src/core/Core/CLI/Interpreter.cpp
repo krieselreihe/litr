@@ -15,7 +15,7 @@
 namespace litr::cli {
 
 /** @private */
-static void CommandPathToHumanReadable(std::string& path) {
+static void command_path_to_human_readable(std::string& path) {
   LITR_PROFILE_FUNCTION();
 
   std::replace(path.begin(), path.end(), '.', ' ');
@@ -229,7 +229,7 @@ void Interpreter::call_instruction() {
 }
 
 // Ignore recursive call of child commands.
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Interpreter::call_command(
     const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
@@ -247,7 +247,7 @@ void Interpreter::call_command(
     return;
   }
 
-  CommandPathToHumanReadable(command_path);
+  command_path_to_human_readable(command_path);
 
   if (command->directory.empty()) {
     run_scripts(scripts, command_path, "", print_result);
@@ -265,7 +265,7 @@ void Interpreter::call_command(
 }
 
 // Ignore recursive call of child commands.
-// NOLINTNEXTLINE
+// NOLINTNEXTLINE(misc-no-recursion)
 void Interpreter::call_child_commands(
     const std::shared_ptr<config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();

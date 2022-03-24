@@ -28,9 +28,9 @@ class Scanner {
   [[nodiscard]] Token make_token(TokenType type) const;
   [[nodiscard]] Token error_token(const char* message) const;
 
-  [[nodiscard]] static bool is_digit(char c);
-  [[nodiscard]] static bool is_alpha(char c);
-  [[nodiscard]] static bool is_short_alpha(char c);
+  [[nodiscard]] static bool is_digit(char character);
+  [[nodiscard]] static bool is_alpha(char character);
+  [[nodiscard]] static bool is_short_alpha(char character);
   [[nodiscard]] bool is_at_end() const;
 
   [[nodiscard]] Token string();
@@ -39,7 +39,6 @@ class Scanner {
   [[nodiscard]] Token long_parameter();
   [[nodiscard]] Token short_parameter();
 
- private:
   const char* m_start;
   const char* m_current;
   uint32_t m_column{1};

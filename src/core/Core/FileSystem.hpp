@@ -19,7 +19,6 @@ class Path {
 
   Path() = default;
   explicit Path(std::string path);
-  virtual ~Path() = default;
 
   [[nodiscard]] Path parent_path() const;
   [[nodiscard]] bool empty() const;
@@ -64,8 +63,8 @@ class Path {
   }
 
   template <typename OStream>
-  friend OStream& operator<<(OStream& os, const Path& path) {
-    return os << path.to_string();
+  friend OStream& operator<<(OStream& ostream, const Path& path) {
+    return ostream << path.to_string();
   }
 
  private:
@@ -90,7 +89,7 @@ struct fmt::formatter<litr::Path> {
   }
 
   template <typename FormatContext>
-  auto format(const litr::Path& p, FormatContext& ctx) {
-    return format_to(ctx.out(), "{}", p.to_string());
+  auto format(const litr::Path& path, FormatContext& ctx) {
+    return format_to(ctx.out(), "{}", path.to_string());
   }
 };

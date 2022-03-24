@@ -39,14 +39,13 @@ class Help {
   [[nodiscard]] size_t get_parameter_padding() const;
 
   [[nodiscard]] static bool sort_parameter_by_required(
-      const std::shared_ptr<config::Parameter>& p1, const std::shared_ptr<config::Parameter>& p2);
+      const std::shared_ptr<config::Parameter>& param1,
+      const std::shared_ptr<config::Parameter>& param2);
 
- private:
   const config::Query m_query;
   const Path m_file_path;
 
   mutable std::string m_command_name{};
-
   const std::string m_argument_placeholder{"=<option>"};
 };
 

@@ -14,8 +14,8 @@ void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char c{peek()};
-    switch (c) {
+    char character{peek()};
+    switch (character) {
       case ' ':
       case '\r':
       case '\t': {
@@ -80,17 +80,17 @@ Token Scanner::scan_token() {
     return make_token(TokenType::EOS);
   }
 
-  char c{advance()};
+  char character{advance()};
 
-  if (is_digit(c)) {
+  if (is_digit(character)) {
     return number();
   }
 
-  if (is_alpha(c)) {
+  if (is_alpha(character)) {
     return command();
   }
 
-  switch (c) {
+  switch (character) {
     case ',':
       return make_token(TokenType::COMMA);
     case '=':
@@ -130,16 +130,17 @@ Token Scanner::error_token(const char* message) const {
   return token;
 }
 
-bool Scanner::is_digit(const char c) {
-  return c >= '0' && c <= '9';
+bool Scanner::is_digit(const char character) {
+  return character >= '0' && character <= '9';
 }
 
-bool Scanner::is_alpha(const char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+bool Scanner::is_alpha(const char character) {
+  return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') ||
+         character == '_';
 }
 
-bool Scanner::is_short_alpha(const char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+bool Scanner::is_short_alpha(const char character) {
+  return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
 }
 
 bool Scanner::is_at_end() const {
@@ -195,18 +196,18 @@ Token Scanner::command() {
 Token Scanner::long_parameter() {
   LITR_PROFILE_FUNCTION();
 
-  bool hasError{false};
+  bool has_error{false};
 
   if (is_digit(peek()) || peek() == '_' || !is_alpha(peek())) {
     advance();
-    hasError = true;
+    has_error = true;
   }
 
   while (is_alpha(peek()) || is_digit(peek())) {
     advance();
   }
 
-  if (hasError) {
+  if (has_error) {
     return error_token("A parameter can only start with the characters A-Za-z.");
   }
 

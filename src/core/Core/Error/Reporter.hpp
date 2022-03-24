@@ -13,7 +13,7 @@ namespace litr::error {
 
 class Reporter {
  public:
-  explicit Reporter(const Path& path);
+  explicit Reporter(Path path);
 
   void print_errors(const std::vector<BaseError>& errors);
   void print_error(const BaseError& error);
