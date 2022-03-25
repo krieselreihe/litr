@@ -199,8 +199,8 @@ TEST_SUITE("Config::Loader") {
 
     CHECK(litr::error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
-    CHECK_EQ(errors[0].message, R"(The parameter name "h" is reserved by Litr.)");
-    CHECK_EQ(errors[1].message, R"(The parameter name "help" is reserved by Litr.)");
+    CHECK_EQ(errors[0].message, R"(The parameter name "help" is reserved by Litr.)");
+    CHECK_EQ(errors[1].message, R"(The parameter name "h" is reserved by Litr.)");
     litr::error::Handler::flush();
   }
 

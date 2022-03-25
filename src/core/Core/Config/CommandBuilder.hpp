@@ -4,24 +4,28 @@
 
 #pragma once
 
+#include <tsl/ordered_map.h>
+
 #include <memory>
 #include <string>
-#include <toml.hpp>
 #include <vector>
 
 #include "Core/Config/Command.hpp"
+#include "Core/Config/TomlFileAdapter.hpp"
 #include "Core/FileSystem.hpp"
 
 namespace litr::config {
 
 class CommandBuilder {
  public:
-  CommandBuilder(const toml::table& file, const toml::value& data, const std::string& name);
+  CommandBuilder(const TomlFileAdapter::Table& context,
+      const TomlFileAdapter::Value& data,
+      const std::string& name);
 
   void add_script_line(const std::string& line);
-  void add_script_line(const std::string& line, const toml::value& context);
+  void add_script_line(const std::string& line, const TomlFileAdapter::Value& context);
   void add_script(const std::vector<std::string>& scripts);
-  void add_script(const toml::value& scripts);
+  void add_script(const TomlFileAdapter::Value& scripts);
 
   void add_description();
   void add_example();
@@ -34,11 +38,12 @@ class CommandBuilder {
   }
 
  private:
-  void add_location(const toml::value& context);
+  void add_location(const TomlFileAdapter::Value& context);
 
-  const toml::table& m_file;
-  const toml::value& m_table;
+  const TomlFileAdapter::Table& m_context;
+  const TomlFileAdapter::Value& m_table;
   const std::shared_ptr<Command> m_command;
+  const TomlFileAdapter m_file{};
 };
 
 }  // namespace litr::config

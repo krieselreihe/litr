@@ -10,9 +10,10 @@
 
 namespace litr::config {
 
-CommandBuilder::CommandBuilder(
-    const toml::table& file, const toml::value& data, const std::string& name)
-    : m_file(file),
+CommandBuilder::CommandBuilder(const TomlFileAdapter::Table& context,
+    const TomlFileAdapter::Value& data,
+    const std::string& name)
+    : m_context(context),
       m_table(data),
       m_command(std::make_shared<Command>(name)) {
   LITR_CORE_TRACE("Creating {}", *m_command);
@@ -24,7 +25,8 @@ void CommandBuilder::add_script_line(const std::string& line) {
   m_command->script.emplace_back(line);
 }
 
-void CommandBuilder::add_script_line(const std::string& line, const toml::value& context) {
+void CommandBuilder::add_script_line(
+    const std::string& line, const TomlFileAdapter::Value& context) {
   add_script_line(line);
   add_location(context);
 }
@@ -35,14 +37,14 @@ void CommandBuilder::add_script(const std::vector<std::string>& scripts) {
   m_command->script = scripts;
 }
 
-void CommandBuilder::add_script(const toml::value& scripts) {
+void CommandBuilder::add_script(const TomlFileAdapter::Value& scripts) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
       error::Handler::push(error::MalformedScriptError(
           "A command script can be either a string or array of strings.",
-          m_file.at(m_command->name)));
+          m_context.at(m_command->name)));
       // Stop after first error in an array of scripts, to avoid being too verbose.
       break;
     }
@@ -57,7 +59,7 @@ void CommandBuilder::add_description() {
   const std::string name{"description"};
 
   if (m_table.contains(name)) {
-    const toml::value& description{toml::find(m_table, name)};
+    const TomlFileAdapter::Value& description{m_file.find_value(m_table, name)};
 
     if (description.is_string()) {
       m_command->description = description.as_string();
@@ -75,7 +77,7 @@ void CommandBuilder::add_example() {
   const std::string name{"example"};
 
   if (m_table.contains(name)) {
-    const toml::value& example{toml::find(m_table, name)};
+    const TomlFileAdapter::Value& example{m_file.find_value(m_table, name)};
     if (example.is_string()) {
       m_command->example = example.as_string();
       return;
@@ -92,7 +94,7 @@ void CommandBuilder::add_directory(const Path& root) {
   const std::string name{"dir"};
 
   if (m_table.contains(name)) {
-    const toml::value& directories{toml::find(m_table, name)};
+    const TomlFileAdapter::Value& directories{m_file.find_value(m_table, name)};
 
     if (directories.is_string()) {
       m_command->directory.emplace_back(root.append(directories.as_string()));
@@ -125,7 +127,7 @@ void CommandBuilder::add_output() {
   const std::string name{"output"};
 
   if (m_table.contains(name)) {
-    const toml::value& output{toml::find(m_table, name)};
+    const TomlFileAdapter::Value& output{m_file.find_value(m_table, name)};
 
     if (output.is_string()) {
       if (output.as_string() == "silent") {
@@ -150,7 +152,7 @@ void CommandBuilder::add_child_command(const std::shared_ptr<Command>& command) 
   m_command->child_commands.emplace_back(command);
 }
 
-void CommandBuilder::add_location(const toml::value& context) {
+void CommandBuilder::add_location(const TomlFileAdapter::Value& context) {
   LITR_PROFILE_FUNCTION();
 
   m_command->Locations.emplace_back(

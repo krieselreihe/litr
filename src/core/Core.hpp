@@ -20,11 +20,13 @@
 // Config -----------------------------
 
 #include "Core/Config/Command.hpp"
+#include "Core/Config/FileAdapter.hpp"
 #include "Core/Config/FileResolver.hpp"
 #include "Core/Config/Loader.hpp"
 #include "Core/Config/Location.hpp"
 #include "Core/Config/Parameter.hpp"
 #include "Core/Config/Query.hpp"
+#include "Core/Config/TomlFileAdapter.hpp"
 
 // CLI --------------------------------
 

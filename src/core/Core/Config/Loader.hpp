@@ -7,16 +7,19 @@
 #include <deque>
 #include <memory>
 #include <string>
-#include <toml.hpp>
 #include <utility>
 #include <vector>
 
 #include "Core/Config/Command.hpp"
 #include "Core/Config/Parameter.hpp"
+#include "Core/Config/TomlFileAdapter.hpp"
 #include "Core/FileSystem.hpp"
 
 namespace litr::config {
 
+// @todo: "Loader" is a horrible name. I thought about "File", but this feels rather
+//  generic and only works in context of the namespace "config". I have no clue how
+//  to name this better thought.
 class Loader {
  public:
   using Commands = std::vector<std::shared_ptr<Command>>;
@@ -35,12 +38,14 @@ class Loader {
   }
 
  private:
-  std::shared_ptr<Command> create_command(
-      const toml::table& commands, const toml::value& definition, const std::string& name);
-  void collect_commands(const toml::table& commands);
-  void collect_params(const toml::table& params);
+  std::shared_ptr<Command> create_command(const TomlFileAdapter::Table& commands,
+      const TomlFileAdapter::Value& definition,
+      const std::string& name);
+  void collect_commands(const TomlFileAdapter::Table& commands);
+  void collect_params(const TomlFileAdapter::Table& params);
 
   const Path m_file_path;
+  const TomlFileAdapter m_file{};
   Commands m_commands{};
   Parameters m_parameters{};
 };
