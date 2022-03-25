@@ -4,9 +4,7 @@
 
 #include "Loader.hpp"
 
-#include <tsl/ordered_map.h>
-
-#include <stack>
+#include <deque>
 #include <utility>
 
 #include "Core/Config/CommandBuilder.hpp"
@@ -21,37 +19,26 @@ namespace litr::config {
 Loader::Loader(Path file_path) : m_file_path(std::move(file_path)) {
   LITR_PROFILE_FUNCTION();
 
-  toml::basic_value<toml::discard_comments, tsl::ordered_map> config{};
-
-  try {
-    config = toml::parse<toml::discard_comments, tsl::ordered_map>(m_file_path.to_string());
-  } catch (const toml::syntax_error& err) {
-    error::Handler::push(
-        error::MalformedFileError("There is a syntax error inside the configuration file.", err));
-    return;
-  }
-
-  if (!config.is_table()) {
-    error::Handler::push(error::MalformedFileError("Configuration is not a TOML table."));
+  TomlFileAdapter::Value config{m_file.parse(m_file_path)};
+  if (error::Handler::has_errors()) {
     return;
   }
 
   if (config.contains("commands")) {
-    const toml::table& commands{
-        toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "commands")};
+    const TomlFileAdapter::Table& commands{m_file.find_table(config, "commands")};
     collect_commands(commands);
   }
 
   if (config.contains("params")) {
-    const toml::table& params{
-        toml::find<toml::table, toml::discard_comments, tsl::ordered_map>(config, "params")};
+    const TomlFileAdapter::Table& params{m_file.find_table(config, "params")};
     collect_params(params);
   }
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-std::shared_ptr<Command> Loader::create_command(
-    const toml::table& commands, const toml::value& definition, const std::string& name) {
+std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Table& commands,
+    const TomlFileAdapter::Value& definition,
+    const std::string& name) {
   LITR_PROFILE_FUNCTION();
 
   CommandBuilder builder{commands, definition, name};
@@ -76,17 +63,17 @@ std::shared_ptr<Command> Loader::create_command(
   }
 
   // Collect command property names
-  std::stack<std::string> properties{};
+  std::deque<std::string> properties{};
   for (auto&& property : definition.as_table()) {
-    properties.push(property.first);
+    properties.push_back(property.first);
   }
 
   while (!properties.empty()) {
     LITR_PROFILE_SCOPE("Config::Loader::create_command::CollectCommandProperties(while)");
-    const std::string property{properties.top()};
+    const std::string property{properties.front()};
 
     if (property == "script") {
-      const toml::value& scripts{toml::find(definition, "script")};
+      const TomlFileAdapter::Value& scripts{m_file.find_value(definition, "script")};
 
       if (scripts.is_string()) {
         builder.add_script_line(scripts.as_string(), scripts);
@@ -98,54 +85,54 @@ std::shared_ptr<Command> Loader::create_command(
             definition.at(property)));
       }
 
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     if (property == "description") {
       builder.add_description();
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     if (property == "example") {
       builder.add_example();
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     if (property == "dir") {
       builder.add_directory(m_file_path.without_filename());
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     if (property == "output") {
       builder.add_output();
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     // Collect properties that cannot directly be resolved.
-    const toml::value& value{toml::find(definition, property)};
+    const TomlFileAdapter::Value& value{m_file.find_value(definition, property)};
     if (!value.is_table()) {
       error::Handler::push(error::UnknownCommandPropertyError(
           fmt::format(
               R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property)));
-      properties.pop();
+      properties.pop_front();
       continue;
     }
 
     // NOLINTNEXTLINE(misc-no-recursion)
     builder.add_child_command(create_command(definition.as_table(), value, property));
-    properties.pop();
+    properties.pop_front();
   }
 
   return builder.get_result();
 }
 
-void Loader::collect_commands(const toml::table& commands) {
+void Loader::collect_commands(const TomlFileAdapter::Table& commands) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : commands) {
@@ -153,7 +140,7 @@ void Loader::collect_commands(const toml::table& commands) {
   }
 }
 
-void Loader::collect_params(const toml::table& params) {
+void Loader::collect_params(const TomlFileAdapter::Table& params) {
   LITR_PROFILE_FUNCTION();
 
   for (auto&& [name, definition] : params) {

@@ -5,10 +5,10 @@
 #pragma once
 
 #include <string>
-#include <toml.hpp>
 #include <utility>
 
 #include "Core/Config/Location.hpp"
+#include "Core/Config/TomlFileAdapter.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/TomlError.hpp"
 
@@ -49,7 +49,8 @@ class BaseError {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(const ErrorType type, std::string message, const toml::value& context)
+  BaseError(
+      const ErrorType type, std::string message, const config::TomlFileAdapter::Value& context)
       : type(type),
         message(std::move(message)),
         location(
@@ -57,7 +58,8 @@ class BaseError {
     LITR_PROFILE_FUNCTION();
   }
 
-  BaseError(const ErrorType type, std::string message, const toml::exception& err)
+  BaseError(
+      const ErrorType type, std::string message, const config::TomlFileAdapter::Exception& err)
       : type(type),
         message(std::move(message)),
         location(err.location().line(), err.location().column(), err.location().line_str()) {
@@ -76,7 +78,7 @@ class BaseError {
 
 class ReservedParamError : public BaseError {
  public:
-  ReservedParamError(const std::string& message, const toml::value& context)
+  ReservedParamError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::RESERVED_PARAM, message, context) {
     BaseError::description = "Parameter name is reserved!";
   }
@@ -86,7 +88,7 @@ class MalformedFileError : public BaseError {
  public:
   explicit MalformedFileError(const std::string& message)
       : BaseError(ErrorType::MALFORMED_FILE, message) {}
-  MalformedFileError(const std::string& message, const toml::exception& err)
+  MalformedFileError(const std::string& message, const config::TomlFileAdapter::Exception& err)
       : BaseError(ErrorType::MALFORMED_FILE, TomlError::extract_message(message, err.what()), err) {
     BaseError::description = "Invalid file format!";
   }
@@ -94,7 +96,7 @@ class MalformedFileError : public BaseError {
 
 class MalformedCommandError : public BaseError {
  public:
-  MalformedCommandError(const std::string& message, const toml::value& context)
+  MalformedCommandError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::MALFORMED_COMMAND, message, context) {
     BaseError::description = "Command format is wrong!";
   }
@@ -102,7 +104,7 @@ class MalformedCommandError : public BaseError {
 
 class MalformedParamError : public BaseError {
  public:
-  MalformedParamError(const std::string& message, const toml::value& context)
+  MalformedParamError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::MALFORMED_PARAM, message, context) {
     BaseError::description = "Parameter format is wrong!";
   }
@@ -110,7 +112,7 @@ class MalformedParamError : public BaseError {
 
 class MalformedScriptError : public BaseError {
  public:
-  MalformedScriptError(const std::string& message, const toml::value& context)
+  MalformedScriptError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::MALFORMED_SCRIPT, message, context) {
     BaseError::description = "Command script is wrong!";
   }
@@ -118,7 +120,8 @@ class MalformedScriptError : public BaseError {
 
 class UnknownCommandPropertyError : public BaseError {
  public:
-  UnknownCommandPropertyError(const std::string& message, const toml::value& context)
+  UnknownCommandPropertyError(
+      const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::UNKNOWN_COMMAND_PROPERTY, message, context) {
     BaseError::description = "Command property does not exist!";
   }
@@ -126,7 +129,7 @@ class UnknownCommandPropertyError : public BaseError {
 
 class UnknownParamValueError : public BaseError {
  public:
-  UnknownParamValueError(const std::string& message, const toml::value& context)
+  UnknownParamValueError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::UNKNOWN_PARAM_VALUE, message, context) {
     BaseError::description = "Parameter value is not known!";
   }
@@ -134,7 +137,7 @@ class UnknownParamValueError : public BaseError {
 
 class ValueAlreadyInUseError : public BaseError {
  public:
-  ValueAlreadyInUseError(const std::string& message, const toml::value& context)
+  ValueAlreadyInUseError(const std::string& message, const config::TomlFileAdapter::Value& context)
       : BaseError(ErrorType::VALUE_ALREADY_IN_USE, message, context) {
     BaseError::description = "Value is is already in use!";
   }

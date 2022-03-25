@@ -6,16 +6,18 @@
 
 #include <memory>
 #include <string>
-#include <toml.hpp>
 #include <vector>
 
 #include "Core/Config/Parameter.hpp"
+#include "Core/Config/TomlFileAdapter.hpp"
 
 namespace litr::config {
 
 class ParameterBuilder {
  public:
-  ParameterBuilder(const toml::table& file, const toml::value& data, const std::string& name);
+  ParameterBuilder(const TomlFileAdapter::Table& context,
+      const TomlFileAdapter::Value& data,
+      const std::string& name);
 
   void add_description();
   void add_description(const std::string& description);
@@ -31,9 +33,10 @@ class ParameterBuilder {
   [[nodiscard]] static bool is_reserved_name(const std::string& name);
 
  private:
-  const toml::table& m_file;
-  const toml::value& m_table;
+  const TomlFileAdapter::Table& m_context;
+  const TomlFileAdapter::Value& m_table;
   const std::shared_ptr<Parameter> m_parameter;
+  const TomlFileAdapter m_file{};
 };
 
 }  // namespace litr::config

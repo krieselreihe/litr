@@ -23,7 +23,8 @@ add_library(${NAME} STATIC
   Core/CLI/Interpreter.cpp Core/CLI/Interpreter.hpp
   Core/Script/Compiler.cpp Core/Script/Compiler.hpp
   Core/Script/Scanner.cpp Core/Script/Scanner.hpp
-  Core/Script/Token.hpp Core/CLI/Variable.hpp)
+  Core/Script/Token.hpp Core/CLI/Variable.hpp
+  Core/Config/FileAdapter.hpp Core/Config/TomlFileAdapter.hpp Core/Config/TomlFileAdapter.cpp)
 
 # Define set of OS specific files to include
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -32,7 +33,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_sources(${NAME} PRIVATE Platform/LinuxEnvironment.cpp)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   target_sources(${NAME} PRIVATE Platform/MacEnvironment.cpp)
-endif()
+endif ()
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_17)

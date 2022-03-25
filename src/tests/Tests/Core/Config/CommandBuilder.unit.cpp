@@ -11,9 +11,9 @@
 
 TEST_SUITE("Config::CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {
-    const auto [file, data] = create_toml_mock("test", "");
+    const auto [context, data] = create_toml_mock("test", "");
 
-    litr::config::CommandBuilder builder{file, data, "test"};
+    litr::config::CommandBuilder builder{context, data, "test"};
     litr::config::Command builder_result{*builder.get_result()};
     litr::config::Command compare{"test"};
 
@@ -24,9 +24,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_script_line") {
     SUBCASE("Can add multiple lines of script to the command") {
-      const auto [file, data] = create_toml_mock("test", "");
+      const auto [context, data] = create_toml_mock("test", "");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_script_line("first line");
       builder.add_script_line("second line");
 
@@ -41,9 +41,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_script") {
     SUBCASE("Can override the whole script at once") {
-      const auto [file, data] = create_toml_mock("test", "");
+      const auto [context, data] = create_toml_mock("test", "");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       const std::vector script{"first line", "second line"};
       builder.add_script(script);
 
@@ -56,10 +56,11 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits and error if script data is not of type string") {
-      const auto [file, data] = create_toml_mock("test", "scripts = [1]");
+      const auto [context, data] = create_toml_mock("test", "scripts = [1]");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
-      builder.add_script(toml::find(data, "scripts"));
+      litr::config::TomlFileAdapter file{};
+      litr::config::CommandBuilder builder{context, data, "test"};
+      builder.add_script(file.find_value(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
       CHECK_EQ(litr::error::Handler::get_errors()[0].message,
@@ -68,10 +69,11 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits only one error if script data is not of type string") {
-      const auto [file, data] = create_toml_mock("test", "scripts = [1, 2, 3]");
+      const auto [context, data] = create_toml_mock("test", "scripts = [1, 2, 3]");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
-      builder.add_script(toml::find(data, "scripts"));
+      litr::config::TomlFileAdapter file{};
+      litr::config::CommandBuilder builder{context, data, "test"};
+      builder.add_script(file.find_value(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
       CHECK_EQ(litr::error::Handler::get_errors()[0].message,
@@ -80,11 +82,12 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Writes scripts from TOML data successfully") {
-      const auto [file, data] =
+      const auto [context, data] =
           create_toml_mock("test", R"(scripts = ["first line", "second line"])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
-      builder.add_script(toml::find(data, "scripts"));
+      litr::config::TomlFileAdapter file{};
+      litr::config::CommandBuilder builder{context, data, "test"};
+      builder.add_script(file.find_value(data, "scripts"));
 
       const auto result{builder.get_result()};
 
@@ -95,11 +98,12 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Retains locations information") {
-      const auto [file, data] =
+      const auto [context, data] =
           create_toml_mock("test", R"(scripts = ["first line", "second line"])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
-      builder.add_script(toml::find(data, "scripts"));
+      litr::config::TomlFileAdapter file{};
+      litr::config::CommandBuilder builder{context, data, "test"};
+      builder.add_script(file.find_value(data, "scripts"));
 
       const auto result{builder.get_result()};
 
@@ -116,9 +120,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_description") {
     SUBCASE("Does nothing if description is not set") {
-      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
+      const auto [context, data] = create_toml_mock("test", R"(key = "value")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -127,9 +131,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits and error if description is not a string") {
-      const auto [file, data] = create_toml_mock("test", R"(description = 42)");
+      const auto [context, data] = create_toml_mock("test", R"(description = 42)");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
@@ -139,9 +143,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Extracts the description from toml data") {
-      const auto [file, data] = create_toml_mock("test", R"(description = "Text")");
+      const auto [context, data] = create_toml_mock("test", R"(description = "Text")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -152,9 +156,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_example") {
     SUBCASE("Does nothing if example is not set") {
-      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
+      const auto [context, data] = create_toml_mock("test", R"(key = "value")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -163,9 +167,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits and error if example is not a string") {
-      const auto [file, data] = create_toml_mock("test", R"(example = 42)");
+      const auto [context, data] = create_toml_mock("test", R"(example = 42)");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
@@ -175,9 +179,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Extracts the example from toml data") {
-      const auto [file, data] = create_toml_mock("test", R"(example = "Text")");
+      const auto [context, data] = create_toml_mock("test", R"(example = "Text")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -188,9 +192,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_directory") {
     SUBCASE("Does nothing if dir is not set") {
-      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
+      const auto [context, data] = create_toml_mock("test", R"(key = "value")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -199,9 +203,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits an error if dir is not a string or array of strings") {
-      const auto [file, data] = create_toml_mock("test", R"(dir = 42)");
+      const auto [context, data] = create_toml_mock("test", R"(dir = 42)");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
@@ -211,9 +215,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits an error if dir array does not only contain strings") {
-      const auto [file, data] = create_toml_mock("test", R"(dir = [1])");
+      const auto [context, data] = create_toml_mock("test", R"(dir = [1])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
@@ -223,9 +227,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits more than one error if dir array does not only contain multiple strings") {
-      const auto [file, data] = create_toml_mock("test", R"(dir = [1, 2])");
+      const auto [context, data] = create_toml_mock("test", R"(dir = [1, 2])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 2);
@@ -237,9 +241,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Creates a directory folder from a string") {
-      const auto [file, data] = create_toml_mock("test", R"(dir = ["folder1"])");
+      const auto [context, data] = create_toml_mock("test", R"(dir = ["folder1"])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -248,9 +252,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Creates a directory folder from an array of strings") {
-      const auto [file, data] = create_toml_mock("test", R"(dir = ["folder1", "folder2"])");
+      const auto [context, data] = create_toml_mock("test", R"(dir = ["folder1", "folder2"])");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(litr::Path(""));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -262,9 +266,9 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_output") {
     SUBCASE("Does nothing if output is not set") {
-      const auto [file, data] = create_toml_mock("test", R"(key = "value")");
+      const auto [context, data] = create_toml_mock("test", R"(key = "value")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -273,9 +277,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Emits an error if output type is not known") {
-      const auto [file, data] = create_toml_mock("test", R"(output = "unknown")");
+      const auto [context, data] = create_toml_mock("test", R"(output = "unknown")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
@@ -285,9 +289,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Sets the output to silent if the option is provided") {
-      const auto [file, data] = create_toml_mock("test", R"(output = "silent")");
+      const auto [context, data] = create_toml_mock("test", R"(output = "silent")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -296,9 +300,9 @@ TEST_SUITE("Config::CommandBuilder") {
     }
 
     SUBCASE("Sets the output to unchanged if the option is provided") {
-      const auto [file, data] = create_toml_mock("test", R"(output = "unchanged")");
+      const auto [context, data] = create_toml_mock("test", R"(output = "unchanged")");
 
-      litr::config::CommandBuilder builder{file, data, "test"};
+      litr::config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 0);
@@ -309,10 +313,10 @@ TEST_SUITE("Config::CommandBuilder") {
 
   TEST_CASE("CommandBuilder::add_child_command") {
     SUBCASE("Sets a child command as reference") {
-      const auto [file, data] = create_toml_mock("test", "");
+      const auto [context, data] = create_toml_mock("test", "");
 
-      litr::config::CommandBuilder builder_root{file, data, "test"};
-      litr::config::CommandBuilder builder_child{file, data, "test"};
+      litr::config::CommandBuilder builder_root{context, data, "test"};
+      litr::config::CommandBuilder builder_child{context, data, "test"};
 
       builder_root.add_child_command(builder_child.get_result());
 
