@@ -25,18 +25,18 @@ Loader::Loader(Path file_path) : m_file_path(std::move(file_path)) {
   }
 
   if (config.contains("commands")) {
-    const TomlFileAdapter::Table& commands{m_file.find_table(config, "commands")};
+    const TomlFileAdapter::Value& commands{m_file.find(config, "commands")};
     collect_commands(commands);
   }
 
   if (config.contains("params")) {
-    const TomlFileAdapter::Table& params{m_file.find_table(config, "params")};
+    const TomlFileAdapter::Value& params{m_file.find(config, "params")};
     collect_params(params);
   }
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Table& commands,
+std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& commands,
     const TomlFileAdapter::Value& definition,
     const std::string& name) {
   LITR_PROFILE_FUNCTION();
@@ -73,7 +73,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Table& co
     const std::string property{properties.front()};
 
     if (property == "script") {
-      const TomlFileAdapter::Value& scripts{m_file.find_value(definition, "script")};
+      const TomlFileAdapter::Value& scripts{m_file.find(definition, "script")};
 
       if (scripts.is_string()) {
         builder.add_script_line(scripts.as_string(), scripts);
@@ -114,7 +114,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Table& co
     }
 
     // Collect properties that cannot directly be resolved.
-    const TomlFileAdapter::Value& value{m_file.find_value(definition, property)};
+    const TomlFileAdapter::Value& value{m_file.find(definition, property)};
     if (!value.is_table()) {
       error::Handler::push(error::UnknownCommandPropertyError(
           fmt::format(
@@ -132,18 +132,24 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Table& co
   return builder.get_result();
 }
 
-void Loader::collect_commands(const TomlFileAdapter::Table& commands) {
+void Loader::collect_commands(const TomlFileAdapter::Value& commands) {
   LITR_PROFILE_FUNCTION();
 
-  for (auto&& [name, definition] : commands) {
-    m_commands.emplace_back(create_command(commands, definition, name));
+  if (commands.is_table()) {
+    for (auto&& [name, definition] : commands.as_table()) {
+      m_commands.emplace_back(create_command(commands, definition, name));
+    }
   }
 }
 
-void Loader::collect_params(const TomlFileAdapter::Table& params) {
+void Loader::collect_params(const TomlFileAdapter::Value& params) {
   LITR_PROFILE_FUNCTION();
 
-  for (auto&& [name, definition] : params) {
+  if (!params.is_table()) {
+    return;
+  }
+
+  for (auto&& [name, definition] : params.as_table()) {
     ParameterBuilder builder{params, definition, name};
 
     if (ParameterBuilder::is_reserved_name(name)) {

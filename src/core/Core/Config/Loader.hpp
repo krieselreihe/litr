@@ -38,11 +38,11 @@ class Loader {
   }
 
  private:
-  std::shared_ptr<Command> create_command(const TomlFileAdapter::Table& commands,
+  std::shared_ptr<Command> create_command(const TomlFileAdapter::Value& commands,
       const TomlFileAdapter::Value& definition,
       const std::string& name);
-  void collect_commands(const TomlFileAdapter::Table& commands);
-  void collect_params(const TomlFileAdapter::Table& params);
+  void collect_commands(const TomlFileAdapter::Value& commands);
+  void collect_params(const TomlFileAdapter::Value& params);
 
   const Path m_file_path;
   const TomlFileAdapter m_file{};

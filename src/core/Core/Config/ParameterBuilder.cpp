@@ -10,7 +10,7 @@
 
 namespace litr::config {
 
-ParameterBuilder::ParameterBuilder(const TomlFileAdapter::Table& context,
+ParameterBuilder::ParameterBuilder(const TomlFileAdapter::Value& context,
     const TomlFileAdapter::Value& data,
     const std::string& name)
     : m_context(context),
@@ -30,7 +30,7 @@ void ParameterBuilder::add_description() {
     return;
   }
 
-  const TomlFileAdapter::Value& description{m_file.find_value(m_table, name)};
+  const TomlFileAdapter::Value& description{m_file.find(m_table, name)};
 
   if (!description.is_string()) {
     error::Handler::push(error::MalformedParamError(
@@ -57,7 +57,7 @@ void ParameterBuilder::add_shortcut(const std::vector<std::shared_ptr<Parameter>
   const std::string name{"shortcut"};
 
   if (m_table.contains(name)) {
-    const TomlFileAdapter::Value& shortcut{m_file.find_value(m_table, name)};
+    const TomlFileAdapter::Value& shortcut{m_file.find(m_table, name)};
 
     if (shortcut.is_string()) {
       const std::string shortcut_str{shortcut.as_string()};
@@ -95,7 +95,7 @@ void ParameterBuilder::add_type() {
   const std::string name{"type"};
 
   if (m_table.contains(name)) {
-    const TomlFileAdapter::Value& type{m_file.find_value(m_table, name)};
+    const TomlFileAdapter::Value& type{m_file.find(m_table, name)};
 
     if (type.is_string()) {
       if (type.as_string() == "string") {
@@ -141,7 +141,7 @@ void ParameterBuilder::add_default() {
   const std::string name{"default"};
 
   if (m_table.contains(name)) {
-    const TomlFileAdapter::Value& def{m_file.find_value(m_table, name)};
+    const TomlFileAdapter::Value& def{m_file.find(m_table, name)};
 
     if (def.is_string()) {
       const std::string default_value{def.as_string()};

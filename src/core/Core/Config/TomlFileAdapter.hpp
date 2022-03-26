@@ -20,8 +20,7 @@ class TomlFileAdapter : public FileAdapter<BasicTomlValue> {
 
   [[nodiscard]] Value parse(const Path& file_path) const override;
 
-  [[nodiscard]] const Value& find_value(const Value& value, const std::string& key) const override;
-  [[nodiscard]] const Table& find_table(const Value& value, const std::string& key) const override;
+  [[nodiscard]] const Value& find(const Value& value, const std::string& key) const override;
 };
 
 }  // namespace litr::config

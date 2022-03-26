@@ -5,9 +5,12 @@
 #pragma once
 
 #include <string>
-#include <utility>
 
 #include "Core/Config/TomlFileAdapter.hpp"
 
-std::pair<litr::config::TomlFileAdapter::Table, litr::config::TomlFileAdapter::Value>
-create_toml_mock(const std::string& name, const std::string& toml);
+struct TomlMock {
+  litr::config::TomlFileAdapter::Value context;
+  litr::config::TomlFileAdapter::Value data;
+};
+
+TomlMock create_toml_mock(const std::string& name, const std::string& toml);

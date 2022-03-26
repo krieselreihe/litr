@@ -15,7 +15,7 @@ namespace litr::config {
 
 class ParameterBuilder {
  public:
-  ParameterBuilder(const TomlFileAdapter::Table& context,
+  ParameterBuilder(const TomlFileAdapter::Value& context,
       const TomlFileAdapter::Value& data,
       const std::string& name);
 
@@ -33,7 +33,7 @@ class ParameterBuilder {
   [[nodiscard]] static bool is_reserved_name(const std::string& name);
 
  private:
-  const TomlFileAdapter::Table& m_context;
+  const TomlFileAdapter::Value& m_context;
   const TomlFileAdapter::Value& m_table;
   const std::shared_ptr<Parameter> m_parameter;
   const TomlFileAdapter m_file{};

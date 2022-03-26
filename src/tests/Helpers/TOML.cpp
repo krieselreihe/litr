@@ -9,8 +9,7 @@
 
 #include <toml.hpp>
 
-std::pair<litr::config::TomlFileAdapter::Table, litr::config::TomlFileAdapter::Value>
-create_toml_mock(const std::string& name, const std::string& toml) {
+TomlMock create_toml_mock(const std::string& name, const std::string& toml) {
   std::string r_context{fmt::format(R"([{}]
 {})",
       name,
@@ -25,5 +24,5 @@ create_toml_mock(const std::string& name, const std::string& toml) {
   std::istringstream is_data(toml, std::ios_base::binary | std::ios_base::in);
   const auto data = toml::parse<toml::discard_comments, tsl::ordered_map>(is_data, "std::string");
 
-  return {context.as_table(), data};
+  return {context, data};
 }

@@ -22,8 +22,7 @@ class FileAdapter {
 
   virtual Value parse(const Path& file_path) const = 0;
 
-  virtual const Value& find_value(const Value&, const std::string& key) const = 0;
-  virtual const Table& find_table(const Value&, const std::string& key) const = 0;
+  virtual const Value& find(const Value&, const std::string& key) const = 0;
 };
 
 }  // namespace litr::config
