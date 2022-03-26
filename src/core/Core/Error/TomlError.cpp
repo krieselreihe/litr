@@ -82,13 +82,10 @@ std::string TomlError::extract_duplicated_table_error(const std::string& error) 
   std::string output{};
   utils::split_into(extract, '\n', lines);
 
-  for (size_t i{0}; i < lines.size(); ++i) {
-    // First line without change
-    if (i == 0) {
-      output.append(fmt::format("{}\n ...\n", lines[i]));
-      continue;
-    }
+  // First line without change
+  output.append(fmt::format("{}\n ...\n", lines[0]));
 
+  for (size_t i{1}; i < lines.size(); ++i) {
     if (is_file_reference(lines[i])) {
       continue;
     }
