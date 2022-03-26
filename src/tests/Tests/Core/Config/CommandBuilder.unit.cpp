@@ -60,7 +60,7 @@ TEST_SUITE("Config::CommandBuilder") {
 
       litr::config::TomlFileAdapter file{};
       litr::config::CommandBuilder builder{context, data, "test"};
-      builder.add_script(file.find_value(data, "scripts"));
+      builder.add_script(file.find(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
       CHECK_EQ(litr::error::Handler::get_errors()[0].message,
@@ -73,7 +73,7 @@ TEST_SUITE("Config::CommandBuilder") {
 
       litr::config::TomlFileAdapter file{};
       litr::config::CommandBuilder builder{context, data, "test"};
-      builder.add_script(file.find_value(data, "scripts"));
+      builder.add_script(file.find(data, "scripts"));
 
       CHECK_EQ(litr::error::Handler::get_errors().size(), 1);
       CHECK_EQ(litr::error::Handler::get_errors()[0].message,
@@ -87,7 +87,7 @@ TEST_SUITE("Config::CommandBuilder") {
 
       litr::config::TomlFileAdapter file{};
       litr::config::CommandBuilder builder{context, data, "test"};
-      builder.add_script(file.find_value(data, "scripts"));
+      builder.add_script(file.find(data, "scripts"));
 
       const auto result{builder.get_result()};
 
@@ -103,7 +103,7 @@ TEST_SUITE("Config::CommandBuilder") {
 
       litr::config::TomlFileAdapter file{};
       litr::config::CommandBuilder builder{context, data, "test"};
-      builder.add_script(file.find_value(data, "scripts"));
+      builder.add_script(file.find(data, "scripts"));
 
       const auto result{builder.get_result()};
 

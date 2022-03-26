@@ -29,18 +29,11 @@ TomlFileAdapter::Value TomlFileAdapter::parse(const Path& file_path) const {
   return config;
 }
 
-const TomlFileAdapter::Value& TomlFileAdapter::find_value(
+const TomlFileAdapter::Value& TomlFileAdapter::find(
     const TomlFileAdapter::Value& value, const std::string& key) const {
   LITR_PROFILE_FUNCTION();
 
   return toml::find(value, key);
-}
-
-const TomlFileAdapter::Table& TomlFileAdapter::find_table(
-    const TomlFileAdapter::Value& value, const std::string& key) const {
-  LITR_PROFILE_FUNCTION();
-
-  return toml::find<TomlFileAdapter::Table, toml::discard_comments, tsl::ordered_map>(value, key);
 }
 
 }  // namespace litr::config

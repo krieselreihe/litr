@@ -18,7 +18,7 @@ namespace litr::config {
 
 class CommandBuilder {
  public:
-  CommandBuilder(const TomlFileAdapter::Table& context,
+  CommandBuilder(const TomlFileAdapter::Value& context,
       const TomlFileAdapter::Value& data,
       const std::string& name);
 
@@ -40,7 +40,7 @@ class CommandBuilder {
  private:
   void add_location(const TomlFileAdapter::Value& context);
 
-  const TomlFileAdapter::Table& m_context;
+  const TomlFileAdapter::Value& m_context;
   const TomlFileAdapter::Value& m_table;
   const std::shared_ptr<Command> m_command;
   const TomlFileAdapter m_file{};
