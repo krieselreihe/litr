@@ -10,7 +10,7 @@
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 Query::Query(const std::shared_ptr<Loader>& config) : m_config(config) {}
 
@@ -74,7 +74,7 @@ Query::Parameters Query::get_parameters(const std::string& command_name) const {
     names.insert(names.end(), child_names.begin(), child_names.end());
   }
 
-  utils::deduplicate(names);
+  Utils::deduplicate(names);
 
   if (!names.empty()) {
     for (auto&& name : names) {
@@ -89,7 +89,7 @@ Query::Parts Query::split_command_query(const std::string& query) {
   LITR_PROFILE_FUNCTION();
 
   Parts parts{};
-  utils::split_into(query, '.', parts);
+  Utils::split_into(query, '.', parts);
   return parts;
 }
 
@@ -143,7 +143,7 @@ Query::Variables Query::get_parameters_as_variables() const {
   Variables variables{};
 
   for (auto&& param : params) {
-    variables.insert_or_assign(param->name, cli::Variable(*param));
+    variables.insert_or_assign(param->name, CLI::Variable(*param));
   }
 
   return variables;
@@ -158,14 +158,14 @@ std::vector<std::string> Query::get_used_parameter_names(
 
   for (auto&& script : command->script) {
     const Variables variables{get_parameters_as_variables()};
-    const script::Compiler compiler{script, command->Locations[index++], variables};
+    const Script::Compiler compiler{script, command->Locations[index++], variables};
     const std::vector<std::string> used_names{compiler.get_used_variables()};
     names.insert(names.end(), used_names.begin(), used_names.end());
   }
 
-  utils::deduplicate(names);
+  Utils::deduplicate(names);
 
   return names;
 }
 
-}  // namespace litr::config
+}  // namespace Litr::Config

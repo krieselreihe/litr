@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace litr::config {
+namespace Litr::Config {
 
 struct Parameter {
   enum class Type { STRING = 0, BOOLEAN = 1, ARRAY = 2 };
@@ -27,19 +27,19 @@ struct Parameter {
   explicit Parameter(std::string name) : name(std::move(name)) {}
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config
 
 #ifdef DEBUG
 // Enable easy formatting with fmt
 template <>
-struct fmt::formatter<litr::config::Parameter> {
+struct fmt::formatter<Litr::Config::Parameter> {
   template <typename ParseContext>
   constexpr auto parse(ParseContext& ctx) {
     return ctx.begin();
   }
 
   template <typename FormatContext>
-  auto format(const litr::config::Parameter& p, FormatContext& ctx) {
+  auto format(const Litr::Config::Parameter& p, FormatContext& ctx) {
     if (!p.description.empty()) {
       return format_to(ctx.out(), "Param: {} - {}", p.name, p.description);
     }

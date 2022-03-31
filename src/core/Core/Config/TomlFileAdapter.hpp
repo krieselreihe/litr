@@ -10,7 +10,7 @@
 
 #include "Core/Config/FileAdapter.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 using BasicTomlValue = toml::basic_value<toml::discard_comments, tsl::ordered_map>;
 
@@ -23,4 +23,4 @@ class TomlFileAdapter : public FileAdapter<BasicTomlValue> {
   [[nodiscard]] const Value& find(const Value& value, const std::string& key) const override;
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

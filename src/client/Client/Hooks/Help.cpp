@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace litr::hook {
+namespace Litr::Hook {
 
 // Attention dear reader: I know how this file looks like. There is a lot going on,
 // numbers, formatting, some of it all over the place. It is not pretty, but it works
@@ -19,11 +19,11 @@ namespace litr::hook {
 // There will be a refactor for this making some improvements on the way as well:
 // https://github.com/krieselreihe/litr/issues/31
 
-Help::Help(const std::shared_ptr<config::Loader>& config)
+Help::Help(const std::shared_ptr<Config::Loader>& config)
     : m_query(config),
       m_file_path(config->get_file_path()) {}
 
-void Help::print(const std::shared_ptr<cli::Instruction>& instruction) const {
+void Help::print(const std::shared_ptr<CLI::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
 
   m_command_name = get_command_name(instruction);
@@ -60,7 +60,7 @@ void Help::print_usage() const {
 void Help::print_commands() const {
   LITR_PROFILE_FUNCTION();
 
-  const config::Query::Commands commands{
+  const Config::Query::Commands commands{
       m_command_name.empty() ? m_query.get_commands() : m_query.get_commands(m_command_name)};
 
   if (commands.empty()) {
@@ -76,7 +76,7 @@ void Help::print_commands() const {
 
 // Ignore recursion as this is needed to print nested commands.
 // NOLINTNEXTLINE(misc-no-recursion)
-void Help::print_command(const std::shared_ptr<config::Command>& command,
+void Help::print_command(const std::shared_ptr<Config::Command>& command,
     const std::string& parent_name,
     size_t depth) const {
   size_t padding{get_command_padding()};
@@ -108,12 +108,12 @@ void Help::print_command(const std::shared_ptr<config::Command>& command,
   }
 }
 
-void Help::print_example(const std::shared_ptr<config::Command>& command) const {
+void Help::print_example(const std::shared_ptr<Config::Command>& command) const {
   if (!command->example.empty()) {
     const size_t padding{get_parameter_padding()};
 
     std::vector<std::string> lines{};
-    utils::split_into(command->example, '\n', lines);
+    Utils::split_into(command->example, '\n', lines);
 
     fmt::print(fg(fmt::color::dark_gray), "{:<{}}   ┌ Example(s):\n", " ", padding);
     for (auto&& line : lines) {
@@ -129,7 +129,7 @@ void Help::print_example(const std::shared_ptr<config::Command>& command) const 
 void Help::print_options() const {
   LITR_PROFILE_FUNCTION();
 
-  const config::Query::Parameters params{
+  const Config::Query::Parameters params{
       m_command_name.empty() ? m_query.get_parameters() : m_query.get_parameters(m_command_name)};
   const size_t padding{get_parameter_padding()};
 
@@ -155,7 +155,7 @@ void Help::print_options() const {
   }
 }
 
-void Help::print_parameter_options(const std::shared_ptr<config::Parameter>& param) const {
+void Help::print_parameter_options(const std::shared_ptr<Config::Parameter>& param) const {
   LITR_PROFILE_FUNCTION();
 
   if (!param->type_arguments.empty()) {
@@ -167,11 +167,11 @@ void Help::print_parameter_options(const std::shared_ptr<config::Parameter>& par
     }
 
     fmt::print(
-        fg(fmt::color::dark_gray), "  {:<{}} {}\n", " ", padding, utils::trim_right(args, ','));
+        fg(fmt::color::dark_gray), "  {:<{}} {}\n", " ", padding, Utils::trim_right(args, ','));
   }
 }
 
-void Help::print_default_parameter_option(const std::shared_ptr<config::Parameter>& param) const {
+void Help::print_default_parameter_option(const std::shared_ptr<Config::Parameter>& param) const {
   LITR_PROFILE_FUNCTION();
 
   if (!param->default_value.empty()) {
@@ -190,7 +190,7 @@ void Help::print_with_description(
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> lines{};
-  utils::split_into(description, '\n', lines);
+  Utils::split_into(description, '\n', lines);
 
   const size_t max_padding{22};
   const size_t padding{get_parameter_padding()};
@@ -212,40 +212,40 @@ void Help::print_with_description(
   }
 }
 
-std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& instruction) {
+std::string Help::get_command_name(const std::shared_ptr<CLI::Instruction>& instruction) {
   LITR_PROFILE_FUNCTION();
 
   size_t offset{0};
   std::vector<std::string> scope{};
 
   while (offset < instruction->count()) {
-    const cli::Instruction::Code code{instruction->read(offset++)};
+    const CLI::Instruction::Code code{instruction->read(offset++)};
 
     switch (code) {
-      case cli::Instruction::Code::BEGIN_SCOPE: {
+      case CLI::Instruction::Code::BEGIN_SCOPE: {
         const std::string value{instruction->read_constant(instruction->read(offset))};
         scope.push_back(value);
         ++offset;
         break;
       }
-      case cli::Instruction::Code::CLEAR: {
+      case CLI::Instruction::Code::CLEAR: {
         scope.pop_back();
         break;
       }
-      case cli::Instruction::Code::DEFINE: {
+      case CLI::Instruction::Code::DEFINE: {
         const std::string value{instruction->read_constant(instruction->read(offset))};
         if (value == "h" || value == "help") {
           std::string command_name{};
           for (auto&& part : scope) {
             command_name.append(".").append(part);
           }
-          return utils::trim_left(command_name, '.');
+          return Utils::trim_left(command_name, '.');
         }
         ++offset;
         break;
       }
-      case cli::Instruction::Code::CONSTANT:
-      case cli::Instruction::Code::EXECUTE: {
+      case CLI::Instruction::Code::CONSTANT:
+      case CLI::Instruction::Code::EXECUTE: {
         ++offset;
         break;
       }
@@ -258,15 +258,15 @@ std::string Help::get_command_name(const std::shared_ptr<cli::Instruction>& inst
 std::string Help::get_command_arguments(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  config::Query::Parameters params{m_query.get_parameters(name)};
+  Config::Query::Parameters params{m_query.get_parameters(name)};
   std::string arguments{};
 
   std::sort(params.begin(), params.end(), sort_parameter_by_required);
 
   for (auto&& param : params) {
     switch (param->type) {
-      case config::Parameter::Type::STRING:
-      case config::Parameter::Type::ARRAY: {
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY: {
         const bool is_optional{!param->default_value.empty()};
         const std::string pattern{is_optional ? " [--{}{}]" : " --{}{}"};
         arguments.append(
@@ -276,7 +276,7 @@ std::string Help::get_command_arguments(const std::string& name) const {
                 m_argument_placeholder));
         break;
       }
-      case config::Parameter::Type::BOOLEAN: {
+      case Config::Parameter::Type::BOOLEAN: {
         arguments.append(fmt::format(fg(fmt::color::dark_gray), " [--{}]", param->name));
         break;
       }
@@ -289,14 +289,14 @@ std::string Help::get_command_arguments(const std::string& name) const {
 size_t Help::get_command_padding() const {
   LITR_PROFILE_FUNCTION();
 
-  const config::Query::Commands commands{
+  const Config::Query::Commands commands{
       m_command_name.empty() ? m_query.get_commands() : m_query.get_commands(m_command_name)};
   return get_command_padding(commands);
 }
 
 // Ignore recursion as this is needed to get padding for nested commands.
 // NOLINTNEXTLINE(misc-no-recursion)
-size_t Help::get_command_padding(const config::Query::Commands& commands) const {
+size_t Help::get_command_padding(const Config::Query::Commands& commands) const {
   LITR_PROFILE_FUNCTION();
 
   size_t padding{0};
@@ -322,7 +322,7 @@ size_t Help::get_command_padding(const config::Query::Commands& commands) const 
 size_t Help::get_parameter_padding() const {
   LITR_PROFILE_FUNCTION();
 
-  const config::Query::Parameters params{
+  const Config::Query::Parameters params{
       m_command_name.empty() ? m_query.get_parameters() : m_query.get_parameters(m_command_name)};
   size_t padding{0};
 
@@ -346,18 +346,18 @@ size_t Help::get_parameter_padding() const {
   return padding_left + padding + padding_right;
 }
 
-bool Help::sort_parameter_by_required(const std::shared_ptr<config::Parameter>& param1,
-    const std::shared_ptr<config::Parameter>& param2) {
+bool Help::sort_parameter_by_required(const std::shared_ptr<Config::Parameter>& param1,
+    const std::shared_ptr<Config::Parameter>& param2) {
   LITR_PROFILE_FUNCTION();
 
-  auto rank_parameter_required{[](const std::shared_ptr<config::Parameter>& param) -> int {
+  auto rank_parameter_required{[](const std::shared_ptr<Config::Parameter>& param) -> int {
     switch (param->type) {
-      case config::Parameter::Type::STRING:
-      case config::Parameter::Type::ARRAY: {
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY: {
         const bool is_required{param->default_value.empty()};
         return is_required ? 1 : 2;
       }
-      case config::Parameter::Type::BOOLEAN: {
+      case Config::Parameter::Type::BOOLEAN: {
         return 2;
       }
     }
@@ -368,4 +368,4 @@ bool Help::sort_parameter_by_required(const std::shared_ptr<config::Parameter>& 
   return rank_parameter_required(param1) < rank_parameter_required(param2);
 }
 
-}  // namespace litr::hook
+}  // namespace Litr::Hook

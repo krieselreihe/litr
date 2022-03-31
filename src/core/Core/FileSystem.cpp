@@ -8,7 +8,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr {
+namespace Litr {
 
 // Path ------------------------------------------
 
@@ -74,4 +74,4 @@ Path FileSystem::get_current_working_directory() {
   return Path(std::filesystem::current_path());
 }
 
-}  // namespace litr
+}  // namespace Litr

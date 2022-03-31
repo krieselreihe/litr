@@ -14,13 +14,13 @@
 #include "Core/Log.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 Loader::Loader(Path file_path) : m_file_path(std::move(file_path)) {
   LITR_PROFILE_FUNCTION();
 
   TomlFileAdapter::Value config{m_file.parse(m_file_path)};
-  if (error::Handler::has_errors()) {
+  if (Error::Handler::has_errors()) {
     return;
   }
 
@@ -57,8 +57,8 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
-    error::Handler::push(
-        error::MalformedCommandError("A command can be a string or table.", commands.at(name)));
+    Error::Handler::push(
+        Error::MalformedCommandError("A command can be a string or table.", commands.at(name)));
     return builder.get_result();
   }
 
@@ -69,7 +69,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
   }
 
   while (!properties.empty()) {
-    LITR_PROFILE_SCOPE("Config::Loader::create_command::CollectCommandProperties(while)");
+    LITR_PROFILE_SCOPE("Config::Loader::create_command > collect_command_properties(while)");
     const std::string property{properties.front()};
 
     if (property == "script") {
@@ -80,7 +80,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
       } else if (scripts.is_array()) {
         builder.add_script(scripts);
       } else {
-        error::Handler::push(error::MalformedScriptError(
+        Error::Handler::push(Error::MalformedScriptError(
             "A command script can be either a string or array of strings.",
             definition.at(property)));
       }
@@ -116,7 +116,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
     // Collect properties that cannot directly be resolved.
     const TomlFileAdapter::Value& value{m_file.find(definition, property)};
     if (!value.is_table()) {
-      error::Handler::push(error::UnknownCommandPropertyError(
+      Error::Handler::push(Error::UnknownCommandPropertyError(
           fmt::format(
               R"(The command property "{}" does not exist. Please refer to the docs.)", property),
           definition.at(property)));
@@ -153,7 +153,7 @@ void Loader::collect_params(const TomlFileAdapter::Value& params) {
     ParameterBuilder builder{params, definition, name};
 
     if (ParameterBuilder::is_reserved_name(name)) {
-      error::Handler::push(error::ReservedParamError(
+      Error::Handler::push(Error::ReservedParamError(
           fmt::format(R"(The parameter name "{}" is reserved by Litr.)", name), params.at(name)));
       continue;
     }
@@ -167,7 +167,7 @@ void Loader::collect_params(const TomlFileAdapter::Value& params) {
 
     // From here on it needs to be a table to be valid.
     if (!definition.is_table()) {
-      error::Handler::push(error::MalformedParamError(
+      Error::Handler::push(Error::MalformedParamError(
           "A parameter needs to be a string or table.", params.at(name)));
       continue;
     }
@@ -181,4 +181,4 @@ void Loader::collect_params(const TomlFileAdapter::Value& params) {
   }
 }
 
-}  // namespace litr::config
+}  // namespace Litr::Config

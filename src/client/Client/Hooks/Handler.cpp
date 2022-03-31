@@ -4,9 +4,9 @@
 
 #include "Handler.hpp"
 
-namespace litr::hook {
+namespace Litr::Hook {
 
-Handler::Handler(const std::shared_ptr<cli::Instruction>& instruction)
+Handler::Handler(const std::shared_ptr<CLI::Instruction>& instruction)
     : m_instruction(instruction) {}
 
 void Handler::add(
@@ -45,4 +45,4 @@ bool Handler::execute() const {
   return false;
 }
 
-}  // namespace litr::hook
+}  // namespace Litr::Hook

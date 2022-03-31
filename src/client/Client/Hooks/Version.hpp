@@ -8,11 +8,11 @@
 
 #include "Core.hpp"
 
-namespace litr::hook {
+namespace Litr::Hook {
 
 class Version {
  public:
-  static void print(const std::shared_ptr<cli::Instruction>& instruction);
+  static void print(const std::shared_ptr<CLI::Instruction>& instruction);
 };
 
-}  // namespace litr::hook
+}  // namespace Litr::Hook

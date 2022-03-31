@@ -18,22 +18,22 @@
 #include "Core/Config/Query.hpp"
 #include "Core/Error/Handler.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 class Interpreter {
-  using Variables = std::unordered_map<std::string, cli::Variable>;
+  using Variables = std::unordered_map<std::string, CLI::Variable>;
   using Scripts = std::vector<std::string>;
 
  public:
   Interpreter(const std::shared_ptr<Instruction>& instruction,
-      const std::shared_ptr<config::Loader>& config);
+      const std::shared_ptr<Config::Loader>& config);
 
   void execute();
 
  private:
   [[nodiscard]] Instruction::Value read_current_value() const;
   [[nodiscard]] Variables get_scope_variables() const;
-  void define_default_variables(const std::shared_ptr<config::Loader>& config);
+  void define_default_variables(const std::shared_ptr<Config::Loader>& config);
 
   void execute_instruction();
 
@@ -43,29 +43,29 @@ class Interpreter {
   void set_constant();
   void call_instruction();
 
-  void call_command(const std::shared_ptr<config::Command>& command, const std::string& scope = "");
+  void call_command(const std::shared_ptr<Config::Command>& command, const std::string& scope = "");
   void call_child_commands(
-      const std::shared_ptr<config::Command>& command, const std::string& scope);
+      const std::shared_ptr<Config::Command>& command, const std::string& scope);
   void run_scripts(const Scripts& scripts,
       const std::string& command_path,
       const std::string& dir,
       bool print_result);
 
-  [[nodiscard]] Scripts parse_scripts(const std::shared_ptr<config::Command>& command);
+  [[nodiscard]] Scripts parse_scripts(const std::shared_ptr<Config::Command>& command);
   [[nodiscard]] std::string parse_script(
-      const std::string& script, const config::Location& location);
+      const std::string& script, const Config::Location& location);
 
   [[nodiscard]] static enum Variable::Type get_variable_type(
-      const std::shared_ptr<config::Parameter>& param);
+      const std::shared_ptr<Config::Parameter>& param);
 
-  void validate_required_parameters(const std::shared_ptr<config::Command>& command);
+  void validate_required_parameters(const std::shared_ptr<Config::Command>& command);
   [[nodiscard]] bool is_variable_defined(const std::string& name) const;
-  void handle_error(const error::BaseError& error);
+  void handle_error(const Error::BaseError& error);
 
   static void print(const std::string& message);
 
   const std::shared_ptr<Instruction>& m_instruction;
-  const config::Query m_query;
+  const Config::Query m_query;
 
   size_t m_offset{0};
   std::string m_current_variable_name{};
@@ -75,4 +75,4 @@ class Interpreter {
   std::vector<Variables> m_scope{Variables()};
 };
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

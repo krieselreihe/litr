@@ -10,9 +10,9 @@
 
 TEST_SUITE("Config::Query") {
   TEST_CASE("get_command()") {
-    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{std::make_shared<litr::config::Loader>(path)};
-    const litr::config::Query query{config};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{std::make_shared<Litr::Config::Loader>(path)};
+    const Litr::Config::Query query{config};
 
     SUBCASE("Get top level command") {
       CHECK_EQ(query.get_command("run")->name, "run");
@@ -36,9 +36,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("get_commands()") {
-    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{std::make_shared<litr::config::Loader>(path)};
-    const litr::config::Query query{config};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{std::make_shared<Litr::Config::Loader>(path)};
+    const Litr::Config::Query query{config};
 
     SUBCASE("Get all defined commands") {
       CHECK_EQ(query.get_commands().size(), 3);
@@ -54,9 +54,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("get_parameter()") {
-    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{std::make_shared<litr::config::Loader>(path)};
-    const litr::config::Query query{config};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{std::make_shared<Litr::Config::Loader>(path)};
+    const Litr::Config::Query query{config};
 
     SUBCASE("Get parameter by name") {
       CHECK_EQ(query.get_parameter("target")->name, "target");
@@ -72,9 +72,9 @@ TEST_SUITE("Config::Query") {
   }
 
   TEST_CASE("get_parameters()") {
-    const litr::Path path{"../../Fixtures/Config/commands-params.toml"};
-    const auto config{std::make_shared<litr::config::Loader>(path)};
-    const litr::config::Query query{config};
+    const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
+    const auto config{std::make_shared<Litr::Config::Loader>(path)};
+    const Litr::Config::Query query{config};
 
     SUBCASE("Get all defined parameters") {
       CHECK_EQ(query.get_parameters().size(), 2);

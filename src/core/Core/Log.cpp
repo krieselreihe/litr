@@ -9,7 +9,7 @@
 
 #include <vector>
 
-namespace litr {
+namespace Litr {
 
 Log::Log() {
   std::vector<spdlog::sink_ptr> log_sinks;
@@ -38,4 +38,4 @@ Log::Log() {
   m_client_logger->flush_on(level);
 }
 
-}  // namespace litr
+}  // namespace Litr

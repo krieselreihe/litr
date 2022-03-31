@@ -8,7 +8,7 @@
 
 #include "Core.hpp"
 
-namespace litr {
+namespace Litr {
 
 class Application {
  public:
@@ -22,4 +22,4 @@ class Application {
   ExitStatus m_exit_status{ExitStatus::SUCCESS};
 };
 
-}  // namespace litr
+}  // namespace Litr

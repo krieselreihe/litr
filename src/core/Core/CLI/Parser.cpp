@@ -10,7 +10,7 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 Parser::Parser(const std::shared_ptr<Instruction>& instruction, const std::string& source)
     : m_source(source),
@@ -171,12 +171,12 @@ void Parser::commands() {
 void Parser::parameters() {
   LITR_PROFILE_FUNCTION();
 
-  emit_definition(utils::trim_left(Scanner::get_token_value(m_previous), '-'));
+  emit_definition(Utils::trim_left(Scanner::get_token_value(m_previous), '-'));
 
   if (peak(TokenType::EQUAL)) {
     advance();
     consume(TokenType::STRING, "Value assignment missing.");
-    emit_constant(utils::trim(Scanner::get_token_value(m_previous), '"'));
+    emit_constant(Utils::trim(Scanner::get_token_value(m_previous), '"'));
   }
 }
 
@@ -239,8 +239,8 @@ void Parser::error_at(Token* token, const std::string& message) {
 
   out_message.append(fmt::format(": {}", message));
 
-  error::Handler::push(
-      error::CLIParserError(out_message, 1, token->column, utils::trim(m_source, ' ')));
+  Error::Handler::push(
+      Error::CLIParserError(out_message, 1, token->column, Utils::trim(m_source, ' ')));
 
   m_has_error = true;
 }
@@ -260,4 +260,4 @@ std::string Parser::get_scope_path() const {
   return value;
 }
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

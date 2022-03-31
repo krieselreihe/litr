@@ -6,7 +6,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::error {
+namespace Litr::Error {
 
 void Handler::push(const BaseError& err) {
   LITR_PROFILE_FUNCTION();
@@ -32,4 +32,4 @@ bool Handler::has_errors() {
   return !get().m_errors.empty();
 }
 
-}  // namespace litr::error
+}  // namespace Litr::Error

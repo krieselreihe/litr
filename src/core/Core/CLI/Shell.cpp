@@ -9,7 +9,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Log.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 Shell::Result Shell::exec(const std::string& command, const Path& path) {
   LITR_PROFILE_FUNCTION();
@@ -93,4 +93,4 @@ std::string Shell::create_cd_command(const Path& path) {
   return cmd;
 }
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

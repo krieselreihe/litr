@@ -7,7 +7,7 @@
 #include <string>
 #include <utility>
 
-namespace litr::config {
+namespace Litr::Config {
 
 struct Location {
   uint32_t line{};
@@ -21,4 +21,4 @@ struct Location {
         line_str(std::move(lineStr)) {}
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

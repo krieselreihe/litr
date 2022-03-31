@@ -15,59 +15,59 @@
 #define CHECK_DEFINITION(scanner, definition)                           \
   {                                                                     \
     for (auto&& test : (definition)) {                                  \
-      litr::cli::Token token{(scanner).scan_token()};                   \
+      Litr::CLI::Token token{(scanner).scan_token()};                   \
       CHECK_EQ(token.type, test.type);                                  \
-      CHECK_EQ(litr::cli::Scanner::get_token_value(token), test.value); \
+      CHECK_EQ(Litr::CLI::Scanner::get_token_value(token), test.value); \
     }                                                                   \
   }
 
 #define CHECK_EOS_TOKEN(scanner)                            \
   {                                                         \
-    litr::cli::Token eos{(scanner).scan_token()};           \
-    CHECK_EQ(eos.type, litr::cli::TokenType::EOS);          \
-    CHECK_EQ(litr::cli::Scanner::get_token_value(eos), ""); \
+    Litr::CLI::Token eos{(scanner).scan_token()};           \
+    CHECK_EQ(eos.type, Litr::CLI::TokenType::EOS);          \
+    CHECK_EQ(Litr::CLI::Scanner::get_token_value(eos), ""); \
   }
 
 struct TokenDefinition {
-  litr::cli::TokenType type;
+  Litr::CLI::TokenType type;
   std::string value;
 };
 
 TEST_SUITE("CLI::Scanner") {
   // Successful cases
   TEST_CASE("Single long parameter") {
-    litr::cli::Scanner scanner{"--help"};
+    Litr::CLI::Scanner scanner{"--help"};
 
-    std::array<TokenDefinition, 1> definition{{{litr::cli::TokenType::LONG_PARAMETER, "--help"}}};
+    std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::LONG_PARAMETER, "--help"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Single short parameter") {
-    litr::cli::Scanner scanner{"-h"};
+    Litr::CLI::Scanner scanner{"-h"};
 
-    std::array<TokenDefinition, 1> definition{{{litr::cli::TokenType::SHORT_PARAMETER, "-h"}}};
+    std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::SHORT_PARAMETER, "-h"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Single command") {
-    litr::cli::Scanner scanner{"build"};
+    Litr::CLI::Scanner scanner{"build"};
 
-    std::array<TokenDefinition, 1> definition{{{litr::cli::TokenType::COMMAND, "build"}}};
+    std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::COMMAND, "build"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Multiple commands") {
-    litr::cli::Scanner scanner{"build cpp"};
+    Litr::CLI::Scanner scanner{"build cpp"};
 
     std::array<TokenDefinition, 2> definition{{
-        {litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMAND, "cpp"},
+        {Litr::CLI::TokenType::COMMAND, "build"},
+        {Litr::CLI::TokenType::COMMAND, "cpp"},
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -75,124 +75,124 @@ TEST_SUITE("CLI::Scanner") {
   }
 
   TEST_CASE("More multiple commands with whitespace") {
-    litr::cli::Scanner scanner{"build cpp   another"};
+    Litr::CLI::Scanner scanner{"build cpp   another"};
 
-    std::array<TokenDefinition, 3> definition{{{litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMAND, "cpp"},
-        {litr::cli::TokenType::COMMAND, "another"}}};
+    std::array<TokenDefinition, 3> definition{{{Litr::CLI::TokenType::COMMAND, "build"},
+        {Litr::CLI::TokenType::COMMAND, "cpp"},
+        {Litr::CLI::TokenType::COMMAND, "another"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Multiple comma separated commands") {
-    litr::cli::Scanner scanner{"build,run"};
+    Litr::CLI::Scanner scanner{"build,run"};
 
-    std::array<TokenDefinition, 3> definition{{{litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMAND, "run"}}};
+    std::array<TokenDefinition, 3> definition{{{Litr::CLI::TokenType::COMMAND, "build"},
+        {Litr::CLI::TokenType::COMMA, ","},
+        {Litr::CLI::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Multiple comma separated commands with whitespace") {
-    litr::cli::Scanner scanner{"build ,  run"};
+    Litr::CLI::Scanner scanner{"build ,  run"};
 
-    std::array<TokenDefinition, 3> definition{{{litr::cli::TokenType::COMMAND, "build"},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMAND, "run"}}};
+    std::array<TokenDefinition, 3> definition{{{Litr::CLI::TokenType::COMMAND, "build"},
+        {Litr::CLI::TokenType::COMMA, ","},
+        {Litr::CLI::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Long parameter with string values") {
-    litr::cli::Scanner scanner{" --target=\"release value\" build,run"};
+    Litr::CLI::Scanner scanner{" --target=\"release value\" build,run"};
 
     constexpr int item_count{6};
     std::array<TokenDefinition, item_count> definition{
-        {{litr::cli::TokenType::LONG_PARAMETER, "--target"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::STRING, "\"release value\""},
-            {litr::cli::TokenType::COMMAND, "build"},
-            {litr::cli::TokenType::COMMA, ","},
-            {litr::cli::TokenType::COMMAND, "run"}}};
+        {{Litr::CLI::TokenType::LONG_PARAMETER, "--target"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::STRING, "\"release value\""},
+            {Litr::CLI::TokenType::COMMAND, "build"},
+            {Litr::CLI::TokenType::COMMA, ","},
+            {Litr::CLI::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Long parameter with string values with whitespace") {
-    litr::cli::Scanner scanner{"  --target  = \"release\"  build ,run  "};
+    Litr::CLI::Scanner scanner{"  --target  = \"release\"  build ,run  "};
 
     constexpr int item_count{6};
     std::array<TokenDefinition, item_count> definition{
-        {{litr::cli::TokenType::LONG_PARAMETER, "--target"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::STRING, "\"release\""},
-            {litr::cli::TokenType::COMMAND, "build"},
-            {litr::cli::TokenType::COMMA, ","},
-            {litr::cli::TokenType::COMMAND, "run"}}};
+        {{Litr::CLI::TokenType::LONG_PARAMETER, "--target"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::STRING, "\"release\""},
+            {Litr::CLI::TokenType::COMMAND, "build"},
+            {Litr::CLI::TokenType::COMMA, ","},
+            {Litr::CLI::TokenType::COMMAND, "run"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Short parameter with number values") {
-    litr::cli::Scanner scanner{" -t=42"};
+    Litr::CLI::Scanner scanner{" -t=42"};
 
-    std::array<TokenDefinition, 3> definition{{{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
-        {litr::cli::TokenType::EQUAL, "="},
-        {litr::cli::TokenType::NUMBER, "42"}}};
+    std::array<TokenDefinition, 3> definition{{{Litr::CLI::TokenType::SHORT_PARAMETER, "-t"},
+        {Litr::CLI::TokenType::EQUAL, "="},
+        {Litr::CLI::TokenType::NUMBER, "42"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Mixed parameters with mixed values and whitespace") {
-    litr::cli::Scanner scanner{" -t=\"release\" --debug  -p = 2.45"};
+    Litr::CLI::Scanner scanner{" -t=\"release\" --debug  -p = 2.45"};
 
     constexpr int item_count{7};
     std::array<TokenDefinition, item_count> definition{
-        {{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::STRING, "\"release\""},
-            {litr::cli::TokenType::LONG_PARAMETER, "--debug"},
-            {litr::cli::TokenType::SHORT_PARAMETER, "-p"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::NUMBER, "2.45"}}};
+        {{Litr::CLI::TokenType::SHORT_PARAMETER, "-t"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::STRING, "\"release\""},
+            {Litr::CLI::TokenType::LONG_PARAMETER, "--debug"},
+            {Litr::CLI::TokenType::SHORT_PARAMETER, "-p"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::NUMBER, "2.45"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Mixed source string") {
-    litr::cli::Scanner scanner{"-t=\"release\" build, run --peer = 1.23"};
+    Litr::CLI::Scanner scanner{"-t=\"release\" build, run --peer = 1.23"};
 
     constexpr int item_count{9};
     std::array<TokenDefinition, item_count> definition{
-        {{litr::cli::TokenType::SHORT_PARAMETER, "-t"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::STRING, "\"release\""},
-            {litr::cli::TokenType::COMMAND, "build"},
-            {litr::cli::TokenType::COMMA, ","},
-            {litr::cli::TokenType::COMMAND, "run"},
-            {litr::cli::TokenType::LONG_PARAMETER, "--peer"},
-            {litr::cli::TokenType::EQUAL, "="},
-            {litr::cli::TokenType::NUMBER, "1.23"}}};
+        {{Litr::CLI::TokenType::SHORT_PARAMETER, "-t"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::STRING, "\"release\""},
+            {Litr::CLI::TokenType::COMMAND, "build"},
+            {Litr::CLI::TokenType::COMMA, ","},
+            {Litr::CLI::TokenType::COMMAND, "run"},
+            {Litr::CLI::TokenType::LONG_PARAMETER, "--peer"},
+            {Litr::CLI::TokenType::EQUAL, "="},
+            {Litr::CLI::TokenType::NUMBER, "1.23"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Does not care about invalid semantics") {
-    litr::cli::Scanner scanner{", , ,"};
+    Litr::CLI::Scanner scanner{", , ,"};
 
     std::array<TokenDefinition, 3> definition{{
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMA, ","},
-        {litr::cli::TokenType::COMMA, ","},
+        {Litr::CLI::TokenType::COMMA, ","},
+        {Litr::CLI::TokenType::COMMA, ","},
+        {Litr::CLI::TokenType::COMMA, ","},
     }};
 
     CHECK_DEFINITION(scanner, definition);
@@ -201,32 +201,32 @@ TEST_SUITE("CLI::Scanner") {
 
   // Error cases
   TEST_CASE("Invalidates unterminated string syntax") {
-    litr::cli::Scanner scanner{"\"str"};
+    Litr::CLI::Scanner scanner{"\"str"};
 
     std::array<TokenDefinition, 1> definition{
-        {{litr::cli::TokenType::ERROR, "Unterminated string."}}};
+        {{Litr::CLI::TokenType::ERROR, "Unterminated string."}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Invalidates unknown characters, but does not stop scanning") {
-    litr::cli::Scanner scanner{"? -p"};
+    Litr::CLI::Scanner scanner{"? -p"};
 
     std::array<TokenDefinition, 2> definition{
-        {{litr::cli::TokenType::ERROR, "Unexpected character."},
-            {litr::cli::TokenType::SHORT_PARAMETER, "-p"}}};
+        {{Litr::CLI::TokenType::ERROR, "Unexpected character."},
+            {Litr::CLI::TokenType::SHORT_PARAMETER, "-p"}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Invalidates wrong long parameter start character") {
-    litr::cli::Scanner scanner{"--1 --_bob"};
+    Litr::CLI::Scanner scanner{"--1 --_bob"};
 
     std::array<TokenDefinition, 2> definition{
-        {{litr::cli::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."},
-            {litr::cli::TokenType::ERROR,
+        {{Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."},
+            {Litr::CLI::TokenType::ERROR,
                 "A parameter can only start with the characters A-Za-z."}}};
 
     CHECK_DEFINITION(scanner, definition);
@@ -234,21 +234,21 @@ TEST_SUITE("CLI::Scanner") {
   }
 
   TEST_CASE("Invalidates wrong short parameter name") {
-    litr::cli::Scanner scanner{"-1 -_ -?"};
+    Litr::CLI::Scanner scanner{"-1 -_ -?"};
 
     std::array<TokenDefinition, 3> definition{
-        {{litr::cli::TokenType::ERROR, "A short parameter can only be A-Za-z as name."},
-            {litr::cli::TokenType::ERROR, "A short parameter can only be A-Za-z as name."},
-            {litr::cli::TokenType::ERROR, "A short parameter can only be A-Za-z as name."}}};
+        {{Litr::CLI::TokenType::ERROR, "A short parameter can only be A-Za-z as name."},
+            {Litr::CLI::TokenType::ERROR, "A short parameter can only be A-Za-z as name."},
+            {Litr::CLI::TokenType::ERROR, "A short parameter can only be A-Za-z as name."}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);
   }
 
   TEST_CASE("Invalidates too long short parameter name") {
-    litr::cli::Scanner scanner{"-long"};
+    Litr::CLI::Scanner scanner{"-long"};
 
-    std::array<TokenDefinition, 1> definition{{{litr::cli::TokenType::ERROR,
+    std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::ERROR,
         "A short parameter can only contain one character (A-Za-z)."}}};
 
     CHECK_DEFINITION(scanner, definition);
@@ -256,10 +256,10 @@ TEST_SUITE("CLI::Scanner") {
   }
 
   TEST_CASE("Invalidates duplicated parameter initializer") {
-    litr::cli::Scanner scanner{"---long"};
+    Litr::CLI::Scanner scanner{"---long"};
 
     std::array<TokenDefinition, 1> definition{
-        {{litr::cli::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."}}};
+        {{Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."}}};
 
     CHECK_DEFINITION(scanner, definition);
     CHECK_EOS_TOKEN(scanner);

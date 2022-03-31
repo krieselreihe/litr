@@ -15,7 +15,7 @@ TomlMock create_toml_mock(const std::string& name, const std::string& toml) {
       name,
       toml)};
 
-  litr::config::TomlFileAdapter file{};
+  Litr::Config::TomlFileAdapter file{};
 
   std::istringstream is_context(r_context, std::ios_base::binary | std::ios_base::in);
   const auto context =
