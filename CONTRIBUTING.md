@@ -187,7 +187,7 @@ git pull
 Build the configuration files with cmake:
 
 ```shell
-cmake -GNinja -DCMAKE_BUILD_TYPE=Debug --build build/debug
+cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -B build/debug
 ```
 
 Build the application:
@@ -240,7 +240,7 @@ results use "Release"):
 
 ```shell
 # Create config files
-cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release --build build/profile
+cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release -B build/profile
 
 # Build profile runner
 cmake --build build/profile
