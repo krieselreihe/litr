@@ -1,6 +1,7 @@
 # Contributing
 
-You want to contribute to this repo? Nice! And of course: **you are the best!** Here is a guide on how to work with it and what to expect.
+You want to contribute to this repo? Nice! And of course: **you are the best!** Here is a guide on how to work with it
+and what to expect.
 
 **Build status:**
 
@@ -40,7 +41,8 @@ brew install cmake
 
 ### LLVM
 
-The LLVM Project is a collection of modular and reusable compiler and toolchain technologies. Some tools from the LLVM toolchain are used.
+The LLVM Project is a collection of modular and reusable compiler and toolchain technologies. Some tools from the LLVM
+toolchain are used.
 
 * Site: https://llvm.org/
 * Github: https://github.com/llvm/llvm-project
@@ -78,7 +80,8 @@ brew install ninja
 
 ### Litr
 
-This repo uses Litr itself for its tasks. So installing it will make things easier (though, it is optional). To install Litr:
+This repo uses Litr itself for its tasks. So installing it will make things easier (though, it is optional). To install
+Litr:
 
 ```shell
 brew tap krieselreihe/litr
@@ -119,7 +122,10 @@ Run Litr with the following options if needed:
 
 ### Profiling
 
-A debug build will always also produce profiling information. Running the executable directly will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run the local build directly:
+A debug build will always also produce profiling information. Running the executable directly will generate
+a `litr-profile.json` file that can be used with any Chromium based browser tracing tool,
+e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run
+the local build directly:
 
 ```shell
 ./build/release/src/client/Client
@@ -139,11 +145,13 @@ Build a release version:
 litr build --target=release
 ```
 
-For a release that can be published, and the release process in full, visit the [wiki](https://github.com/krieselreihe/litr/wiki/Release).
+For a release that can be published, and the release process in full, visit
+the [wiki](https://github.com/krieselreihe/litr/wiki/Release).
 
 ## Tests
 
-After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
+After [building the application](#build) you can run unit tests for the build output
+with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
 
 ```shell
 # Run all tests for debugging build
@@ -211,9 +219,11 @@ cmake --build build/release
 
 ## Tests without Litr
 
-After [building the application](#build) you can run unit tests for the build output with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
+After [building the application](#build) you can run unit tests for the build output
+with [ctest](https://cmake.org/cmake/help/latest/manual/ctest.1.html).
 
-**Note:** With CMake 3.20 it will be possible to specify the `--test-dir` option for ctest [[source](https://cmake.org/cmake/help/latest/release/3.20.html#ctest)], making test execution easier.
+**Note:** With CMake 3.20 it will be possible to specify the `--test-dir` option for
+ctest [[source](https://cmake.org/cmake/help/latest/release/3.20.html#ctest)], making test execution easier.
 
 ```shell
 # Run all tests for debugging build
@@ -225,7 +235,8 @@ cd build/release/src/tests && ctest && ../../../..
 
 ## Profiling without Litr
 
-There is a profiling build you can generate running cmake with `PROFILE=ON` (build type is up to you, for real world results use "Release"):
+There is a profiling build you can generate running cmake with `PROFILE=ON` (build type is up to you, for real world
+results use "Release"):
 
 ```shell
 # Create config files
@@ -235,7 +246,9 @@ cmake -GNinja -DPROFILE=ON -DCMAKE_BUILD_TYPE=Release --build build/profile
 cmake --build build/profile
 ```
 
-Running the profiler executable will generate a `litr-profile.json` file that can be used with any Chromium based browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To generate the file run:
+Running the profiler executable will generate a `litr-profile.json` file that can be used with any Chromium based
+browser tracing tool, e.g. [chrome://tracing](chrome://tracing/). Just drag and drop the file into the tracing view. To
+generate the file run:
 
 ```shell
 ./build/profile/src/client/Client
@@ -245,19 +258,20 @@ Running the profiler executable will generate a `litr-profile.json` file that ca
 
 ### Different compiler
 
-To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be set, specifying the path to the compiler.
+To create builds on a different compiler the variables `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` can be set,
+specifying the path to the compiler.
 
 Example for clang on macOS, creating a debug build:
 
 ```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -B build/debug
+cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -B build/debug
 cmake --build build/debug
 ```
 
 Example for gcc on macOS, creating a debug build:
 
 ```shell
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -B build/debug
+cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -B build/debug
 cmake --build build/debug
 ```
 
