@@ -12,6 +12,8 @@
 
 namespace litr::cli {
 
+using namespace std::string_literals;
+
 struct Variable {
   enum class Type { STRING, BOOLEAN };
 
@@ -19,7 +21,7 @@ struct Variable {
   std::string name;
   // Default value should be an empty string as booleans
   // are always handled explicit.
-  std::variant<std::string, bool> value{};
+  std::variant<std::string, bool> value{""s};
 
   Variable(enum Type type, std::string name) : type(type), name(std::move(name)) {}
 
@@ -38,7 +40,7 @@ struct Variable {
       case config::Parameter::Type::STRING:
       case config::Parameter::Type::ARRAY:
         type = Type::STRING;
-        value = "";
+        value = ""s;
         break;
       case config::Parameter::Type::BOOLEAN:
         type = Type::BOOLEAN;
