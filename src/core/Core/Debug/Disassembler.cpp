@@ -43,7 +43,8 @@ size_t disassemble_instruction(
     case CLI::Instruction::Code::CLEAR:
       return simple_instruction("CLEAR", offset);
     default:
-      fmt::print("Unknown Instruction::Code {:d}\n", code);
+      // `static_cast` used here to avoid a custom formatter for fmt.
+      fmt::print("Unknown Instruction::Code {:d}\n", static_cast<unsigned char>(code));
       return offset + 1;
   }
 }

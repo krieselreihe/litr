@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
   fmt
   GIT_REPOSITORY "https://github.com/fmtlib/fmt.git"
-  GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc # 8.0.1
+  GIT_TAG b6f4ceaed0a0a24ccf575fab6c56dd50ccf6f1a9 # 8.1.1
 )
 add_subdirectory(fmt)
 
@@ -17,7 +17,7 @@ add_subdirectory(spdlog)
 FetchContent_Declare(
   toml11
   GIT_REPOSITORY "https://github.com/ToruNiina/toml11.git"
-  GIT_TAG 647381020ef04b5d41d540ec489eba45e82d90a7 # 3.7.0
+  GIT_TAG dcfe39a783a94e8d52c885e5883a6fbb21529019 # 3.7.1
 )
 add_subdirectory(toml11)
 
@@ -31,6 +31,6 @@ add_subdirectory(ordered-map)
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY "https://github.com/onqtam/doctest.git"
-  GIT_TAG 4d8716f1efc1d14aa736ef52ee727bd4204f4c40 # 2.4.6
+  GIT_TAG 7b9885133108ae301ddd16e2651320f54cafeba7 # 2.4.8
 )
 add_subdirectory(doctest)
