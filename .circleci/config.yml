@@ -13,14 +13,14 @@ jobs:
       - run:
           name: Create build files
           command: |
-            cmake -DCMAKE_BUILD_TYPE=Release -B build
+            cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_CXX_COMPILER=$(which clang++) -B build
       - run:
           name: Build application
           command: |
             cmake --build build
       - persist_to_workspace:
           root: .
-          paths: ['build']
+          paths: [ 'build' ]
   test:
     executor: default
     steps:
