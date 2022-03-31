@@ -143,6 +143,14 @@ bool Scanner::is_short_alpha(const char character) {
   return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
 }
 
+bool Scanner::is_hyphen(char character) {
+  return character == '-';
+}
+
+bool Scanner::is_underscore(char character) {
+  return character == '_';
+}
+
 bool Scanner::is_at_end() const {
   return *m_current == '\0';
 }
@@ -186,7 +194,7 @@ Token Scanner::number() {
 Token Scanner::command() {
   LITR_PROFILE_FUNCTION();
 
-  while (is_alpha(peek()) || is_digit(peek())) {
+  while (is_alpha(peek()) || is_digit(peek()) || is_hyphen(peek())) {
     advance();
   }
 
@@ -198,12 +206,12 @@ Token Scanner::long_parameter() {
 
   bool has_error{false};
 
-  if (is_digit(peek()) || peek() == '_' || !is_alpha(peek())) {
+  if (is_digit(peek()) || is_underscore(peek()) || !is_alpha(peek())) {
     advance();
     has_error = true;
   }
 
-  while (is_alpha(peek()) || is_digit(peek())) {
+  while (is_alpha(peek()) || is_digit(peek()) || is_hyphen(peek())) {
     advance();
   }
 

@@ -31,6 +31,8 @@ class Scanner {
   [[nodiscard]] static bool is_digit(char character);
   [[nodiscard]] static bool is_alpha(char character);
   [[nodiscard]] static bool is_short_alpha(char character);
+  [[nodiscard]] static bool is_hyphen(char character);
+  [[nodiscard]] static bool is_underscore(char character);
   [[nodiscard]] bool is_at_end() const;
 
   [[nodiscard]] Token string();
