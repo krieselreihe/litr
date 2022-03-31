@@ -179,6 +179,10 @@ bool Scanner::is_alpha(char character) {
          character == '_';
 }
 
+bool Scanner::is_hyphen(char character) {
+  return character == '-';
+}
+
 bool Scanner::is_at_end() const {
   LITR_PROFILE_FUNCTION();
 
@@ -229,7 +233,7 @@ Token Scanner::string() {
 Token Scanner::identifier() {
   LITR_PROFILE_FUNCTION();
 
-  while (is_alpha(peek()) || is_digit(peek())) {
+  while (is_alpha(peek()) || is_digit(peek()) || is_hyphen(peek())) {
     advance();
   }
 
