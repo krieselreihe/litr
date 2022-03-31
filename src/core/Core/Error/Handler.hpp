@@ -9,7 +9,7 @@
 
 #include "Core/Error/BaseError.hpp"
 
-namespace litr::error {
+namespace Litr::Error {
 
 class Handler {
  public:
@@ -39,4 +39,4 @@ class Handler {
   Errors m_errors{};
 };
 
-}  // namespace litr::error
+}  // namespace Litr::Error

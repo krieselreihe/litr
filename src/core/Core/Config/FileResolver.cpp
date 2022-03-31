@@ -8,7 +8,7 @@
 #include "Core/Environment.hpp"
 #include "Core/Log.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 FileResolver::FileResolver(const std::string& cwd) : FileResolver(Path(cwd)) {}
 
@@ -78,4 +78,4 @@ void FileResolver::find_file(const Path& cwd) {
   }
 }
 
-}  // namespace litr::config
+}  // namespace Litr::Config

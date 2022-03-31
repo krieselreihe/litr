@@ -8,7 +8,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::script {
+namespace Litr::Script {
 
 Scanner::Scanner(const char* source) : m_start(source), m_current(source) {}
 
@@ -260,4 +260,4 @@ TokenType Scanner::check_keyword(
   return TokenType::IDENTIFIER;
 }
 
-}  // namespace litr::script
+}  // namespace Litr::Script

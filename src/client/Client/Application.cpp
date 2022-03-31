@@ -14,14 +14,14 @@
 #include "Hooks/Help.hpp"
 #include "Hooks/Version.hpp"
 
-namespace litr {
+namespace Litr {
 
 ExitStatus Application::run(const std::vector<std::string>& arguments) {
   LITR_PROFILE_FUNCTION();
 
   const std::string source{source_from_arguments(arguments)};
-  const auto instruction{std::make_shared<cli::Instruction>()};
-  const cli::Parser parser{instruction, source};
+  const auto instruction{std::make_shared<CLI::Instruction>()};
+  const CLI::Parser parser{instruction, source};
 
   // Litr called without any arguments:
   if (instruction->count() == 0) {
@@ -29,10 +29,10 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
     return ExitStatus::FAILURE;
   }
 
-  hook::Handler hooks{instruction};
+  Hook::Handler hooks{instruction};
 
   // Hooks before config
-  hooks.add(cli::Instruction::Code::DEFINE, {"version", "v"}, hook::Version::print);
+  hooks.add(CLI::Instruction::Code::DEFINE, {"version", "v"}, Hook::Version::print);
   if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
@@ -42,19 +42,19 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
     return m_exit_status;
   }
 
-  error::Reporter error_reporter{config_path};
-  if (error::Handler::has_errors()) {
-    error_reporter.print_errors(error::Handler::get_errors());
+  Error::Reporter error_reporter{config_path};
+  if (Error::Handler::has_errors()) {
+    error_reporter.print_errors(Error::Handler::get_errors());
     return ExitStatus::FAILURE;
   }
 
-  const auto config{std::make_shared<config::Loader>(config_path)};
-  const auto interpreter{std::make_shared<cli::Interpreter>(instruction, config)};
+  const auto config{std::make_shared<Config::Loader>(config_path)};
+  const auto interpreter{std::make_shared<CLI::Interpreter>(instruction, config)};
 
-  hooks.add(cli::Instruction::Code::DEFINE,
+  hooks.add(CLI::Instruction::Code::DEFINE,
       {"help", "h"},
-      [&config](const std::shared_ptr<cli::Instruction>& instruction) {
-        const hook::Help help{config};
+      [&config](const std::shared_ptr<CLI::Instruction>& instruction) {
+        const Hook::Help help{config};
         help.print(instruction);
       });
   if (hooks.execute()) {
@@ -63,8 +63,8 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
 
   // Run
   interpreter->execute();
-  if (error::Handler::has_errors()) {
-    error_reporter.print_errors(error::Handler::get_errors());
+  if (Error::Handler::has_errors()) {
+    error_reporter.print_errors(Error::Handler::get_errors());
     return ExitStatus::FAILURE;
   }
 
@@ -75,15 +75,15 @@ Path Application::get_config_path() {
   LITR_PROFILE_FUNCTION();
 
   Path cwd{FileSystem::get_current_working_directory()};
-  config::FileResolver config_path{cwd};
+  Config::FileResolver config_path{cwd};
 
   switch (config_path.get_status()) {
-    case config::FileResolver::Status::NOT_FOUND: {
+    case Config::FileResolver::Status::NOT_FOUND: {
       fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
       m_exit_status = ExitStatus::FAILURE;
       break;
     }
-    case config::FileResolver::Status::DUPLICATE: {
+    case Config::FileResolver::Status::DUPLICATE: {
       fmt::print(fg(fmt::color::gold),
           "You defined both, litr.toml and .litr.toml in {}. "
           "This is probably an error and you only want one of them.\n",
@@ -91,7 +91,7 @@ Path Application::get_config_path() {
       m_exit_status = ExitStatus::FAILURE;
       break;
     }
-    case config::FileResolver::Status::FOUND: {
+    case Config::FileResolver::Status::FOUND: {
       LITR_TRACE("Configuration file found under: {}\n", config_path.get_file_path());
       break;
     }
@@ -112,7 +112,7 @@ std::string Application::source_from_arguments(const std::vector<std::string>& a
 
     if (found != std::string::npos) {
       std::vector<std::string> parts{};
-      utils::split_into(argument, '=', parts);
+      Utils::split_into(argument, '=', parts);
       argument = parts[0].append("=\"").append(parts[1]).append("\"");
     }
 
@@ -123,4 +123,4 @@ std::string Application::source_from_arguments(const std::vector<std::string>& a
   return source;
 }
 
-}  // namespace litr
+}  // namespace Litr

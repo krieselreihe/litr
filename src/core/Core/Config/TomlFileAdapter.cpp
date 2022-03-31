@@ -7,7 +7,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 TomlFileAdapter::Value TomlFileAdapter::parse(const Path& file_path) const {
   LITR_PROFILE_FUNCTION();
@@ -17,13 +17,13 @@ TomlFileAdapter::Value TomlFileAdapter::parse(const Path& file_path) const {
   try {
     config = toml::parse<toml::discard_comments, tsl::ordered_map>(file_path.to_string());
   } catch (const toml::syntax_error& err) {
-    error::Handler::push(
-        error::MalformedFileError("There is a syntax error inside the configuration file.", err));
+    Error::Handler::push(
+        Error::MalformedFileError("There is a syntax error inside the configuration file.", err));
     return config;
   }
 
   if (!config.is_table()) {
-    error::Handler::push(error::MalformedFileError("Configuration is not a TOML table."));
+    Error::Handler::push(Error::MalformedFileError("Configuration is not a TOML table."));
   }
 
   return config;
@@ -36,4 +36,4 @@ const TomlFileAdapter::Value& TomlFileAdapter::find(
   return toml::find(value, key);
 }
 
-}  // namespace litr::config
+}  // namespace Litr::Config

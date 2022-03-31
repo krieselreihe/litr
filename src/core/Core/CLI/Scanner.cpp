@@ -6,7 +6,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 Scanner::Scanner(const char* source) : m_start(source), m_current(source) {}
 
@@ -234,4 +234,4 @@ Token Scanner::short_parameter() {
   return make_token(TokenType::SHORT_PARAMETER);
 }
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

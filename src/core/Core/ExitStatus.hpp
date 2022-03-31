@@ -4,8 +4,8 @@
 
 #pragma once
 
-namespace litr {
+namespace Litr {
 
 enum class ExitStatus : int { SUCCESS = 0, FAILURE = 1 };
 
-}  // namespace litr
+}  // namespace Litr

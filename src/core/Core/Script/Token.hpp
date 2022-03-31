@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace litr::script {
+namespace Litr::Script {
 
 enum class TokenType {
   // Single-character tokens.
@@ -34,4 +34,4 @@ struct Token {
   uint32_t column{};
 };
 
-}  // namespace litr::script
+}  // namespace Litr::Script

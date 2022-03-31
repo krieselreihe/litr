@@ -10,33 +10,33 @@
 
 #include "Core.hpp"
 
-namespace litr::hook {
+namespace Litr::Hook {
 
 class Handler {
-  using HookCallback = std::function<void(const std::shared_ptr<cli::Instruction>& instruction)>;
-  using Code = cli::Instruction::Code;
-  using Value = cli::Instruction::Value;
+  using HookCallback = std::function<void(const std::shared_ptr<CLI::Instruction>& instruction)>;
+  using Code = CLI::Instruction::Code;
+  using Value = CLI::Instruction::Value;
 
   struct Hook {
-    cli::Instruction::Code code;
-    cli::Instruction::Value value;
+    CLI::Instruction::Code code;
+    CLI::Instruction::Value value;
     HookCallback callback;
 
-    Hook(cli::Instruction::Code code, cli::Instruction::Value value, HookCallback callback)
+    Hook(CLI::Instruction::Code code, CLI::Instruction::Value value, HookCallback callback)
         : code(code),
           value(std::move(value)),
           callback(std::move(callback)) {}
   };
 
  public:
-  explicit Handler(const std::shared_ptr<cli::Instruction>& instruction);
+  explicit Handler(const std::shared_ptr<CLI::Instruction>& instruction);
 
   void add(Code code, const std::vector<Value>& values, const HookCallback& callback);
   [[nodiscard]] bool execute() const;
 
  private:
-  const std::shared_ptr<cli::Instruction>& m_instruction;
+  const std::shared_ptr<CLI::Instruction>& m_instruction;
   std::vector<Hook> m_hooks{};
 };
 
-}  // namespace litr::hook
+}  // namespace Litr::Hook

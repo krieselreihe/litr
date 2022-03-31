@@ -9,7 +9,7 @@
 
 #include "Core/Script/Token.hpp"
 
-namespace litr::script {
+namespace Litr::Script {
 
 class Scanner {
  public:
@@ -57,4 +57,4 @@ class Scanner {
   std::stack<Mode> m_modes{{Mode::UNTOUCHED}};
 };
 
-}  // namespace litr::script
+}  // namespace Litr::Script

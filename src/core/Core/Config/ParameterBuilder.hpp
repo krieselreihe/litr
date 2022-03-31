@@ -11,7 +11,7 @@
 #include "Core/Config/Parameter.hpp"
 #include "Core/Config/TomlFileAdapter.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 class ParameterBuilder {
  public:
@@ -39,4 +39,4 @@ class ParameterBuilder {
   const TomlFileAdapter m_file{};
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

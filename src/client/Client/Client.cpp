@@ -14,8 +14,8 @@ int main(int argc, char* argv[]) {
   // Incremented argv plus 1 to skip the program name.
   const std::vector<std::string> arguments{argv + 1, argv + argc};
 
-  litr::Application app{};
-  litr::ExitStatus status{app.run(arguments)};
+  Litr::Application app{};
+  Litr::ExitStatus status{app.run(arguments)};
 
   LITR_PROFILE_END_SESSION();
 

@@ -10,7 +10,7 @@
 
 #include "Core/FileSystem.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 template <typename T>
 class FileAdapter {
@@ -25,4 +25,4 @@ class FileAdapter {
   virtual const Value& find(const Value&, const std::string& key) const = 0;
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

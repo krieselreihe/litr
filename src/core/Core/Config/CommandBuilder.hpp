@@ -14,7 +14,7 @@
 #include "Core/Config/TomlFileAdapter.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 class CommandBuilder {
  public:
@@ -46,4 +46,4 @@ class CommandBuilder {
   const TomlFileAdapter m_file{};
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

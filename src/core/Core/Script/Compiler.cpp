@@ -13,9 +13,9 @@
 #include "Core/Error/Handler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::script {
+namespace Litr::Script {
 
-Compiler::Compiler(const std::string& source, config::Location location, Variables variables)
+Compiler::Compiler(const std::string& source, Config::Location location, Variables variables)
     : m_scanner(source.c_str()),
       m_location(std::move(location)),
       m_variables(std::move(variables)) {
@@ -142,17 +142,17 @@ void Compiler::identifier() {
   collect_used_variable(variable->second);
 
   switch (variable->second.type) {
-    case cli::Variable::Type::STRING:
+    case CLI::Variable::Type::STRING:
       string(variable->second);
       break;
-    case cli::Variable::Type::BOOLEAN:
+    case CLI::Variable::Type::BOOLEAN:
       statement(variable->second);
       break;
   }
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-void Compiler::statement(const cli::Variable& variable) {
+void Compiler::statement(const CLI::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
   advance();
@@ -165,7 +165,7 @@ void Compiler::statement(const cli::Variable& variable) {
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-void Compiler::or_statement(const cli::Variable& variable) {
+void Compiler::or_statement(const CLI::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
   if (std::get<bool>(variable.value)) {
@@ -186,7 +186,7 @@ void Compiler::or_statement(const cli::Variable& variable) {
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-void Compiler::if_statement(const cli::Variable& variable) {
+void Compiler::if_statement(const CLI::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
   if (std::get<bool>(variable.value)) {
@@ -212,10 +212,10 @@ void Compiler::expression() {
 void Compiler::string() {
   LITR_PROFILE_FUNCTION();
 
-  m_script.append(utils::trim(Scanner::get_token_value(m_previous), '\''));
+  m_script.append(Utils::trim(Scanner::get_token_value(m_previous), '\''));
 }
 
-void Compiler::string(const cli::Variable& variable) {
+void Compiler::string(const CLI::Variable& variable) {
   LITR_PROFILE_FUNCTION();
 
   m_script.append(std::get<std::string>(variable.value));
@@ -233,7 +233,7 @@ void Compiler::end_of_script() {
   consume(TokenType::EOS, "Expected end.");
 }
 
-void Compiler::collect_used_variable(const cli::Variable& variable) {
+void Compiler::collect_used_variable(const CLI::Variable& variable) {
   // If name is not already collected:
   if (std::find(m_used_variables.begin(), m_used_variables.end(), variable.name) ==
       m_used_variables.end()) {
@@ -273,8 +273,8 @@ void Compiler::error_at(Token* token, const std::string& message) {
 
   out_message.append(fmt::format(": {}", message));
 
-  error::Handler::push(error::ScriptParserError(
+  Error::Handler::push(Error::ScriptParserError(
       out_message, m_location.line, m_location.column + token->column + 1, m_location.line_str));
 }
 
-}  // namespace litr::script
+}  // namespace Litr::Script

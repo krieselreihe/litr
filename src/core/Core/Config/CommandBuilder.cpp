@@ -8,7 +8,7 @@
 
 #include "Core/Error/Handler.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 CommandBuilder::CommandBuilder(const TomlFileAdapter::Value& context,
     const TomlFileAdapter::Value& data,
@@ -42,7 +42,7 @@ void CommandBuilder::add_script(const TomlFileAdapter::Value& scripts) {
 
   for (auto&& script : scripts.as_array()) {
     if (!script.is_string()) {
-      error::Handler::push(error::MalformedScriptError(
+      Error::Handler::push(Error::MalformedScriptError(
           "A command script can be either a string or array of strings.",
           m_context.at(m_command->name)));
       // Stop after first error in an array of scripts, to avoid being too verbose.
@@ -66,7 +66,7 @@ void CommandBuilder::add_description() {
       return;
     }
 
-    error::Handler::push(error::MalformedCommandError(
+    Error::Handler::push(Error::MalformedCommandError(
         fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
   }
 }
@@ -83,7 +83,7 @@ void CommandBuilder::add_example() {
       return;
     }
 
-    error::Handler::push(error::MalformedCommandError(
+    Error::Handler::push(Error::MalformedCommandError(
         fmt::format(R"(The "{}" can only be a string.)", name), m_table.at(name)));
   }
 }
@@ -104,7 +104,7 @@ void CommandBuilder::add_directory(const Path& root) {
     if (directories.is_array()) {
       for (auto&& directory : directories.as_array()) {
         if (!directory.is_string()) {
-          error::Handler::push(error::MalformedCommandError(
+          Error::Handler::push(Error::MalformedCommandError(
               fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
               m_table.at(name)));
           continue;
@@ -115,7 +115,7 @@ void CommandBuilder::add_directory(const Path& root) {
       return;
     }
 
-    error::Handler::push(error::MalformedCommandError(
+    Error::Handler::push(Error::MalformedCommandError(
         fmt::format(R"(A "{}" can either be a string or array of strings.)", name),
         m_table.at(name)));
   }
@@ -141,7 +141,7 @@ void CommandBuilder::add_output() {
       }
     }
 
-    error::Handler::push(error::MalformedCommandError(
+    Error::Handler::push(Error::MalformedCommandError(
         fmt::format(R"(The "{}" can either be "unchanged" or "silent".)", name), m_table.at(name)));
   }
 }
@@ -159,4 +159,4 @@ void CommandBuilder::add_location(const TomlFileAdapter::Value& context) {
       context.location().line(), context.location().column(), context.location().line_str());
 }
 
-}  // namespace litr::config
+}  // namespace Litr::Config

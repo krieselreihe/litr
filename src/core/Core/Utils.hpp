@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace litr::utils {
+namespace Litr::Utils {
 
 [[nodiscard]] std::string trim_left(const std::string& src, char character);
 [[nodiscard]] std::string trim_right(const std::string& src, char character);
@@ -22,4 +22,4 @@ void deduplicate(std::vector<std::string>& items);
 
 std::string replace(const std::string& source, const std::string& from, const std::string& to);
 
-}  // namespace litr::utils
+}  // namespace Litr::Utils

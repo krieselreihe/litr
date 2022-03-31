@@ -12,7 +12,7 @@
 #include "Core/CLI/Scanner.hpp"
 #include "Core/CLI/Token.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 class Parser {
  public:
@@ -63,4 +63,4 @@ class Parser {
   bool m_panic_mode{false};
 };
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

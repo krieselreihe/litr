@@ -13,11 +13,11 @@
 #include "Core/CLI/Variable.hpp"
 #include "Core/Config/Loader.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 class Query {
   using Parts = std::deque<std::string>;
-  using Variables = std::unordered_map<std::string, cli::Variable>;
+  using Variables = std::unordered_map<std::string, CLI::Variable>;
 
  public:
   using Commands = std::vector<std::shared_ptr<Command>>;
@@ -47,4 +47,4 @@ class Query {
   const std::shared_ptr<Loader>& m_config;
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

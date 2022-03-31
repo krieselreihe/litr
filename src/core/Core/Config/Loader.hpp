@@ -15,7 +15,7 @@
 #include "Core/Config/TomlFileAdapter.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::config {
+namespace Litr::Config {
 
 // @todo: "Loader" is a horrible name. I thought about "File", but this feels rather
 //  generic and only works in context of the namespace "config". I have no clue how
@@ -50,4 +50,4 @@ class Loader {
   Parameters m_parameters{};
 };
 
-}  // namespace litr::config
+}  // namespace Litr::Config

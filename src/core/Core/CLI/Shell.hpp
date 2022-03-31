@@ -10,7 +10,7 @@
 #include "Core/ExitStatus.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 class Shell {
  public:
@@ -33,4 +33,4 @@ class Shell {
   [[nodiscard]] static std::string create_cd_command(const Path& path);
 };
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

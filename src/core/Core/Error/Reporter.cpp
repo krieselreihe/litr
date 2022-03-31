@@ -14,7 +14,7 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::error {
+namespace Litr::Error {
 
 Reporter::Reporter(Path path) : m_file_path(std::move(path)) {}
 
@@ -95,4 +95,4 @@ uint32_t Reporter::count_digits(uint32_t number) {
   return count;
 }
 
-}  // namespace litr::error
+}  // namespace Litr::Error

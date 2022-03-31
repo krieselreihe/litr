@@ -12,7 +12,7 @@
 #include "Core/Script/Compiler.hpp"
 #include "Core/Utils.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 /** @private */
 static void command_path_to_human_readable(std::string& path) {
@@ -22,7 +22,7 @@ static void command_path_to_human_readable(std::string& path) {
 }
 
 Interpreter::Interpreter(
-    const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<config::Loader>& config)
+    const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<Config::Loader>& config)
     : m_instruction(instruction),
       m_query(config) {
   define_default_variables(config);
@@ -62,19 +62,19 @@ Interpreter::Variables Interpreter::get_scope_variables() const {
   return variables;
 }
 
-void Interpreter::define_default_variables(const std::shared_ptr<config::Loader>& config) {
+void Interpreter::define_default_variables(const std::shared_ptr<Config::Loader>& config) {
   LITR_PROFILE_FUNCTION();
 
   const auto params{config->get_parameters()};
   for (auto&& param : params) {
     switch (param->type) {
-      case config::Parameter::Type::BOOLEAN: {
+      case Config::Parameter::Type::BOOLEAN: {
         Variable variable{param->name, false};
         m_scope.back().insert_or_assign(variable.name, variable);
         break;
       }
-      case config::Parameter::Type::STRING:
-      case config::Parameter::Type::ARRAY: {
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY: {
         if (!param->default_value.empty()) {
           Variable variable{param->name, param->default_value};
           m_scope.back().insert_or_assign(variable.name, variable);
@@ -128,10 +128,10 @@ void Interpreter::define_variable() {
   LITR_PROFILE_FUNCTION();
 
   const Instruction::Value name{read_current_value()};
-  const std::shared_ptr<config::Parameter>& param{m_query.get_parameter(name)};
+  const std::shared_ptr<Config::Parameter>& param{m_query.get_parameter(name)};
 
   if (param == nullptr) {
-    handle_error(error::CommandNotFoundError(
+    handle_error(Error::CommandNotFoundError(
         fmt::format("Parameter with the name \"{}\" is not defined."
                     "\n  Run `litr --help` to see a list available options.",
             name)));
@@ -141,12 +141,12 @@ void Interpreter::define_variable() {
   Variable variable{get_variable_type(param), param->name};
 
   switch (param->type) {
-    case config::Parameter::Type::BOOLEAN: {
+    case Config::Parameter::Type::BOOLEAN: {
       variable.value = true;
       break;
     }
-    case config::Parameter::Type::STRING:
-    case config::Parameter::Type::ARRAY: {
+    case Config::Parameter::Type::STRING:
+    case Config::Parameter::Type::ARRAY: {
       if (!param->default_value.empty()) {
         variable.value = param->default_value;
       }
@@ -164,15 +164,15 @@ void Interpreter::set_constant() {
   LITR_PROFILE_FUNCTION();
 
   const Instruction::Value value{read_current_value()};
-  cli::Variable& variable{m_scope.back().at(m_current_variable_name)};
+  CLI::Variable& variable{m_scope.back().at(m_current_variable_name)};
   const auto param{m_query.get_parameter(variable.name)};
 
   switch (param->type) {
-    case config::Parameter::Type::STRING: {
+    case Config::Parameter::Type::STRING: {
       variable.value = value;
       break;
     }
-    case config::Parameter::Type::ARRAY: {
+    case Config::Parameter::Type::ARRAY: {
       const auto& args{param->type_arguments};
       if (std::find(args.begin(), args.end(), value) == args.end()) {
         std::string options{"Available options are:"};
@@ -180,23 +180,23 @@ void Interpreter::set_constant() {
           options.append(fmt::format(" \"{}\",", option));
         }
 
-        handle_error(error::CommandNotFoundError(
+        handle_error(Error::CommandNotFoundError(
             fmt::format("Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
                 value,
                 param->name,
-                utils::trim_right(options, ','))));
+                Utils::trim_right(options, ','))));
         return;
       }
       variable.value = value;
       break;
     }
-    case config::Parameter::Type::BOOLEAN: {
+    case Config::Parameter::Type::BOOLEAN: {
       if (value == "false") {
         variable.value = false;
       } else if (value == "true") {
         variable.value = true;
       } else {
-        handle_error(error::CommandNotFoundError(
+        handle_error(Error::CommandNotFoundError(
             fmt::format("Parameter value \"{}\" is not valid for boolean option \"{}\"."
                         "\n  Please use \"false\", \"true\" or no value for true as well.",
                 value,
@@ -215,10 +215,10 @@ void Interpreter::call_instruction() {
   LITR_PROFILE_FUNCTION();
 
   const Instruction::Value name{read_current_value()};
-  const std::shared_ptr<config::Command> command{m_query.get_command(name)};
+  const std::shared_ptr<Config::Command> command{m_query.get_command(name)};
 
   if (command == nullptr) {
-    handle_error(error::CommandNotFoundError(fmt::format(
+    handle_error(Error::CommandNotFoundError(fmt::format(
         "Command \"{}\" could not be found.\n  Run `litr --help` to see a list of commands.",
         name)));
     return;
@@ -231,7 +231,7 @@ void Interpreter::call_instruction() {
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE(misc-no-recursion)
 void Interpreter::call_command(
-    const std::shared_ptr<config::Command>& command, const std::string& scope) {
+    const std::shared_ptr<Config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   std::string command_path{scope + command->name};
@@ -241,7 +241,7 @@ void Interpreter::call_command(
     return;
   }
 
-  const bool print_result{command->output == config::Command::Output::SILENT};
+  const bool print_result{command->output == Config::Command::Output::SILENT};
   const Scripts scripts{parse_scripts(command)};
   if (m_stop_execution) {
     return;
@@ -267,7 +267,7 @@ void Interpreter::call_command(
 // Ignore recursive call of child commands.
 // NOLINTNEXTLINE(misc-no-recursion)
 void Interpreter::call_child_commands(
-    const std::shared_ptr<config::Command>& command, const std::string& scope) {
+    const std::shared_ptr<Config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
   if (!command->child_commands.empty()) {
@@ -293,14 +293,14 @@ void Interpreter::run_scripts(const Scripts& scripts,
         print_result ? Shell::exec(script, path) : Shell::exec(script, path, print)};
 
     if (result.status == ExitStatus::FAILURE) {
-      handle_error(error::ExecutionFailureError(
+      handle_error(Error::ExecutionFailureError(
           fmt::format("Problem executing the command defined in \"{}\".", command_path)));
       return;
     }
   }
 }
 
-Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<config::Command>& command) {
+Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<Config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   size_t location{0};
@@ -318,13 +318,13 @@ Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<config::Co
   return scripts;
 }
 
-std::string Interpreter::parse_script(const std::string& script, const config::Location& location) {
+std::string Interpreter::parse_script(const std::string& script, const Config::Location& location) {
   LITR_PROFILE_FUNCTION();
 
   const Variables variables{get_scope_variables()};
-  script::Compiler parser{script, location, variables};
+  Script::Compiler parser{script, location, variables};
 
-  if (error::Handler::has_errors()) {
+  if (Error::Handler::has_errors()) {
     m_stop_execution = true;
   }
 
@@ -332,15 +332,15 @@ std::string Interpreter::parse_script(const std::string& script, const config::L
 }
 
 enum Variable::Type Interpreter::get_variable_type(
-    const std::shared_ptr<config::Parameter>& param) {
+    const std::shared_ptr<Config::Parameter>& param) {
   LITR_PROFILE_FUNCTION();
 
   switch (param->type) {
-    case config::Parameter::Type::BOOLEAN: {
+    case Config::Parameter::Type::BOOLEAN: {
       return Variable::Type::BOOLEAN;
     }
-    case config::Parameter::Type::STRING:
-    case config::Parameter::Type::ARRAY: {
+    case Config::Parameter::Type::STRING:
+    case Config::Parameter::Type::ARRAY: {
       return Variable::Type::STRING;
     }
   }
@@ -348,14 +348,14 @@ enum Variable::Type Interpreter::get_variable_type(
   return {};
 }
 
-void Interpreter::validate_required_parameters(const std::shared_ptr<config::Command>& command) {
+void Interpreter::validate_required_parameters(const std::shared_ptr<Config::Command>& command) {
   LITR_PROFILE_FUNCTION();
 
   const auto params{m_query.get_parameters(command->name)};
 
   for (auto&& param : params) {
     if (!is_variable_defined(param->name)) {
-      handle_error(error::ExecutionFailureError(
+      handle_error(Error::ExecutionFailureError(
           fmt::format("The parameter --{} is required. "
                       "You should run the command again with the required parameter.",
               param->name)));
@@ -369,8 +369,8 @@ bool Interpreter::is_variable_defined(const std::string& name) const {
 
   const Variables variables{get_scope_variables()};
   return std::any_of(
-      variables.begin(), variables.end(), [&name](std::pair<std::string, cli::Variable>&& var) {
-        if (var.second.type == cli::Variable::Type::STRING) {
+      variables.begin(), variables.end(), [&name](std::pair<std::string, CLI::Variable>&& var) {
+        if (var.second.type == CLI::Variable::Type::STRING) {
           return name == var.second.name && !std::get<std::string>(var.second.value).empty();
         }
 
@@ -378,11 +378,11 @@ bool Interpreter::is_variable_defined(const std::string& name) const {
       });
 }
 
-void Interpreter::handle_error(const error::BaseError& error) {
+void Interpreter::handle_error(const Error::BaseError& error) {
   LITR_PROFILE_FUNCTION();
 
   m_stop_execution = true;
-  error::Handler::push(error);
+  Error::Handler::push(error);
 }
 
 void Interpreter::print(const std::string& message) {
@@ -391,4 +391,4 @@ void Interpreter::print(const std::string& message) {
   fmt::print("{}", message);
 }
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

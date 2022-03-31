@@ -10,7 +10,7 @@
 
 #include "Core/Config/Parameter.hpp"
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 using namespace std::string_literals;
 
@@ -35,14 +35,14 @@ struct Variable {
         name(std::move(name)),
         value(std::move(value)) {}
 
-  explicit Variable(const config::Parameter& parameter) : name(parameter.name) {
+  explicit Variable(const Config::Parameter& parameter) : name(parameter.name) {
     switch (parameter.type) {
-      case config::Parameter::Type::STRING:
-      case config::Parameter::Type::ARRAY:
+      case Config::Parameter::Type::STRING:
+      case Config::Parameter::Type::ARRAY:
         type = Type::STRING;
         value = ""s;
         break;
-      case config::Parameter::Type::BOOLEAN:
+      case Config::Parameter::Type::BOOLEAN:
         type = Type::BOOLEAN;
         value = false;
         break;
@@ -50,4 +50,4 @@ struct Variable {
   }
 };
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI

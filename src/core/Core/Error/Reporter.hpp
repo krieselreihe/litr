@@ -9,7 +9,7 @@
 #include "Core/Error/BaseError.hpp"
 #include "Core/FileSystem.hpp"
 
-namespace litr::error {
+namespace Litr::Error {
 
 class Reporter {
  public:
@@ -25,4 +25,4 @@ class Reporter {
   bool m_multiple_errors{false};
 };
 
-}  // namespace litr::error
+}  // namespace Litr::Error

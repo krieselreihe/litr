@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace litr::cli {
+namespace Litr::CLI {
 
 class Instruction {
  public:
@@ -39,4 +39,4 @@ class Instruction {
   std::vector<Value> m_constants{};
 };
 
-}  // namespace litr::cli
+}  // namespace Litr::CLI
