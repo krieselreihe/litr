@@ -19,10 +19,13 @@ class Help {
  private:
   void print_welcome_message() const;
   void print_usage() const;
+  void print_command_usage() const;
+
   void print_commands() const;
   void print_command(const std::shared_ptr<Config::Command>& command,
       const std::string& parent_name,
       size_t depth = 1) const;
+
   void print_example(const std::shared_ptr<Config::Command>& command) const;
   void print_options() const;
   void print_parameter_options(const std::shared_ptr<Config::Parameter>& param) const;

@@ -48,13 +48,24 @@ void Help::print_usage() const {
   LITR_PROFILE_FUNCTION();
 
   if (!m_command_name.empty()) {
-    std::string command_name{m_command_name};
-    std::replace(command_name.begin(), command_name.end(), '.', ' ');
-    fmt::print("Usage: litr {} [options]\n\n", command_name);
+    print_command_usage();
     return;
   }
 
   fmt::print("Usage: litr command [options]\n\n");
+}
+
+void Help::print_command_usage() const {
+  std::string command_name{m_command_name};
+  std::replace(command_name.begin(), command_name.end(), '.', ' ');
+  fmt::print("Usage: litr {} [options]", command_name);
+
+  const std::string description{m_query.get_command(m_command_name)->description};
+  if (!description.empty()) {
+    fmt::print("\n  {}", m_query.get_command(m_command_name)->description);
+  }
+
+  fmt::print("\n\n");
 }
 
 void Help::print_commands() const {
