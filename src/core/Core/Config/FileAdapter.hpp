@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <tsl/ordered_map.h>
-
 #include <string>
 
 #include "Core/FileSystem.hpp"
@@ -16,7 +14,6 @@ template <typename T>
 class FileAdapter {
  public:
   using Value = T;
-  using Table = tsl::ordered_map<std::string, Value>;
 
   virtual ~FileAdapter() = default;
 
