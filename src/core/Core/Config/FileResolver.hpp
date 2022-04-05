@@ -26,14 +26,14 @@ class FileResolver {
   [[nodiscard]] Path get_file_directory() const;
 
  private:
+  void find_file(const Path& cwd);
+
   const std::string m_file_name{"litr.toml"};
   const std::string m_hidden_filename{".litr.toml"};
 
   Path m_directory{};
   Path m_path{};
   Status m_status{Status::NOT_FOUND};
-
-  void find_file(const Path& cwd);
 };
 
 }  // namespace Litr::Config

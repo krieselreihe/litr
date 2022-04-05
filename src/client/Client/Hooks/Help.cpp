@@ -203,7 +203,7 @@ void Help::print_with_description(
   std::vector<std::string> lines{};
   Utils::split_into(description, '\n', lines);
 
-  const size_t max_padding{22};
+  constexpr size_t max_padding{22};
   const size_t padding{get_parameter_padding()};
   bool use_max_padding{padding + extra_padding > max_padding};
 
