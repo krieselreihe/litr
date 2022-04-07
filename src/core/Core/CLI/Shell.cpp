@@ -33,8 +33,8 @@ Shell::Result Shell::exec(
   LITR_CORE_TRACE("Executing command \"{}\"", cmd);
 
   // @todo: So, this whole part won't be linted, because everything is screaming, for
-  // very good reasons as well. So, this needs some love here and maybe a better way
-  // to execute a command on the default shell.
+  //  very good reasons as well. So, this needs some love here and maybe a better way
+  //  to execute a command on the default shell.
   // NOLINTNEXTLINE
   FILE* stream{popen(cmd.c_str(), "r")};
 
