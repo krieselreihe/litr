@@ -15,8 +15,8 @@ class Scanner {
   explicit Scanner(const char* source);
 
   [[nodiscard]] Token scan_token();
-  [[nodiscard]] static std::string get_token_value(const Token& token);
-  [[nodiscard]] static std::string get_token_value(Token* token);
+  [[nodiscard]] static std::string token_value(const Token& token);
+  [[nodiscard]] static std::string token_value(Token* token);
 
  private:
   void skip_whitespace();

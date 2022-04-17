@@ -35,7 +35,7 @@ TEST_SUITE("Config::Query") {
     }
   }
 
-  TEST_CASE("get_commands()") {
+  TEST_CASE("commands()") {
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
     const auto config{std::make_shared<Litr::Config::Loader>(path)};
     const Litr::Config::Query query{config};
@@ -71,7 +71,7 @@ TEST_SUITE("Config::Query") {
     }
   }
 
-  TEST_CASE("get_parameters()") {
+  TEST_CASE("parameters()") {
     const Litr::Path path{"../../Fixtures/Config/commands-params.toml"};
     const auto config{std::make_shared<Litr::Config::Loader>(path)};
     const Litr::Config::Query query{config};

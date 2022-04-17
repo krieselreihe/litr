@@ -13,11 +13,11 @@ TEST_SUITE("Config::CommandBuilder") {
   TEST_CASE("Initiates a Command on construction") {
     const auto [context, data] = create_toml_mock("test", "");
 
-    Litr::Config::CommandBuilder builder{context, data, "test"};
-    Litr::Config::Command builder_result{*builder.get_result()};
-    Litr::Config::Command compare{"test"};
+    const Litr::Config::CommandBuilder builder{context, data, "test"};
+    const Litr::Config::Command builder_result{*builder.result()};
+    const Litr::Config::Command compare{"test"};
 
-    CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+    CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
     CHECK_EQ(sizeof(builder_result), sizeof(compare));
     Litr::Error::Handler::flush();
   }
@@ -30,9 +30,9 @@ TEST_SUITE("Config::CommandBuilder") {
       builder.add_script_line("first line");
       builder.add_script_line("second line");
 
-      const auto result{builder.get_result()};
+      const auto result{builder.result()};
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
       CHECK_EQ(result->script[0], "first line");
       CHECK_EQ(result->script[1], "second line");
       Litr::Error::Handler::flush();
@@ -47,9 +47,9 @@ TEST_SUITE("Config::CommandBuilder") {
       const std::vector script{"first line", "second line"};
       builder.add_script(script);
 
-      const auto result{builder.get_result()};
+      const auto result{builder.result()};
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
       CHECK_EQ(result->script[0], "first line");
       CHECK_EQ(result->script[1], "second line");
       Litr::Error::Handler::flush();
@@ -58,12 +58,12 @@ TEST_SUITE("Config::CommandBuilder") {
     SUBCASE("Emits and error if script data is not of type string") {
       const auto [context, data] = create_toml_mock("test", "scripts = [1]");
 
-      Litr::Config::TomlFileAdapter file{};
+      const Litr::Config::TomlFileAdapter file{};
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_script(file.find(data, "scripts"));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           "A command script can be either a string or array of strings.");
       Litr::Error::Handler::flush();
     }
@@ -71,12 +71,12 @@ TEST_SUITE("Config::CommandBuilder") {
     SUBCASE("Emits only one error if script data is not of type string") {
       const auto [context, data] = create_toml_mock("test", "scripts = [1, 2, 3]");
 
-      Litr::Config::TomlFileAdapter file{};
+      const Litr::Config::TomlFileAdapter file{};
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_script(file.find(data, "scripts"));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           "A command script can be either a string or array of strings.");
       Litr::Error::Handler::flush();
     }
@@ -85,13 +85,13 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [context, data] =
           create_toml_mock("test", R"(scripts = ["first line", "second line"])");
 
-      Litr::Config::TomlFileAdapter file{};
+      const Litr::Config::TomlFileAdapter file{};
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_script(file.find(data, "scripts"));
 
-      const auto result{builder.get_result()};
+      const auto result{builder.result()};
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
       CHECK_EQ(result->script[0], "first line");
       CHECK_EQ(result->script[1], "second line");
       Litr::Error::Handler::flush();
@@ -101,19 +101,19 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [context, data] =
           create_toml_mock("test", R"(scripts = ["first line", "second line"])");
 
-      Litr::Config::TomlFileAdapter file{};
+      const Litr::Config::TomlFileAdapter file{};
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_script(file.find(data, "scripts"));
 
-      const auto result{builder.get_result()};
+      const auto result{builder.result()};
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(result->Locations[0].line, 1);
-      CHECK_EQ(result->Locations[0].column, 12);
-      CHECK_EQ(result->Locations[0].line_str, R"(scripts = ["first line", "second line"])");
-      CHECK_EQ(result->Locations[1].line, 1);
-      CHECK_EQ(result->Locations[1].column, 26);
-      CHECK_EQ(result->Locations[1].line_str, R"(scripts = ["first line", "second line"])");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(result->locations[0].line, 1);
+      CHECK_EQ(result->locations[0].column, 12);
+      CHECK_EQ(result->locations[0].line_str, R"(scripts = ["first line", "second line"])");
+      CHECK_EQ(result->locations[1].line, 1);
+      CHECK_EQ(result->locations[1].column, 26);
+      CHECK_EQ(result->locations[1].line_str, R"(scripts = ["first line", "second line"])");
       Litr::Error::Handler::flush();
     }
   }
@@ -125,8 +125,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK(builder.get_result()->description.empty());
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK(builder.result()->description.empty());
       Litr::Error::Handler::flush();
     }
 
@@ -136,9 +136,9 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
-          R"(The "description" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(
+          Litr::Error::Handler::errors()[0].message, R"(The "description" can only be a string.)");
       Litr::Error::Handler::flush();
     }
 
@@ -148,8 +148,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->description, "Text");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->description, "Text");
       Litr::Error::Handler::flush();
     }
   }
@@ -161,8 +161,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK(builder.get_result()->example.empty());
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK(builder.result()->example.empty());
       Litr::Error::Handler::flush();
     }
 
@@ -172,9 +172,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(
-          Litr::Error::Handler::get_errors()[0].message, R"(The "example" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message, R"(The "example" can only be a string.)");
       Litr::Error::Handler::flush();
     }
 
@@ -184,8 +183,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_example();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->example, "Text");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->example, "Text");
       Litr::Error::Handler::flush();
     }
   }
@@ -197,8 +196,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK(builder.get_result()->directory.empty());
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK(builder.result()->directory.empty());
       Litr::Error::Handler::flush();
     }
 
@@ -208,8 +207,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(A "dir" can either be a string or array of strings.)");
       Litr::Error::Handler::flush();
     }
@@ -220,8 +219,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(A "dir" can either be a string or array of strings.)");
       Litr::Error::Handler::flush();
     }
@@ -232,10 +231,10 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 2);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 2);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(A "dir" can either be a string or array of strings.)");
-      CHECK_EQ(Litr::Error::Handler::get_errors()[1].message,
+      CHECK_EQ(Litr::Error::Handler::errors()[1].message,
           R"(A "dir" can either be a string or array of strings.)");
       Litr::Error::Handler::flush();
     }
@@ -246,8 +245,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->directory[0], "folder1");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->directory[0], "folder1");
       Litr::Error::Handler::flush();
     }
 
@@ -257,9 +256,9 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_directory(Litr::Path(""));
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->directory[0], "folder1");
-      CHECK_EQ(builder.get_result()->directory[1], "folder2");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->directory[0], "folder1");
+      CHECK_EQ(builder.result()->directory[1], "folder2");
       Litr::Error::Handler::flush();
     }
   }
@@ -271,8 +270,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->output, Litr::Config::Command::Output::UNCHANGED);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->output, Litr::Config::Command::Output::UNCHANGED);
       Litr::Error::Handler::flush();
     }
 
@@ -282,8 +281,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The "output" can either be "unchanged" or "silent".)");
       Litr::Error::Handler::flush();
     }
@@ -294,8 +293,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->output, Litr::Config::Command::Output::SILENT);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->output, Litr::Config::Command::Output::SILENT);
       Litr::Error::Handler::flush();
     }
 
@@ -305,8 +304,8 @@ TEST_SUITE("Config::CommandBuilder") {
       Litr::Config::CommandBuilder builder{context, data, "test"};
       builder.add_output();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->output, Litr::Config::Command::Output::UNCHANGED);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->output, Litr::Config::Command::Output::UNCHANGED);
       Litr::Error::Handler::flush();
     }
   }
@@ -316,12 +315,12 @@ TEST_SUITE("Config::CommandBuilder") {
       const auto [context, data] = create_toml_mock("test", "");
 
       Litr::Config::CommandBuilder builder_root{context, data, "test"};
-      Litr::Config::CommandBuilder builder_child{context, data, "test"};
+      const Litr::Config::CommandBuilder builder_child{context, data, "test"};
 
-      builder_root.add_child_command(builder_child.get_result());
+      builder_root.add_child_command(builder_child.result());
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder_root.get_result()->child_commands.size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder_root.result()->child_commands.size(), 1);
       Litr::Error::Handler::flush();
     }
   }

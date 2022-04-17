@@ -19,11 +19,11 @@ class Log {
   Log& operator=(const Log&&) = delete;
   ~Log() = default;
 
-  static std::shared_ptr<spdlog::logger>& get_core_logger() {
+  static std::shared_ptr<spdlog::logger>& core_logger() {
     return get().m_core_logger;
   }
 
-  static std::shared_ptr<spdlog::logger>& get_client_logger() {
+  static std::shared_ptr<spdlog::logger>& client_logger() {
     return get().m_client_logger;
   }
 
@@ -49,32 +49,32 @@ class Log {
 #ifndef LITR_DEACTIVATE_LOGGING
 
 #if DEBUG
-#define LITR_CORE_TRACE(...) ::Litr::Log::get_core_logger()->trace(__VA_ARGS__)
-#define LITR_CORE_DEBUG(...) ::Litr::Log::get_core_logger()->debug(__VA_ARGS__)
+#define LITR_CORE_TRACE(...) ::Litr::Log::core_logger()->trace(__VA_ARGS__)
+#define LITR_CORE_DEBUG(...) ::Litr::Log::core_logger()->debug(__VA_ARGS__)
 #else
 #define LITR_CORE_TRACE(...)
 #define LITR_CORE_DEBUG(...)
 #endif
 
-#define LITR_CORE_INFO(...) ::Litr::Log::get_core_logger()->info(__VA_ARGS__)
-#define LITR_CORE_WARN(...) ::Litr::Log::get_core_logger()->warn(__VA_ARGS__)
-#define LITR_CORE_ERROR(...) ::Litr::Log::get_core_logger()->error(__VA_ARGS__)
-#define LITR_CORE_FATAL(...) ::Litr::Log::get_core_logger()->fatal(__VA_ARGS__)
+#define LITR_CORE_INFO(...) ::Litr::Log::core_logger()->info(__VA_ARGS__)
+#define LITR_CORE_WARN(...) ::Litr::Log::core_logger()->warn(__VA_ARGS__)
+#define LITR_CORE_ERROR(...) ::Litr::Log::core_logger()->error(__VA_ARGS__)
+#define LITR_CORE_FATAL(...) ::Litr::Log::core_logger()->fatal(__VA_ARGS__)
 
 // Client logging
 
 #if DEBUG
-#define LITR_TRACE(...) ::Litr::Log::get_client_logger()->trace(__VA_ARGS__)
-#define LITR_DEBUG(...) ::Litr::Log::get_client_logger()->debug(__VA_ARGS__)
+#define LITR_TRACE(...) ::Litr::Log::client_logger()->trace(__VA_ARGS__)
+#define LITR_DEBUG(...) ::Litr::Log::client_logger()->debug(__VA_ARGS__)
 #else
 #define LITR_TRACE(...)
 #define LITR_DEBUG(...)
 #endif
 
-#define LITR_INFO(...) ::Litr::Log::get_client_logger()->info(__VA_ARGS__)
-#define LITR_WARN(...) ::Litr::Log::get_client_logger()->warn(__VA_ARGS__)
-#define LITR_ERROR(...) ::Litr::Log::get_client_logger()->error(__VA_ARGS__)
-#define LITR_FATAL(...) ::Litr::Log::get_client_logger()->fatal(__VA_ARGS__)
+#define LITR_INFO(...) ::Litr::Log::client_logger()->info(__VA_ARGS__)
+#define LITR_WARN(...) ::Litr::Log::client_logger()->warn(__VA_ARGS__)
+#define LITR_ERROR(...) ::Litr::Log::client_logger()->error(__VA_ARGS__)
+#define LITR_FATAL(...) ::Litr::Log::client_logger()->fatal(__VA_ARGS__)
 
 #else
 

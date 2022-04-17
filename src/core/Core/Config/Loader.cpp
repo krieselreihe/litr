@@ -12,14 +12,14 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
 #include "Core/Log.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::Config {
 
 Loader::Loader(Path file_path) : m_file_path(std::move(file_path)) {
   LITR_PROFILE_FUNCTION();
 
-  TomlFileAdapter::Value config{m_file.parse(m_file_path)};
+  const TomlFileAdapter::Value config{m_file.parse(m_file_path)};
   if (Error::Handler::has_errors()) {
     return;
   }
@@ -46,20 +46,20 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
   // Simple string form
   if (definition.is_string()) {
     builder.add_script_line(definition.as_string(), definition);
-    return builder.get_result();
+    return builder.result();
   }
 
   // Simple string array form
   if (definition.is_array()) {
     builder.add_script(definition);
-    return builder.get_result();
+    return builder.result();
   }
 
   // From here on it needs to be a table to be valid.
   if (!definition.is_table()) {
     Error::Handler::push(
         Error::MalformedCommandError("A command can be a string or table.", commands.at(name)));
-    return builder.get_result();
+    return builder.result();
   }
 
   // Collect command property names
@@ -129,7 +129,7 @@ std::shared_ptr<Command> Loader::create_command(const TomlFileAdapter::Value& co
     properties.pop_front();
   }
 
-  return builder.get_result();
+  return builder.result();
 }
 
 void Loader::collect_commands(const TomlFileAdapter::Value& commands) {
@@ -161,7 +161,7 @@ void Loader::collect_params(const TomlFileAdapter::Value& params) {
     // Simple string form
     if (definition.is_string()) {
       builder.add_description(definition.as_string());
-      m_parameters.emplace_back(builder.get_result());
+      m_parameters.emplace_back(builder.result());
       continue;
     }
 
@@ -177,7 +177,7 @@ void Loader::collect_params(const TomlFileAdapter::Value& params) {
     builder.add_type();
     builder.add_default();
 
-    m_parameters.emplace_back(builder.get_result());
+    m_parameters.emplace_back(builder.result());
   }
 }
 

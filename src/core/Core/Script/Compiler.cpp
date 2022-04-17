@@ -11,7 +11,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::Script {
 
@@ -26,11 +26,11 @@ Compiler::Compiler(const std::string& source, Config::Location location, Variabl
   end_of_script();
 }
 
-std::string Compiler::get_script() const {
+std::string Compiler::result() const {
   return m_script;
 }
 
-std::vector<std::string> Compiler::get_used_variables() const {
+std::vector<std::string> Compiler::used_variables() const {
   return m_used_variables;
 }
 
@@ -86,7 +86,7 @@ void Compiler::source_token() {
   }
 
   if (match(TokenType::START_SEQ)) {
-    script();
+    inline_script();
     return;
   }
 }
@@ -94,11 +94,11 @@ void Compiler::source_token() {
 void Compiler::untouched() {
   LITR_PROFILE_FUNCTION();
 
-  m_script.append(Scanner::get_token_value(m_previous));
+  m_script.append(Scanner::token_value(m_previous));
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
-void Compiler::script() {
+void Compiler::inline_script() {
   LITR_PROFILE_FUNCTION();
 
   advance();
@@ -131,7 +131,7 @@ void Compiler::script() {
 void Compiler::identifier() {
   LITR_PROFILE_FUNCTION();
 
-  const std::string name{Scanner::get_token_value(m_previous)};
+  const std::string name{Scanner::token_value(m_previous)};
   auto variable{m_variables.find(name)};
 
   if (variable == m_variables.end()) {
@@ -212,7 +212,7 @@ void Compiler::expression() {
 void Compiler::string() {
   LITR_PROFILE_FUNCTION();
 
-  m_script.append(Utils::trim(Scanner::get_token_value(m_previous), '\''));
+  m_script.append(StringUtils::trim(Scanner::token_value(m_previous), '\''));
 }
 
 void Compiler::string(const CLI::Variable& variable) {
@@ -268,7 +268,7 @@ void Compiler::error_at(Token* token, const std::string& message) {
   } else if (token->type == TokenType::ERROR) {
     // Nothing, yet.
   } else {
-    out_message.append(fmt::format(" at `{}`", Scanner::get_token_value(token)));
+    out_message.append(fmt::format(" at `{}`", Scanner::token_value(token)));
   }
 
   out_message.append(fmt::format(": {}", message));

@@ -9,7 +9,7 @@
 
 namespace Litr {
 
-Path Environment::get_home_directory() {
+Path Environment::home_directory() {
   LITR_PROFILE_FUNCTION();
 
   // std::getenv is not thread safe, but this will not be a problem here.

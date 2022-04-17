@@ -27,7 +27,7 @@ class Shell {
       const std::string& command, const Path& path, const Shell::ExecCallback& callback);
 
  private:
-  [[nodiscard]] static ExitStatus get_status_code(int stream_status);
+  [[nodiscard]] static ExitStatus status_code(int stream_status);
   [[nodiscard]] static std::string create_command_string(
       const std::string& command, const Path& path);
   [[nodiscard]] static std::string create_cd_command(const Path& path);

@@ -25,7 +25,7 @@ class Handler {
   static void push(const BaseError& err);
   static void flush();
 
-  [[nodiscard]] static Errors get_errors();
+  [[nodiscard]] static Errors errors();
   [[nodiscard]] static bool has_errors();
 
  private:

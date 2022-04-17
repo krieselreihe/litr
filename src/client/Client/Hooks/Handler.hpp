@@ -13,7 +13,7 @@
 namespace Litr::Hook {
 
 class Handler {
-  using HookCallback = std::function<void(const std::shared_ptr<CLI::Instruction>& instruction)>;
+  using HookCallback = std::function<void()>;
   using Code = CLI::Instruction::Code;
   using Value = CLI::Instruction::Value;
 

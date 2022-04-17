@@ -10,7 +10,7 @@ namespace Litr {
 
 class Environment {
  public:
-  [[nodiscard]] static Path get_home_directory();
+  [[nodiscard]] static Path home_directory();
 };
 
 }  // namespace Litr

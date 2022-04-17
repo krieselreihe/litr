@@ -1,8 +1,5 @@
 [commands]
 
-[commands.edit]
-script = "nano ./litr.toml"
-
 [commands.update]
 script = "git pull"
 description = "Update repository code."
@@ -13,12 +10,12 @@ script = [
   %{nolog '-DDEACTIVATE_LOGGING=ON'} \
   %{debug '-DDEBUG=ON'} \
   %{profile '-DPROFILE=ON'} \
+  %{release '-DRELEASE=ON'} \
   -DCMAKE_BUILD_TYPE=%{target} \
   -B build/%{target}""",
-  "cmake --build build/%{target}"
+  "ninja -C build/%{target}"
 ]
 description = "Build the application for a given target."
-example = "This is an example."
 
 [commands.test]
 script = "cd build/%{target}/src/tests && CTEST_OUTPUT_ON_FAILURE=TRUE ctest && cd ../../../.."
@@ -27,21 +24,6 @@ description = "Run all unit tests defined under src/tests"
 [commands.release.brew]
 script = "./scripts/release.sh"
 description = "Build a production release for Homebrew on macOS."
-
-[commands.release.brew.another-one-command-super-long]
-script = "./scripts/release.sh"
-description = "Build a production release for Homebrew on macOS. With a very long description, like really super duper long."
-example = """This is an example.
-On multiple lines.
-Just so you know."""
-
-[commands.release.brew.next-level]
-script = "./scripts/release.sh"
-description = "Build a production release for Homebrew on macOS."
-
-[commands.release.another]
-script = "./scripts/release.sh"
-description = "Build another  production release for Something OS."
 
 [commands.format]
 script = "find src -iname *.hpp -o -iname *.cpp | xargs clang-format -i"
@@ -55,7 +37,7 @@ default = "debug"
 
 [params.something]
 # shortcut = "t"
-description = "Define something for a test to see how things are aligned or not."
+description = "Define something for a test to see how things are aligned."
 type = ["one", "two", "three", "four"]
 default = "one"
 
@@ -69,8 +51,6 @@ shortcut = "l"
 description = "Deactivate all logging output."
 type = "boolean"
 
-# @todo: The following 3 params can be removed after https://github.com/krieselreihe/litr/issues/51
-
 [params.debug]
 shortcut = "d"
 description = "Set debug mode, even if build type differs."
@@ -79,4 +59,8 @@ type = "boolean"
 [params.profile]
 shortcut = "p"
 description = "Build the application with profiling tools enabled."
+type = "boolean"
+
+[params.release]
+description = "Create a release build detached from build target."
 type = "boolean"

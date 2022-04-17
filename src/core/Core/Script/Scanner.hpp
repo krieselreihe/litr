@@ -19,8 +19,8 @@ class Scanner {
   [[nodiscard]] Token scan_untouched_token();
   [[nodiscard]] Token scan_expression_token();
 
-  [[nodiscard]] static std::string get_token_value(const Token& token);
-  [[nodiscard]] static std::string get_token_value(Token* token);
+  [[nodiscard]] static std::string token_value(const Token& token);
+  [[nodiscard]] static std::string token_value(Token* token);
 
  private:
   enum class Mode { UNTOUCHED, EXPRESSION };

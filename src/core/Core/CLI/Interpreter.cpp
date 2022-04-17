@@ -10,21 +10,16 @@
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/ExitStatus.hpp"
 #include "Core/Script/Compiler.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::CLI {
-
-/** @private */
-static void command_path_to_human_readable(std::string& path) {
-  LITR_PROFILE_FUNCTION();
-
-  std::replace(path.begin(), path.end(), '.', ' ');
-}
 
 Interpreter::Interpreter(
     const std::shared_ptr<Instruction>& instruction, const std::shared_ptr<Config::Loader>& config)
     : m_instruction(instruction),
       m_query(config) {
+  LITR_PROFILE_FUNCTION();
+
   define_default_variables(config);
 }
 
@@ -41,6 +36,59 @@ void Interpreter::execute() {
   }
 }
 
+std::string Interpreter::command_name_occurrence(
+    const std::vector<std::string>& parameter_names) const {
+  LITR_PROFILE_FUNCTION();
+
+  size_t offset{0};
+  std::vector<std::string> scope{};
+
+  while (offset < m_instruction->count()) {
+    const auto code{static_cast<Instruction::Code>(m_instruction->read(offset++))};
+
+    switch (code) {
+      case Instruction::Code::BEGIN_SCOPE: {
+        const std::string value{m_instruction->read_constant(m_instruction->read(offset))};
+        scope.push_back(value);
+        ++offset;
+        break;
+      }
+      case Instruction::Code::CLEAR: {
+        scope.pop_back();
+        break;
+      }
+      case Instruction::Code::DEFINE: {
+        const std::string value{m_instruction->read_constant(m_instruction->read(offset))};
+        if (std::find(parameter_names.begin(), parameter_names.end(), value) !=
+            parameter_names.end()) {
+          std::string command_name{};
+          for (auto&& part : scope) {
+            command_name.append(".").append(part);
+          }
+          return StringUtils::trim_left(command_name, '.');
+        }
+        ++offset;
+        break;
+      }
+      case Instruction::Code::CONSTANT:
+      case Instruction::Code::EXECUTE: {
+        ++offset;
+        break;
+      }
+    }
+  }
+
+  return "";
+}
+
+std::string Interpreter::command_path_to_human_readable(const std::string& path) {
+  LITR_PROFILE_FUNCTION();
+
+  std::string readable_command{path};
+  std::replace(readable_command.begin(), readable_command.end(), '.', ' ');
+  return readable_command;
+}
+
 Instruction::Value Interpreter::read_current_value() const {
   LITR_PROFILE_FUNCTION();
 
@@ -48,7 +96,7 @@ Instruction::Value Interpreter::read_current_value() const {
   return m_instruction->read_constant(index);
 }
 
-Interpreter::Variables Interpreter::get_scope_variables() const {
+Interpreter::Variables Interpreter::scope_variables() const {
   LITR_PROFILE_FUNCTION();
 
   Variables variables{};
@@ -65,18 +113,18 @@ Interpreter::Variables Interpreter::get_scope_variables() const {
 void Interpreter::define_default_variables(const std::shared_ptr<Config::Loader>& config) {
   LITR_PROFILE_FUNCTION();
 
-  const auto params{config->get_parameters()};
+  const auto params{config->parameters()};
   for (auto&& param : params) {
     switch (param->type) {
       case Config::Parameter::Type::BOOLEAN: {
-        Variable variable{param->name, false};
+        const Variable variable{param->name, false};
         m_scope.back().insert_or_assign(variable.name, variable);
         break;
       }
       case Config::Parameter::Type::STRING:
       case Config::Parameter::Type::ARRAY: {
         if (!param->default_value.empty()) {
-          Variable variable{param->name, param->default_value};
+          const Variable variable{param->name, param->default_value};
           m_scope.back().insert_or_assign(variable.name, variable);
         }
         break;
@@ -88,7 +136,7 @@ void Interpreter::define_default_variables(const std::shared_ptr<Config::Loader>
 void Interpreter::execute_instruction() {
   LITR_PROFILE_FUNCTION();
 
-  const Instruction::Code code{m_instruction->read(m_offset++)};
+  const auto code{static_cast<Instruction::Code>(m_instruction->read(m_offset++))};
 
   switch (code) {
     case Instruction::Code::CLEAR:
@@ -114,7 +162,7 @@ void Interpreter::execute_instruction() {
 void Interpreter::begin_scope() {
   LITR_PROFILE_FUNCTION();
 
-  m_scope.emplace_back(Variables());
+  m_scope.emplace_back();
   ++m_offset;
 }
 
@@ -138,7 +186,7 @@ void Interpreter::define_variable() {
     return;
   }
 
-  Variable variable{get_variable_type(param), param->name};
+  Variable variable{variable_type(param), param->name};
 
   switch (param->type) {
     case Config::Parameter::Type::BOOLEAN: {
@@ -184,7 +232,7 @@ void Interpreter::set_constant() {
             fmt::format("Parameter value \"{}\" is no valid option for \"{}\".\n  {}",
                 value,
                 param->name,
-                Utils::trim_right(options, ','))));
+                StringUtils::trim_right(options, ','))));
         return;
       }
       variable.value = value;
@@ -234,8 +282,6 @@ void Interpreter::call_command(
     const std::shared_ptr<Config::Command>& command, const std::string& scope) {
   LITR_PROFILE_FUNCTION();
 
-  std::string command_path{scope + command->name};
-
   validate_required_parameters(command);
   if (m_stop_execution) {
     return;
@@ -247,7 +293,7 @@ void Interpreter::call_command(
     return;
   }
 
-  command_path_to_human_readable(command_path);
+  std::string command_path{command_path_to_human_readable(scope + command->name)};
 
   if (command->directory.empty()) {
     run_scripts(scripts, command_path, "", print_result);
@@ -286,10 +332,10 @@ void Interpreter::run_scripts(const Scripts& scripts,
     bool print_result) {
   LITR_PROFILE_FUNCTION();
 
-  Path path{dir};
+  const Path path{dir};
 
   for (auto&& script : scripts) {
-    Shell::Result result{
+    const Shell::Result result{
         print_result ? Shell::exec(script, path) : Shell::exec(script, path, print)};
 
     if (result.status == ExitStatus::FAILURE) {
@@ -307,7 +353,7 @@ Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<Config::Co
   Scripts scripts{};
 
   for (auto&& script : command->script) {
-    const std::string parsed_script{parse_script(script, command->Locations[location])};
+    const std::string parsed_script{parse_script(script, command->locations[location])};
     if (m_stop_execution) {
       break;
     }
@@ -321,18 +367,17 @@ Interpreter::Scripts Interpreter::parse_scripts(const std::shared_ptr<Config::Co
 std::string Interpreter::parse_script(const std::string& script, const Config::Location& location) {
   LITR_PROFILE_FUNCTION();
 
-  const Variables variables{get_scope_variables()};
-  Script::Compiler parser{script, location, variables};
+  const Variables variables{scope_variables()};
+  const Script::Compiler parser{script, location, variables};
 
   if (Error::Handler::has_errors()) {
     m_stop_execution = true;
   }
 
-  return parser.get_script();
+  return parser.result();
 }
 
-enum Variable::Type Interpreter::get_variable_type(
-    const std::shared_ptr<Config::Parameter>& param) {
+enum Variable::Type Interpreter::variable_type(const std::shared_ptr<Config::Parameter>& param) {
   LITR_PROFILE_FUNCTION();
 
   switch (param->type) {
@@ -367,7 +412,7 @@ void Interpreter::validate_required_parameters(const std::shared_ptr<Config::Com
 bool Interpreter::is_variable_defined(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  const Variables variables{get_scope_variables()};
+  const Variables variables{scope_variables()};
   return std::any_of(
       variables.begin(), variables.end(), [&name](std::pair<std::string, CLI::Variable>&& var) {
         if (var.second.type == CLI::Variable::Type::STRING) {

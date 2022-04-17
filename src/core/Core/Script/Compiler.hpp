@@ -21,8 +21,8 @@ class Compiler {
 
   Compiler(const std::string& source, Config::Location location, Variables variables);
 
-  [[nodiscard]] std::string get_script() const;
-  [[nodiscard]] std::vector<std::string> get_used_variables() const;
+  [[nodiscard]] std::string result() const;
+  [[nodiscard]] std::vector<std::string> used_variables() const;
 
  private:
   void advance();
@@ -33,7 +33,7 @@ class Compiler {
 
   void source_token();
   void untouched();
-  void script();
+  void inline_script();
   void identifier();
 
   void statement(const CLI::Variable& variable);

@@ -30,9 +30,15 @@ class Interpreter {
 
   void execute();
 
+  // @todo: This does need a better name. It returns the command name until a
+  //  specified parameter name was found.
+  [[nodiscard]] std::string command_name_occurrence(
+      const std::vector<std::string>& parameter_names) const;
+  [[nodiscard]] static std::string command_path_to_human_readable(const std::string& path);
+
  private:
   [[nodiscard]] Instruction::Value read_current_value() const;
-  [[nodiscard]] Variables get_scope_variables() const;
+  [[nodiscard]] Variables scope_variables() const;
   void define_default_variables(const std::shared_ptr<Config::Loader>& config);
 
   void execute_instruction();
@@ -55,7 +61,7 @@ class Interpreter {
   [[nodiscard]] std::string parse_script(
       const std::string& script, const Config::Location& location);
 
-  [[nodiscard]] static enum Variable::Type get_variable_type(
+  [[nodiscard]] static enum Variable::Type variable_type(
       const std::shared_ptr<Config::Parameter>& param);
 
   void validate_required_parameters(const std::shared_ptr<Config::Command>& command);

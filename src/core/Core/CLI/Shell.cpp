@@ -28,7 +28,7 @@ Shell::Result Shell::exec(
   LITR_PROFILE_FUNCTION();
 
   Result result{};
-  std::string cmd{create_command_string(command, path)};
+  const std::string cmd{create_command_string(command, path)};
 
   LITR_CORE_TRACE("Executing command \"{}\"", cmd);
 
@@ -49,13 +49,13 @@ Shell::Result Shell::exec(
       }
     }
 
-    result.status = get_status_code(pclose(stream));
+    result.status = status_code(pclose(stream));
   }
 
   return result;
 }
 
-ExitStatus Shell::get_status_code(const int stream_status) {
+ExitStatus Shell::status_code(const int stream_status) {
   constexpr int status_base{256};
   return static_cast<ExitStatus>(stream_status / status_base);
 }

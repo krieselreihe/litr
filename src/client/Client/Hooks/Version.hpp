@@ -12,7 +12,7 @@ namespace Litr::Hook {
 
 class Version {
  public:
-  static void print(const std::shared_ptr<CLI::Instruction>& instruction);
+  [[nodiscard]] static std::string read();
 };
 
 }  // namespace Litr::Hook

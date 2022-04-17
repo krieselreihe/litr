@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "Hooks/Handler.hpp"
-#include "Hooks/Help.hpp"
+#include "Hooks/Help/NewHelp.hpp"
 #include "Hooks/Version.hpp"
 
 namespace Litr {
@@ -32,7 +32,9 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
   Hook::Handler hooks{instruction};
 
   // Hooks before config
-  hooks.add(CLI::Instruction::Code::DEFINE, {"version", "v"}, Hook::Version::print);
+  hooks.add(CLI::Instruction::Code::DEFINE, {"version", "v"}, []() {
+    fmt::print(Hook::Version::read());
+  });
   if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
@@ -44,19 +46,17 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
 
   Error::Reporter error_reporter{config_path};
   if (Error::Handler::has_errors()) {
-    error_reporter.print_errors(Error::Handler::get_errors());
+    error_reporter.print_errors(Error::Handler::errors());
     return ExitStatus::FAILURE;
   }
 
   const auto config{std::make_shared<Config::Loader>(config_path)};
   const auto interpreter{std::make_shared<CLI::Interpreter>(instruction, config)};
 
-  hooks.add(CLI::Instruction::Code::DEFINE,
-      {"help", "h"},
-      [&config](const std::shared_ptr<CLI::Instruction>& instruction) {
-        const Hook::Help help{config};
-        help.print(instruction);
-      });
+  Hook::NewHelp help{config, instruction};
+  hooks.add(CLI::Instruction::Code::DEFINE, {"help", "h"}, [&help]() {
+    fmt::print(help.read());
+  });
   if (hooks.execute()) {
     return ExitStatus::SUCCESS;
   }
@@ -64,7 +64,7 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
   // Run
   interpreter->execute();
   if (Error::Handler::has_errors()) {
-    error_reporter.print_errors(Error::Handler::get_errors());
+    error_reporter.print_errors(Error::Handler::errors());
     return ExitStatus::FAILURE;
   }
 
@@ -74,10 +74,10 @@ ExitStatus Application::run(const std::vector<std::string>& arguments) {
 Path Application::get_config_path() {
   LITR_PROFILE_FUNCTION();
 
-  Path cwd{FileSystem::get_current_working_directory()};
-  Config::FileResolver config_path{cwd};
+  const Path cwd{FileSystem::current_working_directory()};
+  const Config::FileResolver config_path{cwd};
 
-  switch (config_path.get_status()) {
+  switch (config_path.status()) {
     case Config::FileResolver::Status::NOT_FOUND: {
       fmt::print(fg(fmt::color::crimson), "No configuration file found!\n");
       m_exit_status = ExitStatus::FAILURE;
@@ -87,17 +87,17 @@ Path Application::get_config_path() {
       fmt::print(fg(fmt::color::gold),
           "You defined both, litr.toml and .litr.toml in {}. "
           "This is probably an error and you only want one of them.\n",
-          config_path.get_file_directory());
+          config_path.file_directory());
       m_exit_status = ExitStatus::FAILURE;
       break;
     }
     case Config::FileResolver::Status::FOUND: {
-      LITR_TRACE("Configuration file found under: {}\n", config_path.get_file_path());
+      LITR_TRACE("Configuration file found under: {}\n", config_path.file_path());
       break;
     }
   }
 
-  return config_path.get_file_path();
+  return config_path.file_path();
 }
 
 std::string Application::source_from_arguments(const std::vector<std::string>& arguments) {
@@ -108,11 +108,11 @@ std::string Application::source_from_arguments(const std::vector<std::string>& a
   // !!! HACK ALERT START !!!
   // @todo: https://github.com/krieselreihe/litr/issues/20
   for (std::string argument : arguments) {
-    std::size_t found{argument.find('=')};
+    const std::size_t found{argument.find('=')};
 
     if (found != std::string::npos) {
       std::vector<std::string> parts{};
-      Utils::split_into(argument, '=', parts);
+      StringUtils::split_into(argument, '=', parts);
       argument = parts[0].append("=\"").append(parts[1]).append("\"");
     }
 

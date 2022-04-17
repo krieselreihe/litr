@@ -33,12 +33,12 @@ class Help {
   void print_with_description(
       const std::string& name, const std::string& description, size_t extra_padding = 0) const;
 
-  [[nodiscard]] static std::string get_command_name(
+  [[nodiscard]] static std::string command_name(
       const std::shared_ptr<CLI::Instruction>& instruction);
-  [[nodiscard]] std::string get_command_arguments(const std::string& name) const;
+  [[nodiscard]] std::string command_arguments(const std::string& name) const;
 
   [[nodiscard]] size_t get_command_padding() const;
-  [[nodiscard]] size_t get_command_padding(const Config::Query::Commands& commands) const;
+  [[nodiscard]] size_t get_command_padding(const Config::Commands& commands) const;
   [[nodiscard]] size_t get_parameter_padding() const;
 
   [[nodiscard]] static bool sort_parameter_by_required(

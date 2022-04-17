@@ -155,7 +155,7 @@ void CommandBuilder::add_child_command(const std::shared_ptr<Command>& command) 
 void CommandBuilder::add_location(const TomlFileAdapter::Value& context) {
   LITR_PROFILE_FUNCTION();
 
-  m_command->Locations.emplace_back(
+  m_command->locations.emplace_back(
       context.location().line(), context.location().column(), context.location().line_str());
 }
 

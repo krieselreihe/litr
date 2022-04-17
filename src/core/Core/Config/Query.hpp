@@ -15,14 +15,14 @@
 
 namespace Litr::Config {
 
+using Commands = std::vector<std::shared_ptr<Command>>;
+using Parameters = std::vector<std::shared_ptr<Parameter>>;
+
 class Query {
   using Parts = std::deque<std::string>;
   using Variables = std::unordered_map<std::string, CLI::Variable>;
 
  public:
-  using Commands = std::vector<std::shared_ptr<Command>>;
-  using Parameters = std::vector<std::shared_ptr<Parameter>>;
-
   explicit Query(const std::shared_ptr<Loader>& config);
 
   [[nodiscard]] std::shared_ptr<Command> get_command(const std::string& name) const;

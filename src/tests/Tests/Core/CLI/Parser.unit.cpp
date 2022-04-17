@@ -25,7 +25,7 @@ inline void check_definition(const std::shared_ptr<Litr::CLI::Instruction>& inst
   while (offset < instruction->count()) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
     const auto& test{definition[iteration]};
-    const Litr::CLI::Instruction::Code code{(instruction)->read(offset++)};
+    const auto code{static_cast<Litr::CLI::Instruction::Code>((instruction)->read(offset++))};
     switch (code) {
       case Litr::CLI::Instruction::Code::CONSTANT:
       case Litr::CLI::Instruction::Code::DEFINE:
@@ -57,7 +57,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(--target="Some release")"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "target"},
             {Litr::CLI::Instruction::Code::CONSTANT, "Some release"}}};
@@ -71,7 +71,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="debug is nice")"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "t"},
             {Litr::CLI::Instruction::Code::CONSTANT, "debug is nice"}}};
@@ -85,7 +85,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="")"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "t"},
             {Litr::CLI::Instruction::Code::CONSTANT, ""}}};
@@ -99,7 +99,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 2> definition{
         {{Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build"}}};
@@ -113,7 +113,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build cpp"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 3> definition{
         {{Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "cpp"},
@@ -128,7 +128,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build,run"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 5> definition{
         {{Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build"},
@@ -145,7 +145,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(--target="release" build,run)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 7> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "target"},
             {Litr::CLI::Instruction::Code::CONSTANT, "release"},
@@ -164,7 +164,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="release" --debug)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 3> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "t"},
             {Litr::CLI::Instruction::Code::CONSTANT, "release"},
@@ -179,11 +179,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{","};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors() == true);
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::flush();
@@ -193,11 +193,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="debug" ,)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::flush();
@@ -207,11 +207,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"run ,,"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::flush();
@@ -221,11 +221,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{", ,"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Unexpected comma.");
     Litr::Error::Handler::flush();
@@ -235,11 +235,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build cpp , ,"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::flush();
@@ -249,11 +249,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build cpp ,,,,"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::flush();
@@ -263,11 +263,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"build cpp , , run"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `,`: Duplicated comma.");
     Litr::Error::Handler::flush();
@@ -277,7 +277,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="debug" build cpp)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 5> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "t"},
             {Litr::CLI::Instruction::Code::CONSTANT, "debug"},
@@ -294,7 +294,7 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t="debug" build cpp, java)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
     const std::array<InstructionDefinition, 8> definition{
         {{Litr::CLI::Instruction::Code::DEFINE, "t"},
             {Litr::CLI::Instruction::Code::CONSTANT, "debug"},
@@ -314,11 +314,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"(9)"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse: Unexpected character.");
     Litr::Error::Handler::flush();
@@ -328,11 +328,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(build "debug" project )"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `\"debug\"`: This is not allowed here.");
     Litr::Error::Handler::flush();
@@ -342,11 +342,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(build 23 project )"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `23`: This is not allowed here.");
     Litr::Error::Handler::flush();
@@ -356,11 +356,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(build ++ project )"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse: Unexpected character.");
     Litr::Error::Handler::flush();
@@ -370,11 +370,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(= "value")"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message,
         "Cannot parse at `=`: You are missing a parameter in front of the assignment.");
@@ -385,11 +385,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{R"(-t == "value")"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(errors[0].message, "Cannot parse at `=`: Value assignment missing.");
     Litr::Error::Handler::flush();
@@ -399,11 +399,11 @@ TEST_SUITE("CLI::Parser") {
     const auto instruction{std::make_shared<Litr::CLI::Instruction>()};
     const std::string source{"---t"};
 
-    Litr::CLI::Parser parser{instruction, source};
+    const Litr::CLI::Parser parser{instruction, source};
 
     CHECK(parser.has_errors());
 
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
     CHECK_EQ(errors.size(), 1);
     CHECK_EQ(
         errors[0].message, "Cannot parse: A parameter can only start with the characters A-Za-z.");

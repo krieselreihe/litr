@@ -24,7 +24,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits a custom syntax error on exception") {
     const Litr::Path path{"../../Fixtures/Config/syntax-error.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -35,7 +35,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits an error on malformed command") {
     const Litr::Path path{"../../Fixtures/Config/malformed-command.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -46,7 +46,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits an error if command script is not a string") {
     const Litr::Path path{"../../Fixtures/Config/malformed-command-script.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -57,7 +57,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits an error if command property unknown") {
     const Litr::Path path{"../../Fixtures/Config/unknown-command-property.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -69,7 +69,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Copies errors from CommandBuilder to Loader on malformed script array") {
     const Litr::Path path{"../../Fixtures/Config/command-script-array-malformed.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -80,7 +80,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Copies errors from CommandBuilder to Loader on detailed malformed script array") {
     const Litr::Path path{"../../Fixtures/Config/command-detailed-script-array-malformed.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -91,7 +91,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Copies errors from CommandBuilder to Loader on multiple malformed fields") {
     const Litr::Path path{"../../Fixtures/Config/command-description-and-output-malformed.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
@@ -105,8 +105,8 @@ TEST_SUITE("Config::Loader") {
     const Litr::Config::Loader config{path};
 
     CHECK_FALSE(Litr::Error::Handler::has_errors());
-    CHECK_EQ(config.get_commands().size(), 0);
-    CHECK_EQ(config.get_parameters().size(), 0);
+    CHECK_EQ(config.commands().size(), 0);
+    CHECK_EQ(config.parameters().size(), 0);
     Litr::Error::Handler::flush();
   }
 
@@ -116,7 +116,7 @@ TEST_SUITE("Config::Loader") {
 
     SUBCASE("Successfully without errors") {
       CHECK_FALSE(Litr::Error::Handler::has_errors());
-      CHECK_EQ(config->get_commands().size(), 3);
+      CHECK_EQ(config->commands().size(), 3);
     }
 
     SUBCASE("Resolves all fields on a command") {
@@ -195,7 +195,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits an error if parameter name is reserved for Litr") {
     const Litr::Path path{"../../Fixtures/Config/reserved-parameter.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
@@ -207,7 +207,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Emits an error if parameter definition is malformed") {
     const Litr::Path path{"../../Fixtures/Config/malformed-parameter.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 1);
@@ -218,7 +218,7 @@ TEST_SUITE("Config::Loader") {
   TEST_CASE("Copies errors from ParameterBuilder to Loader on multiple malformed params") {
     const Litr::Path path{"../../Fixtures/Config/params-description-and-type-malformed.toml"};
     const Litr::Config::Loader config{path};
-    const auto errors{Litr::Error::Handler::get_errors()};
+    const auto errors{Litr::Error::Handler::errors()};
 
     CHECK(Litr::Error::Handler::has_errors());
     CHECK_EQ(errors.size(), 2);
@@ -234,7 +234,7 @@ TEST_SUITE("Config::Loader") {
 
     SUBCASE("Successfully without errors") {
       CHECK_FALSE(Litr::Error::Handler::has_errors());
-      CHECK_EQ(config->get_parameters().size(), 2);
+      CHECK_EQ(config->parameters().size(), 2);
     }
 
     SUBCASE("Resolves all fields on a parameter") {

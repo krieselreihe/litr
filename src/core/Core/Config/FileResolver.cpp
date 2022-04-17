@@ -29,22 +29,22 @@ FileResolver::FileResolver(Path cwd) {
     cwd = cwd.parent_path();
   } while (cwd != cwd.parent_path());
 
-  Path home_dir{Environment::get_home_directory()};
+  const Path home_dir{Environment::home_directory()};
   if (!home_dir.empty()) {
     LITR_CORE_TRACE("Searching configuration file in user home: {0}", home_dir);
     find_file(home_dir);
   }
 }
 
-FileResolver::Status FileResolver::get_status() const {
+FileResolver::Status FileResolver::status() const {
   return m_status;
 }
 
-Path FileResolver::get_file_path() const {
+Path FileResolver::file_path() const {
   return m_path;
 }
 
-Path FileResolver::get_file_directory() const {
+Path FileResolver::file_directory() const {
   return m_directory;
 }
 
@@ -54,8 +54,8 @@ void FileResolver::find_file(const Path& cwd) {
   const Path file_path{cwd.append(m_file_name)};
   const Path hidden_file_path{cwd.append(m_hidden_filename)};
 
-  bool file_exists{FileSystem::exists(file_path)};
-  bool hidden_file_exists{FileSystem::exists(hidden_file_path)};
+  const bool file_exists{FileSystem::exists(file_path)};
+  const bool hidden_file_exists{FileSystem::exists(hidden_file_path)};
 
   if (file_exists && hidden_file_exists) {
     LITR_CORE_TRACE("Configuration file duplicate detected.");

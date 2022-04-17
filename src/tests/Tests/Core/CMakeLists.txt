@@ -2,46 +2,50 @@
 
 add_executable(Config_Loader Config/Loader.int.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Config_Loader COMMAND Config_Loader)
-target_link_libraries(Config_Loader PRIVATE TestBase)
+target_link_libraries(Config_Loader PRIVATE CoreTestBase)
 
 add_executable(Config_FileResolver Config/FileResolver.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Config_FileResolver COMMAND Config_FileResolver)
-target_link_libraries(Config_FileResolver PRIVATE TestBase)
+target_link_libraries(Config_FileResolver PRIVATE CoreTestBase)
 
 add_executable(Config_CommandBuilder Config/CommandBuilder.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Config_CommandBuilder COMMAND Config_CommandBuilder)
-target_link_libraries(Config_CommandBuilder PRIVATE TestBase)
+target_link_libraries(Config_CommandBuilder PRIVATE CoreTestBase)
 
 add_executable(Config_ParameterBuilder Config/ParameterBuilder.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Config_ParameterBuilder COMMAND Config_ParameterBuilder)
-target_link_libraries(Config_ParameterBuilder PRIVATE TestBase)
+target_link_libraries(Config_ParameterBuilder PRIVATE CoreTestBase)
 
 add_executable(Config_Query Config/Query.int.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Config_Query COMMAND Config_Query)
-target_link_libraries(Config_Query PRIVATE TestBase)
+target_link_libraries(Config_Query PRIVATE CoreTestBase)
 
 # --- CLI ---
 
+add_executable(CLI_Interpreter CLI/Interpreter.unit.cpp $<TARGET_OBJECTS:Tests>)
+add_test(NAME CLI_Interpreter COMMAND CLI_Interpreter)
+target_link_libraries(CLI_Interpreter PRIVATE CoreTestBase)
+
 add_executable(CLI_Scanner CLI/Scanner.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME CLI_Scanner COMMAND CLI_Scanner)
-target_link_libraries(CLI_Scanner PRIVATE TestBase)
+target_link_libraries(CLI_Scanner PRIVATE CoreTestBase)
 
 add_executable(CLI_Parser CLI/Parser.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME CLI_Parser COMMAND CLI_Parser)
-target_link_libraries(CLI_Parser PRIVATE TestBase)
+target_link_libraries(CLI_Parser PRIVATE CoreTestBase)
 
 # --- Script ---
 
 add_executable(Script_Scanner Script/Scanner.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Script_Scanner COMMAND Script_Scanner)
-target_link_libraries(Script_Scanner PRIVATE TestBase)
+target_link_libraries(Script_Scanner PRIVATE CoreTestBase)
 
 add_executable(Script_Compiler Script/Compiler.unit.cpp $<TARGET_OBJECTS:Tests>)
 add_test(NAME Script_Compiler COMMAND Script_Compiler)
-target_link_libraries(Script_Compiler PRIVATE TestBase)
+target_link_libraries(Script_Compiler PRIVATE CoreTestBase)
 
 # --- Misc ---
 
-add_executable(Misc_Utils Utils.unit.cpp $<TARGET_OBJECTS:Tests>)
-add_test(NAME Misc_Utils COMMAND Misc_Utils)
-target_link_libraries(Misc_Utils PRIVATE TestBase)
+add_executable(Misc_StringUtils StringUtils.unit.cpp $<TARGET_OBJECTS:Tests>)
+add_test(NAME Misc_StringUtils COMMAND Misc_StringUtils)
+target_link_libraries(Misc_StringUtils PRIVATE CoreTestBase)

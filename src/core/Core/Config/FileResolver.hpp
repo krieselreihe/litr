@@ -21,9 +21,9 @@ class FileResolver {
   explicit FileResolver(const std::string& cwd);
   explicit FileResolver(Path cwd);
 
-  [[nodiscard]] Status get_status() const;
-  [[nodiscard]] Path get_file_path() const;
-  [[nodiscard]] Path get_file_directory() const;
+  [[nodiscard]] Status status() const;
+  [[nodiscard]] Path file_path() const;
+  [[nodiscard]] Path file_directory() const;
 
  private:
   void find_file(const Path& cwd);

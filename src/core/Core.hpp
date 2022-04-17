@@ -9,7 +9,7 @@
 #include "Core/Assert.hpp"
 #include "Core/ExitStatus.hpp"
 #include "Core/Log.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 #include "Version.hpp"
 
 // Main -------------------------------

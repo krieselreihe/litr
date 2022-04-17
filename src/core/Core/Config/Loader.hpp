@@ -27,13 +27,13 @@ class Loader {
 
   explicit Loader(Path file_path);
 
-  [[nodiscard]] inline Commands get_commands() const {
+  [[nodiscard]] inline Commands commands() const {
     return m_commands;
   }
-  [[nodiscard]] inline Parameters get_parameters() const {
+  [[nodiscard]] inline Parameters parameters() const {
     return m_parameters;
   }
-  [[nodiscard]] inline Path get_file_path() const {
+  [[nodiscard]] inline Path file_path() const {
     return m_file_path;
   }
 

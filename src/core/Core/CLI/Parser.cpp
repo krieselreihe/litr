@@ -8,7 +8,7 @@
 #include "Core/Debug/Disassembler.hpp"
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Error/Handler.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::CLI {
 
@@ -113,8 +113,7 @@ void Parser::emit_scope(const Instruction::Value& value) {
 void Parser::emit_execution() {
   LITR_PROFILE_FUNCTION();
 
-  const std::string scope_path{get_scope_path()};
-  emit_bytes(Instruction::Code::EXECUTE, make_constant(scope_path));
+  emit_bytes(Instruction::Code::EXECUTE, make_constant(scope_path()));
 }
 
 void Parser::emit_clear() {
@@ -165,18 +164,18 @@ void Parser::arguments() {
 void Parser::commands() {
   LITR_PROFILE_FUNCTION();
 
-  emit_scope(Scanner::get_token_value(m_previous));
+  emit_scope(Scanner::token_value(m_previous));
 }
 
 void Parser::parameters() {
   LITR_PROFILE_FUNCTION();
 
-  emit_definition(Utils::trim_left(Scanner::get_token_value(m_previous), '-'));
+  emit_definition(StringUtils::trim_left(Scanner::token_value(m_previous), '-'));
 
   if (peak(TokenType::EQUAL)) {
     advance();
     consume(TokenType::STRING, "Value assignment missing.");
-    emit_constant(Utils::trim(Scanner::get_token_value(m_previous), '"'));
+    emit_constant(StringUtils::trim(Scanner::token_value(m_previous), '"'));
   }
 }
 
@@ -234,18 +233,18 @@ void Parser::error_at(Token* token, const std::string& message) {
   } else if (token->type == TokenType::ERROR) {
     // Nothing, yet.
   } else {
-    out_message.append(fmt::format(" at `{}`", Scanner::get_token_value(token)));
+    out_message.append(fmt::format(" at `{}`", Scanner::token_value(token)));
   }
 
   out_message.append(fmt::format(": {}", message));
 
   Error::Handler::push(
-      Error::CLIParserError(out_message, 1, token->column, Utils::trim(m_source, ' ')));
+      Error::CLIParserError(out_message, 1, token->column, StringUtils::trim(m_source, ' ')));
 
   m_has_error = true;
 }
 
-std::string Parser::get_scope_path() const {
+std::string Parser::scope_path() const {
   LITR_PROFILE_FUNCTION();
 
   std::string value{};

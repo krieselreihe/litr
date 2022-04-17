@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::Error {
 
@@ -36,12 +36,12 @@ bool TomlError::is_duplicated_value_error(const std::string& error) {
 std::string TomlError::extract_duplicated_value_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string extract{Utils::replace(error, "[error] toml::insert_value: ", "")};
+  const std::string extract{StringUtils::replace(error, "[error] toml::insert_value: ", "")};
 
   // Reformat lines
   std::vector<std::string> lines{};
   std::string output{};
-  Utils::split_into(extract, '\n', lines);
+  StringUtils::split_into(extract, '\n', lines);
 
   for (size_t i{0}; i < lines.size(); ++i) {
     // First line without change
@@ -63,7 +63,7 @@ std::string TomlError::extract_duplicated_value_error(const std::string& error) 
     output.append(lines[i]).append("\n");
   }
 
-  return Utils::trim(output, '\n');
+  return StringUtils::trim(output, '\n');
 }
 
 bool TomlError::is_duplicated_table_error(const std::string& error) {
@@ -75,12 +75,12 @@ bool TomlError::is_duplicated_table_error(const std::string& error) {
 std::string TomlError::extract_duplicated_table_error(const std::string& error) {
   LITR_PROFILE_FUNCTION();
 
-  const std::string extract{Utils::replace(error, "[error] toml::insert_value: ", "")};
+  const std::string extract{StringUtils::replace(error, "[error] toml::insert_value: ", "")};
 
   // Reformat lines
   std::vector<std::string> lines{};
   std::string output{};
-  Utils::split_into(extract, '\n', lines);
+  StringUtils::split_into(extract, '\n', lines);
 
   // First line without change
   output.append(fmt::format("{}\n ...\n", lines[0]));
@@ -99,7 +99,7 @@ std::string TomlError::extract_duplicated_table_error(const std::string& error) 
     output.append(lines[i]).append("\n");
   }
 
-  return Utils::trim(output, '\n');
+  return StringUtils::trim(output, '\n');
 }
 
 bool TomlError::is_file_reference(const std::string& line) {

@@ -6,7 +6,6 @@
 
 #include <fmt/color.h>
 #include <fmt/format.h>
-#include <fmt/printf.h>
 
 #include <algorithm>
 #include <vector>
@@ -21,12 +20,12 @@ namespace Litr::Hook {
 
 Help::Help(const std::shared_ptr<Config::Loader>& config)
     : m_query(config),
-      m_file_path(config->get_file_path()) {}
+      m_file_path(config->file_path()) {}
 
 void Help::print(const std::shared_ptr<CLI::Instruction>& instruction) const {
   LITR_PROFILE_FUNCTION();
 
-  m_command_name = get_command_name(instruction);
+  m_command_name = command_name(instruction);
 
   print_welcome_message();
   print_usage();
@@ -71,7 +70,7 @@ void Help::print_command_usage() const {
 void Help::print_commands() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Commands commands{
+  const Config::Commands commands{
       m_command_name.empty() ? m_query.get_commands() : m_query.get_commands(m_command_name)};
 
   if (commands.empty()) {
@@ -98,7 +97,7 @@ void Help::print_command(const std::shared_ptr<Config::Command>& command,
     command_path = fmt::format("{}.{}", parent_name, command->name);
   }
 
-  const std::string arguments{get_command_arguments(command_path)};
+  const std::string arguments{command_arguments(command_path)};
   const std::string name{fmt::format("{: ^{}}{:<{}} {}",
       "",
       depth * 2,  // Left side padding
@@ -124,7 +123,7 @@ void Help::print_example(const std::shared_ptr<Config::Command>& command) const 
     const size_t padding{get_parameter_padding()};
 
     std::vector<std::string> lines{};
-    Utils::split_into(command->example, '\n', lines);
+    StringUtils::split_into(command->example, '\n', lines);
 
     fmt::print(fg(fmt::color::dark_gray), "{:<{}}   ┌ Example(s):\n", " ", padding);
     for (auto&& line : lines) {
@@ -140,7 +139,7 @@ void Help::print_example(const std::shared_ptr<Config::Command>& command) const 
 void Help::print_options() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Parameters params{
+  const Config::Parameters params{
       m_command_name.empty() ? m_query.get_parameters() : m_query.get_parameters(m_command_name)};
   const size_t padding{get_parameter_padding()};
 
@@ -178,7 +177,8 @@ void Help::print_parameter_options(const std::shared_ptr<Config::Parameter>& par
     }
 
     fmt::print(
-        fg(fmt::color::dark_gray), "  {:<{}} {}\n", " ", padding, Utils::trim_right(args, ','));
+        fg(fmt::color::dark_gray), "  {:<{}} {}\n", " ", padding,
+        StringUtils::trim_right(args, ','));
   }
 }
 
@@ -201,11 +201,11 @@ void Help::print_with_description(
   LITR_PROFILE_FUNCTION();
 
   std::vector<std::string> lines{};
-  Utils::split_into(description, '\n', lines);
+  StringUtils::split_into(description, '\n', lines);
 
   constexpr size_t max_padding{22};
   const size_t padding{get_parameter_padding()};
-  bool use_max_padding{padding + extra_padding > max_padding};
+  const bool use_max_padding{padding + extra_padding > max_padding};
 
   for (size_t i{0}; i < lines.size(); ++i) {
     if (use_max_padding) {
@@ -223,14 +223,14 @@ void Help::print_with_description(
   }
 }
 
-std::string Help::get_command_name(const std::shared_ptr<CLI::Instruction>& instruction) {
+std::string Help::command_name(const std::shared_ptr<CLI::Instruction>& instruction) {
   LITR_PROFILE_FUNCTION();
 
   size_t offset{0};
   std::vector<std::string> scope{};
 
   while (offset < instruction->count()) {
-    const CLI::Instruction::Code code{instruction->read(offset++)};
+    const auto code{static_cast<CLI::Instruction::Code>(instruction->read(offset++))};
 
     switch (code) {
       case CLI::Instruction::Code::BEGIN_SCOPE: {
@@ -250,7 +250,7 @@ std::string Help::get_command_name(const std::shared_ptr<CLI::Instruction>& inst
           for (auto&& part : scope) {
             command_name.append(".").append(part);
           }
-          return Utils::trim_left(command_name, '.');
+          return StringUtils::trim_left(command_name, '.');
         }
         ++offset;
         break;
@@ -266,10 +266,10 @@ std::string Help::get_command_name(const std::shared_ptr<CLI::Instruction>& inst
   return "";
 }
 
-std::string Help::get_command_arguments(const std::string& name) const {
+std::string Help::command_arguments(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
-  Config::Query::Parameters params{m_query.get_parameters(name)};
+  Config::Parameters params{m_query.get_parameters(name)};
   std::string arguments{};
 
   std::sort(params.begin(), params.end(), sort_parameter_by_required);
@@ -300,14 +300,14 @@ std::string Help::get_command_arguments(const std::string& name) const {
 size_t Help::get_command_padding() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Commands commands{
+  const Config::Commands commands{
       m_command_name.empty() ? m_query.get_commands() : m_query.get_commands(m_command_name)};
   return get_command_padding(commands);
 }
 
 // Ignore recursion as this is needed to get padding for nested commands.
 // NOLINTNEXTLINE(misc-no-recursion)
-size_t Help::get_command_padding(const Config::Query::Commands& commands) const {
+size_t Help::get_command_padding(const Config::Commands& commands) const {
   LITR_PROFILE_FUNCTION();
 
   size_t padding{0};
@@ -333,7 +333,7 @@ size_t Help::get_command_padding(const Config::Query::Commands& commands) const 
 size_t Help::get_parameter_padding() const {
   LITR_PROFILE_FUNCTION();
 
-  const Config::Query::Parameters params{
+  const Config::Parameters params{
       m_command_name.empty() ? m_query.get_parameters() : m_query.get_parameters(m_command_name)};
   size_t padding{0};
 
@@ -343,7 +343,7 @@ size_t Help::get_parameter_padding() const {
 
   for (auto&& param : params) {
     const std::string argument{param->type_arguments.empty() ? "" : m_argument_placeholder};
-    size_t param_length{(param->name.length() + argument.length())};
+    const size_t param_length{(param->name.length() + argument.length())};
 
     if (padding < param_length) {
       padding = param_length;

@@ -197,9 +197,9 @@ class InstrumentationTimer {
 #define LITR_PROFILE_BEGIN_SESSION_WITH_FILE(name, file_path) \
   ::Litr::Debug::Instrumentor::get().begin_session(name, file_path)
 #define LITR_PROFILE_END_SESSION() ::Litr::Debug::Instrumentor::get().end_session()
-#define LITR_PROFILE_SCOPE(name)                              \
-  ::Litr::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
-    name                                                      \
+#define LITR_PROFILE_SCOPE(name)                                    \
+  const ::Litr::Debug::InstrumentationTimer JOIN(timer, __LINE__) { \
+    name                                                            \
   }
 #define LITR_PROFILE_FUNCTION() LITR_PROFILE_SCOPE(LITR_FUNC_SIG)
 #else

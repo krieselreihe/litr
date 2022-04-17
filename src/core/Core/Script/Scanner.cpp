@@ -140,13 +140,13 @@ Token Scanner::scan_expression_token() {
   }
 }
 
-std::string Scanner::get_token_value(const Token& token) {
+std::string Scanner::token_value(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
   return {token.start, token.length};
 }
 
-std::string Scanner::get_token_value(Token* token) {
+std::string Scanner::token_value(Token* token) {
   LITR_PROFILE_FUNCTION();
 
   return {token->start, token->length};
@@ -207,7 +207,7 @@ Token Scanner::untouched() {
   LITR_PROFILE_FUNCTION();
 
   // @todo: Refactor this condition for the check `m_Current[-1] != '\\'` of the escape sequence.
-  while (!(peek() == '%' && peek_next() == '{' && m_current[-1] != '\\') && !is_at_end()) {
+  while ((peek() != '%' || peek_next() != '{' || m_current[-1] == '\\') && !is_at_end()) {
     advance();
   }
 

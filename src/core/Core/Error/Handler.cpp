@@ -20,7 +20,7 @@ void Handler::flush() {
   get().m_errors.clear();
 }
 
-Handler::Errors Handler::get_errors() {
+Handler::Errors Handler::errors() {
   LITR_PROFILE_FUNCTION();
 
   return get().m_errors;

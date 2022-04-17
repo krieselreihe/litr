@@ -12,7 +12,7 @@
 #include <utility>
 
 #include "Core/Debug/Instrumentor.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::Error {
 

@@ -33,7 +33,7 @@ class CommandBuilder {
   void add_output();
   void add_child_command(const std::shared_ptr<Command>& command);
 
-  [[nodiscard]] inline std::shared_ptr<Command> get_result() const {
+  [[nodiscard]] inline std::shared_ptr<Command> result() const {
     return m_command;
   }
 

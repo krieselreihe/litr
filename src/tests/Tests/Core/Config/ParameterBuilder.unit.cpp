@@ -13,11 +13,11 @@ TEST_SUITE("ParameterBuilder") {
   TEST_CASE("Initiates a Parameter on construction") {
     const auto [file, data] = create_toml_mock("test", "");
 
-    Litr::Config::ParameterBuilder builder{file, data, "test"};
-    Litr::Config::Parameter builder_result{*builder.get_result()};
-    Litr::Config::Parameter compare{"test"};
+    const Litr::Config::ParameterBuilder builder{file, data, "test"};
+    const Litr::Config::Parameter builder_result{*builder.result()};
+    const Litr::Config::Parameter compare{"test"};
 
-    CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+    CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
     CHECK_EQ(sizeof(builder_result), sizeof(compare));
     Litr::Error::Handler::flush();
   }
@@ -29,9 +29,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
-          R"(You're missing the "description" field.)");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(
+          Litr::Error::Handler::errors()[0].message, R"(You're missing the "description" field.)");
       Litr::Error::Handler::flush();
     }
 
@@ -41,9 +41,9 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
-          R"(The "description" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(
+          Litr::Error::Handler::errors()[0].message, R"(The "description" can only be a string.)");
       Litr::Error::Handler::flush();
     }
 
@@ -53,8 +53,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_description();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->description, "Text");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->description, "Text");
       Litr::Error::Handler::flush();
     }
 
@@ -64,8 +64,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_description("Text");
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->description, "Text");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->description, "Text");
       Litr::Error::Handler::flush();
     }
   }
@@ -77,8 +77,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK(builder.get_result()->shortcut.empty());
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK(builder.result()->shortcut.empty());
       Litr::Error::Handler::flush();
     }
 
@@ -88,9 +88,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(
-          Litr::Error::Handler::get_errors()[0].message, R"(A "shortcut" can only be a string.)");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message, R"(A "shortcut" can only be a string.)");
       Litr::Error::Handler::flush();
     }
 
@@ -100,8 +99,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The shortcut name "help" is reserved by Litr.)");
       Litr::Error::Handler::flush();
     }
@@ -112,8 +111,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The shortcut name "h" is reserved by Litr.)");
       Litr::Error::Handler::flush();
     }
@@ -124,8 +123,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->shortcut, "t");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->shortcut, "t");
       Litr::Error::Handler::flush();
     }
 
@@ -133,13 +132,13 @@ TEST_SUITE("ParameterBuilder") {
       const auto [file, data] = create_toml_mock("test", R"(shortcut = "x")");
       auto param{std::make_shared<Litr::Config::Parameter>("something")};
       param->shortcut = "x";
-      std::vector<std::shared_ptr<Litr::Config::Parameter>> params{{param}};
+      const std::vector<std::shared_ptr<Litr::Config::Parameter>> params{{param}};
 
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_shortcut(params);
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The shortcut name "x" is already used for parameter "something".)");
       Litr::Error::Handler::flush();
     }
@@ -152,8 +151,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->type, Litr::Config::Parameter::Type::STRING);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->type, Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::flush();
     }
 
@@ -163,8 +162,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The "type" option as string can only be "string" or "boolean". Provided value "unknown" is not known.)");
       Litr::Error::Handler::flush();
     }
@@ -175,8 +174,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->type, Litr::Config::Parameter::Type::STRING);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->type, Litr::Config::Parameter::Type::STRING);
       Litr::Error::Handler::flush();
     }
 
@@ -186,8 +185,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->type, Litr::Config::Parameter::Type::ARRAY);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->type, Litr::Config::Parameter::Type::ARRAY);
       Litr::Error::Handler::flush();
     }
 
@@ -197,8 +196,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The options provided in "type" are not all strings.)");
       Litr::Error::Handler::flush();
     }
@@ -208,9 +207,9 @@ TEST_SUITE("ParameterBuilder") {
 
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
-      std::shared_ptr<Litr::Config::Parameter> result{builder.get_result()};
+      const std::shared_ptr<Litr::Config::Parameter> result{builder.result()};
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
       CHECK_EQ(result->type, Litr::Config::Parameter::Type::ARRAY);
       CHECK_EQ(result->type_arguments[0], "test");
       CHECK_EQ(result->type_arguments[1], "debug");
@@ -223,8 +222,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_type();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(A "type" can only be "string" or an array of options as strings.)");
       Litr::Error::Handler::flush();
     }
@@ -237,8 +236,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK(builder.get_result()->default_value.empty());
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK(builder.result()->default_value.empty());
       Litr::Error::Handler::flush();
     }
 
@@ -248,8 +247,8 @@ TEST_SUITE("ParameterBuilder") {
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(The field "default" needs to be a string.)");
       Litr::Error::Handler::flush();
     }
@@ -262,8 +261,8 @@ default = "Default")");
       builder.add_type();
       builder.add_default();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 1);
-      CHECK_EQ(Litr::Error::Handler::get_errors()[0].message,
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 1);
+      CHECK_EQ(Litr::Error::Handler::errors()[0].message,
           R"(Cannot find default value "Default" inside "type" list defined in line 1.)");
       Litr::Error::Handler::flush();
     }
@@ -274,8 +273,8 @@ default = "Default")");
       Litr::Config::ParameterBuilder builder{file, data, "test"};
       builder.add_default();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->default_value, "something");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->default_value, "something");
       Litr::Error::Handler::flush();
     }
 
@@ -287,8 +286,8 @@ default = "something")");
       builder.add_type();
       builder.add_default();
 
-      CHECK_EQ(Litr::Error::Handler::get_errors().size(), 0);
-      CHECK_EQ(builder.get_result()->default_value, "something");
+      CHECK_EQ(Litr::Error::Handler::errors().size(), 0);
+      CHECK_EQ(builder.result()->default_value, "something");
       Litr::Error::Handler::flush();
     }
   }

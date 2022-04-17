@@ -14,7 +14,7 @@ void Scanner::skip_whitespace() {
   LITR_PROFILE_FUNCTION();
 
   for (;;) {
-    char character{peek()};
+    const char character{peek()};
     switch (character) {
       case ' ':
       case '\r':
@@ -80,7 +80,7 @@ Token Scanner::scan_token() {
     return make_token(TokenType::EOS);
   }
 
-  char character{advance()};
+  const char character{advance()};
 
   if (is_digit(character)) {
     return number();
@@ -104,13 +104,13 @@ Token Scanner::scan_token() {
   }
 }
 
-std::string Scanner::get_token_value(const Token& token) {
+std::string Scanner::token_value(const Token& token) {
   LITR_PROFILE_FUNCTION();
 
   return {token.start, token.length};
 }
 
-std::string Scanner::get_token_value(Token* token) {
+std::string Scanner::token_value(Token* token) {
   LITR_PROFILE_FUNCTION();
 
   return {token->start, token->length};

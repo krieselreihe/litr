@@ -29,7 +29,7 @@ size_t disassemble_instruction(
     const std::shared_ptr<CLI::Instruction>& instruction, size_t offset) {
   fmt::print("{:04d} ", offset);
 
-  const CLI::Instruction::Code code{instruction->read(offset++)};
+  const auto code{static_cast<CLI::Instruction::Code>(instruction->read(offset++))};
 
   switch (code) {
     case CLI::Instruction::Code::CONSTANT:

@@ -7,7 +7,7 @@ add_library(${NAME} STATIC
   Core/Debug/Instrumentor.hpp Core/Debug/Disassembler.cpp Core/Debug/Disassembler.hpp
   Core/Log.cpp Core/Log.hpp Core/Assert.hpp Core/ExitStatus.hpp
   Core/FileSystem.cpp Core/FileSystem.hpp Core/Environment.hpp
-  Core/Utils.cpp Core/Utils.hpp
+  Core/StringUtils.cpp Core/StringUtils.hpp
   Core/Error/Reporter.cpp Core/Error/Reporter.hpp Core/Error/BaseError.hpp
   Core/Error/TomlError.cpp Core/Error/TomlError.hpp
   Core/Error/Handler.cpp Core/Error/Handler.hpp

@@ -16,7 +16,7 @@ static Path user_path(const std::string& user_name) {
   return path;
 }
 
-Path Environment::get_home_directory() {
+Path Environment::home_directory() {
   LITR_PROFILE_FUNCTION();
 
   // std::getenv is not thread safe, but this will not be a problem here.

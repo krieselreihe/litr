@@ -26,7 +26,7 @@ class ParameterBuilder {
   void add_default();
   void add_type();
 
-  [[nodiscard]] inline std::shared_ptr<Parameter> get_result() const {
+  [[nodiscard]] inline std::shared_ptr<Parameter> result() const {
     return m_parameter;
   }
 

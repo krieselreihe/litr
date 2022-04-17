@@ -49,7 +49,7 @@ class Parser {
   void error_at_current(const std::string& message);
   void error_at(Token* token, const std::string& message);
 
-  [[nodiscard]] std::string get_scope_path() const;
+  [[nodiscard]] std::string scope_path() const;
 
   std::string m_source;
   Scanner m_scanner;

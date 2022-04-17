@@ -27,7 +27,7 @@ struct Command {
   std::vector<std::shared_ptr<Command>> child_commands{};
 
   Output output{Output::UNCHANGED};
-  std::vector<Location> Locations{};
+  std::vector<Location> locations{};
 
   explicit Command(std::string name) : name(std::move(name)) {}
 };

@@ -75,7 +75,7 @@ class Path {
 class FileSystem {
  public:
   [[nodiscard]] static bool exists(const Path& path);
-  [[nodiscard]] static Path get_current_working_directory();
+  [[nodiscard]] static Path current_working_directory();
 };
 
 }  // namespace Litr

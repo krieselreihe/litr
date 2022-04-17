@@ -68,7 +68,7 @@ bool FileSystem::exists(const Path& path) {
   return std::filesystem::exists(path.m_path);
 }
 
-Path FileSystem::get_current_working_directory() {
+Path FileSystem::current_working_directory() {
   LITR_PROFILE_FUNCTION();
 
   return Path(std::filesystem::current_path());

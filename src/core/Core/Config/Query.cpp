@@ -8,7 +8,7 @@
 
 #include "Core/Debug/Instrumentor.hpp"
 #include "Core/Script/Compiler.hpp"
-#include "Core/Utils.hpp"
+#include "Core/StringUtils.hpp"
 
 namespace Litr::Config {
 
@@ -33,13 +33,13 @@ std::shared_ptr<Parameter> Query::get_parameter(const std::string& name) const {
   return nullptr;
 }
 
-Query::Commands Query::get_commands() const {
+Commands Query::get_commands() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_config->get_commands();
+  return m_config->commands();
 }
 
-Query::Commands Query::get_commands(const std::string& name) const {
+Commands Query::get_commands(const std::string& name) const {
   LITR_PROFILE_FUNCTION();
 
   const std::shared_ptr<Command>& command{get_command(name)};
@@ -51,17 +51,17 @@ Query::Commands Query::get_commands(const std::string& name) const {
   return command->child_commands;
 }
 
-Query::Parameters Query::get_parameters() const {
+Parameters Query::get_parameters() const {
   LITR_PROFILE_FUNCTION();
 
-  return m_config->get_parameters();
+  return m_config->parameters();
 }
 
-Query::Parameters Query::get_parameters(const std::string& command_name) const {
+Parameters Query::get_parameters(const std::string& command_name) const {
   LITR_PROFILE_FUNCTION();
 
   const std::shared_ptr<Command>& command{get_command(command_name)};
-  Query::Parameters parameters{};
+  Parameters parameters{};
 
   if (command == nullptr) {
     return parameters;
@@ -74,7 +74,7 @@ Query::Parameters Query::get_parameters(const std::string& command_name) const {
     names.insert(names.end(), child_names.begin(), child_names.end());
   }
 
-  Utils::deduplicate(names);
+  StringUtils::deduplicate(names);
 
   if (!names.empty()) {
     for (auto&& name : names) {
@@ -89,7 +89,7 @@ Query::Parts Query::split_command_query(const std::string& query) {
   LITR_PROFILE_FUNCTION();
 
   Parts parts{};
-  Utils::split_into(query, '.', parts);
+  StringUtils::split_into(query, '.', parts);
   return parts;
 }
 
@@ -139,7 +139,7 @@ std::shared_ptr<Command> Query::get_command_by_name(
 Query::Variables Query::get_parameters_as_variables() const {
   LITR_PROFILE_FUNCTION();
 
-  const Query::Parameters params{get_parameters()};
+  const Parameters params{get_parameters()};
   Variables variables{};
 
   for (auto&& param : params) {
@@ -158,12 +158,12 @@ std::vector<std::string> Query::get_used_parameter_names(
 
   for (auto&& script : command->script) {
     const Variables variables{get_parameters_as_variables()};
-    const Script::Compiler compiler{script, command->Locations[index++], variables};
-    const std::vector<std::string> used_names{compiler.get_used_variables()};
+    const Script::Compiler compiler{script, command->locations[index++], variables};
+    const std::vector<std::string> used_names{compiler.used_variables()};
     names.insert(names.end(), used_names.begin(), used_names.end());
   }
 
-  Utils::deduplicate(names);
+  StringUtils::deduplicate(names);
 
   return names;
 }
