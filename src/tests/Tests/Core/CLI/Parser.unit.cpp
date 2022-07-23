@@ -18,7 +18,7 @@
     size_t iteration{0};                                                                        \
     size_t offset{0};                                                                           \
     while (offset < (instruction)->count()) {                                                   \
-      const auto test{(definition)[iteration]};                                                 \
+      const auto& test{(definition)[iteration]};                                                \
       const Litr::CLI::Instruction::Code code{(instruction)->read(offset++)};                   \
       switch (code) {                                                                           \
         case Litr::CLI::Instruction::Code::CONSTANT:                                            \
