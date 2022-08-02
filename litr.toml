@@ -10,10 +10,9 @@ script = [
   %{nolog '-DDEACTIVATE_LOGGING=ON'} \
   %{debug '-DDEBUG=ON'} \
   %{profile '-DPROFILE=ON'} \
-  %{release '-DRELEASE=ON'} \
   -DCMAKE_BUILD_TYPE=%{target} \
   -B build/%{target}""",
-  "ninja -C build/%{target}"
+  "cmake --build build/%{target}"
 ]
 description = "Build the application for a given traget."
 
@@ -55,8 +54,4 @@ type = "boolean"
 [params.profile]
 shortcut = "p"
 description = "Build the application with profiling tools enabled."
-type = "boolean"
-
-[params.release]
-description = "Create a release build detached from build target."
 type = "boolean"
