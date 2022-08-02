@@ -12,26 +12,29 @@
 
 #include "Core/Script/Scanner.hpp"
 
-#define CHECK_DEFINITION(scanner, definition)                              \
-  {                                                                        \
-    for (auto&& test : (definition)) {                                     \
-      Litr::Script::Token token{(scanner).scan_token()};                   \
-      CHECK_EQ(token.type, test.type);                                     \
-      CHECK_EQ(Litr::Script::Scanner::get_token_value(token), test.value); \
-    }                                                                      \
-  }
-
-#define CHECK_EOS_TOKEN(scanner)                               \
-  {                                                            \
-    Litr::Script::Token eos{(scanner).scan_token()};           \
-    CHECK_EQ(eos.type, Litr::Script::TokenType::EOS);          \
-    CHECK_EQ(Litr::Script::Scanner::get_token_value(eos), ""); \
-  }
-
 struct TokenDefinition {
   Litr::Script::TokenType type;
   std::string value;
 };
+
+template <typename T, size_t S>
+inline void check_definition(Litr::Script::Scanner& scanner, const std::array<T, S>& definition) {
+  for (auto&& test : definition) {
+    Litr::Script::Token token{scanner.scan_token()};
+    // NOLINTNEXTLINE
+    CHECK_EQ(token.type, test.type);
+    // NOLINTNEXTLINE
+    CHECK_EQ(Litr::Script::Scanner::get_token_value(token), test.value);
+  }
+}
+
+inline void check_eos_token(Litr::Script::Scanner& scanner) {
+  Litr::Script::Token eos{(scanner).scan_token()};
+  // NOLINTNEXTLINE
+  CHECK_EQ(eos.type, Litr::Script::TokenType::EOS);
+  // NOLINTNEXTLINE
+  CHECK_EQ(Litr::Script::Scanner::get_token_value(eos), "");
+}
 
 TEST_SUITE("script::Scanner") {
   // Successful cases
@@ -41,8 +44,8 @@ TEST_SUITE("script::Scanner") {
     std::array<TokenDefinition, 1> definition{
         {{Litr::Script::TokenType::UNTOUCHED, "echo 'Hello World!'"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Nothing to parse on escaped sequence") {
@@ -51,8 +54,8 @@ TEST_SUITE("script::Scanner") {
     std::array<TokenDefinition, 1> definition{
         {{Litr::Script::TokenType::UNTOUCHED, R"(echo \%{something})"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single variable") {
@@ -63,8 +66,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::IDENTIFIER, "var"},
         {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Ignores duplicated closing brace") {
@@ -78,8 +81,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::END_SEQ, "}"},
             {Litr::Script::TokenType::UNTOUCHED, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Multiple variables") {
@@ -97,8 +100,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::END_SEQ, "}"},
     }};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Multiple variables in between") {
@@ -117,8 +120,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::UNTOUCHED, " end"},
     }};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single string") {
@@ -129,8 +132,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::STRING, "'Hello'"},
         {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single string including ignored expression syntax") {
@@ -141,8 +144,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::STRING, "'He%{ll}o'"},
         {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single string with leading variable") {
@@ -156,8 +159,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::STRING, "'Hello'"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Strings and or-statement") {
@@ -173,8 +176,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::STRING, "'Bye'"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   /*
@@ -210,8 +213,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::RIGHT_PAREN, ")"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Function usage with two arguments") {
@@ -229,8 +232,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::RIGHT_PAREN, ")"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Function usage with or-statement") {
@@ -249,8 +252,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::STRING, "'Second'"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Nested function usage") {
@@ -271,8 +274,8 @@ TEST_SUITE("script::Scanner") {
             {Litr::Script::TokenType::RIGHT_PAREN, ")"},
             {Litr::Script::TokenType::END_SEQ, "}"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Does not care about invalid semantic") {
@@ -282,8 +285,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::START_SEQ, "%{"},
         {Litr::Script::TokenType::IDENTIFIER, "var"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Ignores percentage sign without opening brace") {
@@ -291,8 +294,8 @@ TEST_SUITE("script::Scanner") {
 
     std::array<TokenDefinition, 1> definition{{{Litr::Script::TokenType::UNTOUCHED, "echo %var"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   // Error cases
@@ -303,8 +306,8 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::START_SEQ, "%{"},
         {Litr::Script::TokenType::ERROR, "Unterminated string."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates unknown characters, but does not stop scanning") {
@@ -317,7 +320,7 @@ TEST_SUITE("script::Scanner") {
         {Litr::Script::TokenType::END_SEQ, "}"},
     }};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 }
