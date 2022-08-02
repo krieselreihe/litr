@@ -12,26 +12,29 @@
 
 #include "Core/CLI/Scanner.hpp"
 
-#define CHECK_DEFINITION(scanner, definition)                           \
-  {                                                                     \
-    for (auto&& test : (definition)) {                                  \
-      Litr::CLI::Token token{(scanner).scan_token()};                   \
-      CHECK_EQ(token.type, test.type);                                  \
-      CHECK_EQ(Litr::CLI::Scanner::get_token_value(token), test.value); \
-    }                                                                   \
-  }
-
-#define CHECK_EOS_TOKEN(scanner)                            \
-  {                                                         \
-    Litr::CLI::Token eos{(scanner).scan_token()};           \
-    CHECK_EQ(eos.type, Litr::CLI::TokenType::EOS);          \
-    CHECK_EQ(Litr::CLI::Scanner::get_token_value(eos), ""); \
-  }
-
 struct TokenDefinition {
   Litr::CLI::TokenType type;
   std::string value;
 };
+
+template <typename T, size_t S>
+inline void check_definition(Litr::CLI::Scanner& scanner, const std::array<T, S>& definition) {
+  for (auto&& test : definition) {
+    Litr::CLI::Token token{scanner.scan_token()};
+    // NOLINTNEXTLINE
+    CHECK_EQ(token.type, test.type);
+    // NOLINTNEXTLINE
+    CHECK_EQ(Litr::CLI::Scanner::get_token_value(token), test.value);
+  }
+}
+
+inline void check_eos_token(Litr::CLI::Scanner& scanner) {
+  Litr::CLI::Token eos{(scanner).scan_token()};
+  // NOLINTNEXTLINE
+  CHECK_EQ(eos.type, Litr::CLI::TokenType::EOS);
+  // NOLINTNEXTLINE
+  CHECK_EQ(Litr::CLI::Scanner::get_token_value(eos), "");
+}
 
 TEST_SUITE("CLI::Scanner") {
   // Successful cases
@@ -40,8 +43,8 @@ TEST_SUITE("CLI::Scanner") {
 
     std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::LONG_PARAMETER, "--help"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single short parameter") {
@@ -49,8 +52,8 @@ TEST_SUITE("CLI::Scanner") {
 
     std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::SHORT_PARAMETER, "-h"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Single command") {
@@ -58,8 +61,8 @@ TEST_SUITE("CLI::Scanner") {
 
     std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::COMMAND, "build"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Multiple commands") {
@@ -70,8 +73,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::COMMAND, "cpp"},
     }};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("More multiple commands with whitespace") {
@@ -81,8 +84,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::COMMAND, "cpp"},
         {Litr::CLI::TokenType::COMMAND, "another"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Multiple comma separated commands") {
@@ -92,8 +95,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::COMMA, ","},
         {Litr::CLI::TokenType::COMMAND, "run"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Multiple comma separated commands with whitespace") {
@@ -103,8 +106,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::COMMA, ","},
         {Litr::CLI::TokenType::COMMAND, "run"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Long parameter with string values") {
@@ -119,8 +122,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::COMMA, ","},
             {Litr::CLI::TokenType::COMMAND, "run"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Long parameter with string values with whitespace") {
@@ -135,8 +138,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::COMMA, ","},
             {Litr::CLI::TokenType::COMMAND, "run"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Short parameter with number values") {
@@ -146,8 +149,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::EQUAL, "="},
         {Litr::CLI::TokenType::NUMBER, "42"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Mixed parameters with mixed values and whitespace") {
@@ -163,8 +166,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::EQUAL, "="},
             {Litr::CLI::TokenType::NUMBER, "2.45"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Mixed source string") {
@@ -182,8 +185,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::EQUAL, "="},
             {Litr::CLI::TokenType::NUMBER, "1.23"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Does not care about invalid semantics") {
@@ -195,8 +198,8 @@ TEST_SUITE("CLI::Scanner") {
         {Litr::CLI::TokenType::COMMA, ","},
     }};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   // Error cases
@@ -206,8 +209,8 @@ TEST_SUITE("CLI::Scanner") {
     std::array<TokenDefinition, 1> definition{
         {{Litr::CLI::TokenType::ERROR, "Unterminated string."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates unknown characters, but does not stop scanning") {
@@ -217,8 +220,8 @@ TEST_SUITE("CLI::Scanner") {
         {{Litr::CLI::TokenType::ERROR, "Unexpected character."},
             {Litr::CLI::TokenType::SHORT_PARAMETER, "-p"}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates wrong long parameter start character") {
@@ -229,8 +232,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::ERROR,
                 "A parameter can only start with the characters A-Za-z."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates wrong short parameter name") {
@@ -241,8 +244,8 @@ TEST_SUITE("CLI::Scanner") {
             {Litr::CLI::TokenType::ERROR, "A short parameter can only be A-Za-z as name."},
             {Litr::CLI::TokenType::ERROR, "A short parameter can only be A-Za-z as name."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates too long short parameter name") {
@@ -251,8 +254,8 @@ TEST_SUITE("CLI::Scanner") {
     std::array<TokenDefinition, 1> definition{{{Litr::CLI::TokenType::ERROR,
         "A short parameter can only contain one character (A-Za-z)."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 
   TEST_CASE("Invalidates duplicated parameter initializer") {
@@ -261,7 +264,7 @@ TEST_SUITE("CLI::Scanner") {
     std::array<TokenDefinition, 1> definition{
         {{Litr::CLI::TokenType::ERROR, "A parameter can only start with the characters A-Za-z."}}};
 
-    CHECK_DEFINITION(scanner, definition);
-    CHECK_EOS_TOKEN(scanner);
+    check_definition(scanner, definition);
+    check_eos_token(scanner);
   }
 }

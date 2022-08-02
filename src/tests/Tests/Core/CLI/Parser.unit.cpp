@@ -12,44 +12,45 @@
 
 #include "Core/Error/Handler.hpp"
 
-#define NO_VALUE ""
-#define CHECK_DEFINITION(instruction, definition)                                               \
-  {                                                                                             \
-    size_t iteration{0};                                                                        \
-    size_t offset{0};                                                                           \
-    while (offset < (instruction)->count()) {                                                   \
-      const auto& test{(definition)[iteration]};                                                \
-      const Litr::CLI::Instruction::Code code{(instruction)->read(offset++)};                   \
-      switch (code) {                                                                           \
-        case Litr::CLI::Instruction::Code::CONSTANT:                                            \
-        case Litr::CLI::Instruction::Code::DEFINE:                                              \
-        case Litr::CLI::Instruction::Code::BEGIN_SCOPE:                                         \
-        case Litr::CLI::Instruction::Code::EXECUTE: {                                           \
-          const std::byte index{(instruction)->read(offset)};                                   \
-          const Litr::CLI::Instruction::Value constant{(instruction)->read_constant(index)};    \
-          offset += 1;                                                                          \
-          CHECK_EQ(test.code, code);                                                            \
-          CHECK_EQ(test.value, constant);                                                       \
-          break;                                                                                \
-        }                                                                                       \
-        case Litr::CLI::Instruction::Code::CLEAR: {                                             \
-          CHECK_EQ(test.code, code);                                                            \
-          break;                                                                                \
-        }                                                                                       \
-        default:                                                                                \
-          CHECK_MESSAGE(false,                                                                  \
-              fmt::format("Unknown Instruction::Code {:d}", static_cast<unsigned char>(code))); \
-          offset += 1;                                                                          \
-      }                                                                                         \
-      ++iteration;                                                                              \
-    }                                                                                           \
-    CHECK_EQ(iteration, (definition).size());                                                   \
-  }
-
 struct InstructionDefinition {
   Litr::CLI::Instruction::Code code;
   Litr::CLI::Instruction::Value value;
 };
+
+template <typename T, size_t S>
+inline void check_definition(const std::shared_ptr<Litr::CLI::Instruction>& instruction,
+    const std::array<T, S>& definition) {
+  size_t iteration{0};
+  size_t offset{0};
+  while (offset < instruction->count()) {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
+    const auto& test{definition[iteration]};
+    const Litr::CLI::Instruction::Code code{(instruction)->read(offset++)};
+    switch (code) {
+      case Litr::CLI::Instruction::Code::CONSTANT:
+      case Litr::CLI::Instruction::Code::DEFINE:
+      case Litr::CLI::Instruction::Code::BEGIN_SCOPE:
+      case Litr::CLI::Instruction::Code::EXECUTE: {
+        const std::byte index{instruction->read(offset)};
+        const Litr::CLI::Instruction::Value constant{instruction->read_constant(index)};
+        offset += 1;
+        CHECK_EQ(test.code, code);
+        CHECK_EQ(test.value, constant);
+        break;
+      }
+      case Litr::CLI::Instruction::Code::CLEAR: {
+        CHECK_EQ(test.code, code);
+        break;
+      }
+      default:
+        CHECK_MESSAGE(
+            false, fmt::format("Unknown Instruction::Code {:d}", static_cast<unsigned char>(code)));
+        offset += 1;
+    }
+    ++iteration;
+  }
+  CHECK_EQ(iteration, (definition).size());
+}
 
 TEST_SUITE("CLI::Parser") {
   TEST_CASE("Single long parameter") {
@@ -62,8 +63,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::CONSTANT, "Some release"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -77,8 +77,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::CONSTANT, "debug is nice"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -92,8 +91,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::CONSTANT, ""}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -107,8 +105,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::EXECUTE, "build"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -123,8 +120,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -136,13 +132,12 @@ TEST_SUITE("CLI::Parser") {
     const std::array<InstructionDefinition, 5> definition{
         {{Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build"},
-            {Litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
+            {Litr::CLI::Instruction::Code::CLEAR, ""},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "run"},
             {Litr::CLI::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -156,13 +151,12 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::CONSTANT, "release"},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build"},
-            {Litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
+            {Litr::CLI::Instruction::Code::CLEAR, ""},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "run"},
             {Litr::CLI::Instruction::Code::EXECUTE, "run"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -177,8 +171,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::DEFINE, "debug"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -293,8 +286,7 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::EXECUTE, "build.cpp"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
@@ -309,13 +301,12 @@ TEST_SUITE("CLI::Parser") {
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "build"},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "cpp"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build.cpp"},
-            {Litr::CLI::Instruction::Code::CLEAR, NO_VALUE},
+            {Litr::CLI::Instruction::Code::CLEAR, ""},
             {Litr::CLI::Instruction::Code::BEGIN_SCOPE, "java"},
             {Litr::CLI::Instruction::Code::EXECUTE, "build.java"}}};
 
     CHECK_FALSE(parser.has_errors());
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-constant-array-index)
-    CHECK_DEFINITION(instruction, definition);
+    check_definition(instruction, definition);
     Litr::Error::Handler::flush();
   }
 
