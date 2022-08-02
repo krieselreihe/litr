@@ -15,7 +15,7 @@ done
 echo "Version is $VERSION"
 
 echo "Build application"
-litr build --target=release --release
+litr build --target=release
 
 echo "Setup release"
 rm -fr $PUBLISH_DIR
