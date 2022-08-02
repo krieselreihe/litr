@@ -2,15 +2,11 @@
  * Copyright (c) 2020-2022 Martin Helmut Fieber <info@martin-fieber.se>
  */
 
+#include "Core/CLI/Scanner.hpp"
+
 #include <doctest/doctest.h>
 
 #include <array>
-
-// Not sure why, but doctest really wants iostream here when
-// using g++. Who am I to judge.
-#include <iostream>
-
-#include "Core/CLI/Scanner.hpp"
 
 struct TokenDefinition {
   Litr::CLI::TokenType type;
