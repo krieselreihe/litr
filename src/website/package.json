@@ -1,0 +1,19 @@
+{
+  "name": "litr-documentation",
+  "version": "0.1.0",
+  "description": "Litr (Language Independent Task Runner) lets you configure and then run any tasks you want for any language.",
+  "private": true,
+  "authors": {
+    "name": "Krieselreihe",
+    "email": "info@krieselreihe.com"
+  },
+  "repository": "https://github.com/krieselreihe/litr",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}

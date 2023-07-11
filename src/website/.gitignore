@@ -1,0 +1,10 @@
+pids
+logs
+node_modules
+coverage/
+run
+dist
+.nyc_output
+.basement
+config.local.js
+basement_dist
